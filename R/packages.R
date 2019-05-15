@@ -1,0 +1,6 @@
+library(eidith)
+library(tidyverse)
+library(here)
+library(knitr)
+library(kableExtra)
+library(flextable)
