@@ -1,60 +1,3 @@
-# convenience functions
-
-h <- here::here
-
-header_true <- function(df) {
-  names(df) <- as.character(unlist(df[1,]))
-  df <- df %>% 
-    rownames_to_column() %>%
-    slice(-1)
-  return(df)
-}
-
-# get behavioral data
-get_raw_behav <- function(country, download = FALSE){
-  
-  if(download){
-    ed_db_download(verbose = TRUE, p1_tables = NULL, p2_tables = c("Event", "Human"), p1_data = FALSE)
-  }
-  
-  human <- eidith::ed2_human()
-  event <- eidith::ed2_events() %>% 
-    filter(project == "P2") %>%
-    select(event_name, concurrent_sampling_site, country, season,
-           human_density_impact, disease_transmission_interfaces,
-           veterinarian_care, sampling_area_size, humans_present,
-           rodents_present, bats_present, nhp_present, poultry_present,
-           pangolins_present, ungulates_present, birds_present,
-           cattle_present, goats_present, swine_present, cats_present,
-           dogs_present, carnivores_present, camels_present,
-           community_engagement, vector_control_measures, insect_vectors,
-           average_trip_to_water, toilets_available, drinking_water_shared,
-           bathing_water_shared, drinking_water_source) %>%
-    rename(drinking_water_source_site = drinking_water_source)
-  
-  left_join(human, event) %>%
-    filter(country == !!country,
-           concurrent_sampling_site  != "Not Mapped")
-}
-
-# create data frame of site names
-get_site_names <- function(dat, site_lookup){ # input dataframe in format of site-name-lookup.csv
-  
-  n_respondents <- dat %>%
-    group_by(concurrent_sampling_site) %>%
-    count() %>%
-    ungroup() 
-  
-  site_lookup %>%
-    filter(country == !!country,
-           old %in% unique(dat$concurrent_sampling_site)) %>%
-    left_join(n_respondents, by = c("old" = "concurrent_sampling_site")) %>%
-    mutate(new = paste0(new, " (n = ", n, ")")) %>%
-    select(-n) %>%
-    bind_rows(tibble(new = paste0("Aggregate (n = ", sum(n_respondents$n), ")" ),
-                     old = "Aggregate", country = country))
-}
-
 #'  make summary tables of response statistics
 #'
 #' @param dat humans and events datasets combined (e.g., left_join(humans, events, by = "event_name"))
@@ -137,5 +80,3 @@ format_sum_table <- function(tbs, footer = TRUE){
     autofit()
   
 }
-
-
