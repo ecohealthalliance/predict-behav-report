@@ -1,0 +1,41 @@
+body {
+    font-family: Avenir, helvetica, sans-serif;
+}
+
+
+h1 {
+    color: #01498E;
+    font-size: 127%;
+    font-family: Raleway, georgia, serif;
+}
+
+.title {
+    margin-top: 120px;
+}
+
+h2 {
+    color: #01498E;
+    font-size: 121%;
+}
+
+h3 {
+    color: #01498E;
+    font-size: 109%;
+    font-weight: bold;
+}
+
+h4 {
+    color: #01498E;
+    font-size: 100%;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.watermark {
+    opacity: 0.2;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    font-size: 500%;
+    color: #00407d;
+}

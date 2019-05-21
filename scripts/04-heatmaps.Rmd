@@ -1,0 +1,95 @@
+---
+params:
+  country: "Indonesia"
+title: '<span style="color:red;">DRAFT</span> Heatmaps: `r params$country`'
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    keep_md: false
+---
+
+```{r setup, include=FALSE}
+purrr::walk(list.files(here::here("R/"), full.names = TRUE),
+            source, echo = FALSE, verbose = FALSE)
+
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+country <- params$country
+
+# Read in data
+dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) 
+
+# Get Site names
+site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")))
+
+# Merge data and site names
+dat0 <- site_names %>%
+  filter(old %in% (dat$concurrent_sampling_site)) %>%
+  left_join(dat, by = c("old" = "concurrent_samplong_site")) %>%
+  rename::(site = new)
+
+# Save output files
+rmarkdown::render(h("scripts/04-heatmaps.Rmd"),
+                  output_file = paste0(country, "-heatmaps.html"),
+                  output_dir = h("heatmaps"),
+                  params = list(country = country))
+
+```
+
+```{r select taxa of interest, include = FALSE}
+
+fdat <- dat0 %>%
+  get_formatted_dat(taxa_names=c('rodents', 'bats', 'nhp', 'swine', 'poultry'), lifetime = FALSE, illness_var = c()) # select taxa names of interest for heatmap
+
+# default setting includes all taxa types
+
+# additional taxa options: camels; ungulates; pangolins; dogs; cats; birds; goats_sheep; carnivores; cattle
+
+```
+<small>_Click on the_ ▶ _︎arrows to expand sections._</small>
+
+
+<details>
+<summary>Taxa Contact</summary>
+```{r heatmap, fig.width = 15, fig.height = 7.5}
+
+get_heatmap(fdat, title = "")
+
+ggsave(h(paste0("heatmaps/", country, "-heatmap.png")))
+
+```
+</details>
+
+<details>
+<summary>Taxa Contact by Gender</summary>
+```{r heatmap, fig.width = 15, fig.height = 7.5}
+
+get_heatmap(bind_cols(dat0 %>% select(gender), fdat), group_var = "gender", title = "")
+
+ggsave(h(paste0("heatmaps/", country, "-gender-heatmap.png")))
+
+```
+</details>
+
+<details>
+<summary>Taxa Contact by Education</summary>
+```{r heatmap, fig.width = 15, fig.height = 7.5}
+
+get_heatmap(bind_cols(dat0 %>% select(highest_education), fdat), group_var = "highest_education", title = "")
+
+ggsave(h(paste0("heatmaps/", country, "-education-heatmap.png")))
+
+```
+</details>
+
+<details>
+<summary>Taxa Contact by Site</summary>
+```{r heatmap, fig.width = 15, fig.height = 7.5}
+
+# confirm that new site var names are correct
+
+get_heatmap(bind_cols(dat0 %>% select(site), fdat), group_var = "site", title = "")
+
+ggsave(h(paste0("heatmaps/", country, "site-heatmap.png")))
+
+```
+</details>
