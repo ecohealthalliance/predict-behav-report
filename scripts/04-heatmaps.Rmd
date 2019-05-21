@@ -25,7 +25,7 @@ site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")))
 dat0 <- site_names %>%
   filter(old %in% (dat$concurrent_sampling_site)) %>%
   left_join(dat, by = c("old" = "concurrent_samplong_site")) %>%
-  rename::(site = new)
+  rename(site = new)
 
 # Save output files
 rmarkdown::render(h("scripts/04-heatmaps.Rmd"),
