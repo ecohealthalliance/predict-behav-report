@@ -16,6 +16,7 @@ country <- params$country
 
 # Read in data
 dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) 
+fdat <- read_csv(h(paste0("data/formatted-behav-", country, ".csv")))
 
 # Get Site names
 site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")))
@@ -23,7 +24,7 @@ site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")))
 
 <small>_Click on the_ ▶ _︎arrows to expand sections._</small>
 
-
+SUMMARY
 <details>
 <summary>Site Characteristics</summary>
 ```{r site-general-table}
@@ -672,13 +673,13 @@ m_treat_table <- get_sum_table(dat,
                                asterisk = TRUE)
 
 m_treat_table_2 <- get_sum_table(dat, 
-                               pretty_names = site_names, 
-                               group_var = "treatment_specific", 
-                               factor_levels = c("clinic, hospital, or community health worker only", 
-                                              "traditional healer only", 
-                                              "dispensary or pharmacy only",
-                                              "multiple sources"),
-                               table_lab="Specific Location of Treatment for Medical Problems")
+                                 pretty_names = site_names, 
+                                 group_var = "treatment_specific", 
+                                 factor_levels = c("clinic, hospital, or community health worker only", 
+                                                   "traditional healer only", 
+                                                   "dispensary or pharmacy only",
+                                                   "multiple sources"),
+                                 table_lab="Specific Location of Treatment for Medical Problems")
 
 #had_symptoms_in_year
 symp_year_table <- get_sum_table(dat, 
@@ -766,28 +767,28 @@ format_sum_table(out, footer = TRUE)
 <summary>Movement</summary>
 ```{r movement-table}
 movement_table <- get_sum_table(dat, 
-                               pretty_names = site_names, 
-                               group_var = "travelled", 
-                               factor_levels = c("yes",
-                                                 "no", 
-                                                 "MISSING"),  
-                               table_lab="Travelled (past year)")
+                                pretty_names = site_names, 
+                                group_var = "travelled", 
+                                factor_levels = c("yes",
+                                                  "no", 
+                                                  "MISSING"),  
+                                table_lab="Travelled (past year)")
 
 movement_table_2 <- get_sum_table(dat,
                                   pretty_names = site_names,
                                   group_var = "travel_reason",
                                   factor_levels = c("work",
-                                                  "visit family",
-                                                  "moved",
-                                                  "religious reasons",
-                                                  "holiday/vacation",
-                                                  "go to hospital/seek medical care",
-                                                  "go to market",
-                                                  "other",
-                                                  "N/A"),
+                                                    "visit family",
+                                                    "moved",
+                                                    "religious reasons",
+                                                    "holiday/vacation",
+                                                    "go to hospital/seek medical care",
+                                                    "go to market",
+                                                    "other",
+                                                    "N/A"),
                                   table_lab = "Reasons for Travel",
                                   asterisk = TRUE)
-                                              
+
 
 # Together 
 out <- bind_rows(movement_table, movement_table_2)
@@ -866,5 +867,52 @@ format_sum_table(out, footer = TRUE)
 
 ```
 </details>
+<br />
+HEATMAP
+
+<details>
+<summary>Taxa Contact</summary>
+```{r heatmap, fig.width = 15, fig.height = 7.5}
+
+hm <- get_heatmap(fdat, title = "Taxa Contact")
+
+# ggsave(plot = hm, file = h("outputs/heat maps", paste0(country, "-heat-map.png")), width = 15, height = 7.5, units = "in")
+
+print(hm)
+```
+</details>
+
+<details>
+<summary>Taxa Contact by Gender</summary>
+```{r heatmap-gender, fig.width = 15, fig.height = 7.5}
+
+gender_dat <- bind_cols(dat %>% select(gender), fdat) %>%
+  mutate(gender = factor(gender, levels = c("female", "male"), ordered =TRUE))
+
+hm <- get_heatmap(gender_dat, group_var = "gender", title = "Taxa Contact by Gender")
+
+# ggsave(plot = hm, file = h("outputs/heat maps", paste0(country, "-gender-heat-map.png")), width = 15, height = 7.5, units = "in")
+
+print(hm)
+
+```
+</details>
+
+<details>
+<summary>Taxa Contact by Education</summary>
+```{r heatmap-edu, fig.width = 15, fig.height = 15}
+
+edu_dat <- bind_cols(dat %>% select(highest_education), fdat) %>%
+  mutate(highest_education = factor(highest_education, levels = c("none", "primary school", "secondary school", "college/university/professional"), ordered = TRUE))
+
+hm <- get_heatmap(edu_dat, group_var = "highest_education", title = "Taxa Contact by Education")
+
+# ggsave(plot = hm, file = h("outputs/heat maps", paste0(country, "-educ-heat-map.png")), width = 15, height = 15, units = "in")
+
+print(hm)
+
+```
+</details>
+
 
 

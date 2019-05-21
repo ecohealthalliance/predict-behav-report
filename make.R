@@ -4,11 +4,16 @@ purrr::walk(list.files(here::here("R/"), full.names = TRUE),
 # User entered information
 country <- "Indonesia" # Name country here
 illness_outcomes <- c("ili", "sari")
-taxa_outcomes <- c("bat", "rodent")
+taxa_outcomes <- c('rodents', 'nhp',  'bats', 'swine',   'poultry',
+                   'birds', 'cattle', 'goats_sheep', 'carnivores',
+                   'camels', 'pangolins', 'ungulates', 'dogs', 'cats')
 
-# get raw data 
+# get data 
 dat <- get_behav(country, download = FALSE)
 write_csv(dat, h(paste0("data/raw-behav-", country, ".csv")))
+
+fdat <- get_formatted_dat(dat, taxa_names = taxa_outcomes)
+write_csv(fdat, h(paste0("data/formatted-behav-", country, ".csv")))
 
 # MAKE SURE site_name_lookup.csv is updated for your country
 site_lookup <- read_csv(h("site-name-lookup.csv")) %>% 
