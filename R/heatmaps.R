@@ -1,3 +1,12 @@
+#' Main heatmap function
+#' 
+#' @param dat contaxa dataframe with T/F for taxa contact (get_formatted_dat())
+#' @param taxa_types string of taxa name for stratification
+#' @param contx_types string of contact name for stratification
+#' @param title plot title
+#' @param group_var name of column for facet wrapping (e.g., "gender").  Optional.
+#' @return ggplot2 heatmap object
+#' @export
 get_heatmap <- function(dat,
                         taxa_types = c("bats", "nhp", "poultry", "rodents", "swine", "birds",
                                        "cattle", "ungulates", "pangolins", "carnivores",
@@ -69,7 +78,7 @@ get_heatmap <- function(dat,
       mutate(lab = paste0(perc, "%", " (", n, ")"))
   }
   
-  p <- ggplot(data = hdat, aes(x = taxa, y = contx, fill = n, label = lab)) +
+  p <- ggplot(data = hdat, aes(x = taxa, y = contx, fill = perc, label = lab)) +
     geom_tile(color = 'gray') +
     geom_label(fontface='bold', fill="white", size = 2) +
     scale_x_discrete(position = 'bottom') +
@@ -80,7 +89,7 @@ get_heatmap <- function(dat,
           axis.text.y = element_text(size=12, color="black"),
           axis.text.x = element_text(size=12, color="black", angle = 60, vjust = 1, hjust = 0.95)) +
   labs(title = title, x="", y="")
-  
+
   if(group_var != ""){
     p <- p + facet_wrap(as.formula(paste("~", group_var)))
   }
