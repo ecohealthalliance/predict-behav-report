@@ -991,3 +991,17 @@ plot_lasso_fit <- function(lasso_obj, dat, pretty_names = TRUE, vert_line = TRUE
   
   out_plot
 }
+
+
+######## Support functions for outcome of interest in lasso plots ###########
+
+if(outcome_var %in% c("ili", "encephalitis", "hemorrhagic_fever", "sari")){
+  self_reports <- get_self_reports(dat) %>%
+    select(participant_id, ends_with(outcome_var)) %>%
+    rename(!!outcome_var := 2)
+} else {
+  self_reports <- dat %>%
+    mutate(contact_any = ifelse(!!sym(outcome_var) == "", FALSE, TRUE)) %>%
+    select(participant_id, contact_any) %>%
+    rename(!!outcome_var := 2)
+}
