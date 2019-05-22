@@ -52,9 +52,11 @@ fdat <- dat0 %>%
 <summary>Taxa Contact</summary>
 ```{r heatmap, fig.width = 15, fig.height = 7.5}
 
-get_heatmap(fdat, title = "")
+hm <- get_heatmap(fdat, title = "Taxa Contact")
 
-ggsave(h(paste0("heatmaps/", country, "-heatmap.png")))
+ggsave(plot = hm, file = h("heatmaps/", paste0(country, "-heatmap.png")), width = 15, heigh = 7.5)
+
+print(hm)
 
 ```
 </details>
@@ -63,9 +65,11 @@ ggsave(h(paste0("heatmaps/", country, "-heatmap.png")))
 <summary>Taxa Contact by Gender</summary>
 ```{r heatmap, fig.width = 15, fig.height = 7.5}
 
-get_heatmap(bind_cols(dat0 %>% select(gender), fdat), group_var = "gender", title = "")
+hm <- get_heatmap(bind_cols(dat0 %>% select(gender), fdat), group_var = "gender", title = "Taxa Contact by Gender")
 
-ggsave(h(paste0("heatmaps/", country, "-gender-heatmap.png")))
+ggsave(plot = hm, file = h("heatmaps/", paste0(country, "-gender-heatmap.png")), width = 15, height = 7.5)
+
+print(hm)
 
 ```
 </details>
@@ -74,9 +78,11 @@ ggsave(h(paste0("heatmaps/", country, "-gender-heatmap.png")))
 <summary>Taxa Contact by Education</summary>
 ```{r heatmap, fig.width = 15, fig.height = 7.5}
 
-get_heatmap(bind_cols(dat0 %>% select(highest_education), fdat), group_var = "highest_education", title = "")
+hm <- get_heatmap(bind_cols(dat0 %>% select(highest_education), fdat), group_var = "highest_education", title = "Taxa Contact by Education")
 
-ggsave(h(paste0("heatmaps/", country, "-education-heatmap.png")))
+ggsave(plot = hm, file = h("heatmaps/", paste0(country, "-education-heatmap.png")), width = 15, height = 7.5)
+
+print(hm)
 
 ```
 </details>
@@ -87,9 +93,11 @@ ggsave(h(paste0("heatmaps/", country, "-education-heatmap.png")))
 
 # confirm that new site var names are correct
 
-get_heatmap(bind_cols(dat0 %>% select(site), fdat), group_var = "site", title = "")
+hm <- get_heatmap(bind_cols(dat0 %>% select(site), fdat), group_var = "site", title = "")
 
-ggsave(h(paste0("heatmaps/", country, "site-heatmap.png")))
+ggsave(plot = hm, file = h("heatmaps/", paste0(country, "site-heatmap.png")), width = 15, height = 7.5)
+
+print(hm)
 
 ```
 </details>
