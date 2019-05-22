@@ -10,15 +10,14 @@ output:
     toc: true
     toc_float: true
     highlight: pygments
-    css: ../site-maps/assets/usaid.css
 ---
 
 ```{r setup, include=FALSE}
 
-purrr::walk(list.files(here::here("site-maps/"), full.names = TRUE),
+purrr::walk(list.files(here::here("R/"), full.names = TRUE),
             source, echo = FALSE, verbose = FALSE)
 
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, out.extra = '')
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 country <- params$country
 
 # Read in data
@@ -52,19 +51,3 @@ library(knitr)
 
 ```
 
-
-
-h <- here::here
-
-USAID_path <- h("/drafts/outputs/assets/USAID-logo.png")
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
