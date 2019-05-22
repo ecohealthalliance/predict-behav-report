@@ -3,10 +3,10 @@ purrr::walk(list.files(here::here("R/"), full.names = TRUE),
 
 # User entered information
 country <- "Indonesia" # Name country here
-illness_outcomes <- c("ili", "sari")
+illness_outcomes <- c("ili", "sari", "encephalitis") #select illness of interest here (can select 0 through 3)
 taxa_outcomes <- c('rodents', 'nhp',  'bats', 'swine',   'poultry',
                    'birds', 'cattle', 'goats_sheep', 'carnivores',
-                   'camels', 'pangolins', 'ungulates', 'dogs', 'cats')
+                   'camels', 'pangolins', 'ungulates', 'dogs', 'cats') #select taxa contact of interest (can select 0 through 14)
 
 # get data 
 dat <- get_behav(country, download = FALSE)
