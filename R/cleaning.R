@@ -45,6 +45,7 @@ get_behav <- function(country, download = FALSE){
   # recode 
   out <- out %>%
     mutate_if(is.character, ~replace_na(., "N/A")) %>%
+    mutate_at(.vars = vars(rooms_in_dwelling, people_in_dwelling, children_in_dwelling, males_in_dwelling), .funs = as.numeric) %>%
     mutate(drinking_water_shared = recode(drinking_water_shared, "don't know" = "unknown"),
            bathing_water_shared = recode(bathing_water_shared, "don't know" = "unknown"),
            had_symptoms_in_last_year = recode(had_symptoms_in_last_year, "N/A" = "no"),
@@ -80,7 +81,12 @@ get_behav <- function(country, download = FALSE){
            risk_open_wound = ifelse(str_detect(risk_open_wound, "yes"), "yes",
                                     ifelse(str_detect(risk_open_wound, "other"), "other",
                                            risk_open_wound)),
-           occupation = ifelse(str_detect(primary_livelihood, "[Oo]ther"), livelihood_groups_other, primary_livelihood)
+           occupation = ifelse(str_detect(primary_livelihood, "[Oo]ther"), livelihood_groups_other, primary_livelihood),
+           people_in_dwelling = people_in_dwelling + 1,
+           males_in_dwelling = ifelse(gender=="male", males_in_dwelling + 1, males_in_dwelling),
+           rooms_in_dwelling_crowd = ifelse(rooms_in_dwelling == 0, 1, rooms_in_dwelling),
+           crowding_index = people_in_dwelling/rooms_in_dwelling_crowd
+             
     )
   
 }
