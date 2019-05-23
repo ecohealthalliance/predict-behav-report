@@ -11,6 +11,14 @@ taxa_outcomes <- c("rodents", "bats") # Select taxa contact of interest (`taxa_n
 dat <- get_behav(country, download = FALSE)
 write_csv(dat, h(paste0("data/raw-behav-", country, ".csv")))
 
+# get data for sitmaps report
+adat <- read_csv(h("site-name-lookup.csv")) %>% 
+  get_all_dat(dat, ., country)
+write_csv(adat, h(paste0("data/map-all-behav-", country, ".csv")))
+
+mdat <- get_map_dat(adat)
+write_csv(mdat, h(paste0("data/map-site-behav-", country, ".csv")))
+
 # get boolean values for non-numeric responses
 ldat <- get_logical(dat)
 write_csv(ldat, h(paste0("data/logic-behav-", country, ".csv")))
