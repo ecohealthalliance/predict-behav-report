@@ -26,28 +26,15 @@ dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv")))
 # Get Site names
 site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")))
 
+#library(bplots) #if(!require(bplots)) devtools::install_github("brooke-watson/bplots")
+
 ```
 
 ```{r load packages, include=FALSE}
 
-library(eidith)
-library(tidyverse)
-library(lubridate)
-library(here)
-library(mapview)
-library(leaflet)
-library(leafpop)
-library(janitor)
-library(rgeos)
-library(rworldmap)
-library(bplots) #if(!require(bplots)) devtools::install_github("brooke-watson/bplots")
-library(RColorBrewer)
-library(maptools)
-library(scales)
-library(stringr)
-library(rlang)
-library(shiny)
-library(knitr)
+
+
+
 
 ```
 

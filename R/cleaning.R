@@ -46,9 +46,9 @@ get_behav <- function(country, download = FALSE){
   out <- out %>%
     mutate_if(is.character, ~replace_na(., "N/A")) %>%
     mutate_at(.vars = vars(rooms_in_dwelling, people_in_dwelling, children_in_dwelling, males_in_dwelling), .funs = as.numeric) %>%
-    mutate(drinking_water_shared = dplyr::recode(drinking_water_shared, "don't know" = "unknown"),
-           bathing_water_shared = dplyr::recode(bathing_water_shared, "don't know" = "unknown"),
-           had_symptoms_in_last_year = dplyr::recode(had_symptoms_in_last_year, "N/A" = "no"),
+    mutate(drinking_water_shared = recode(drinking_water_shared, "don't know" = "unknown"),
+           bathing_water_shared = recode(bathing_water_shared, "don't know" = "unknown"),
+           had_symptoms_in_last_year = recode(had_symptoms_in_last_year, "N/A" = "no"),
            insect_vectors = str_replace_all(tolower(insect_vectors), c("sand fly" = "sand", 
                                                                        "tsetse fly" = "tsetse", 
                                                                        "housefly" = "other",
@@ -66,7 +66,7 @@ get_behav <- function(country, download = FALSE){
            treatment_specific = map_chr(str_split(treatment_specific, "; "), function(x){
              unique(x) %>%
                ifelse(length(.)==1, ., "multiple sources") %>%
-               dplyr::recode(., "clinic" = "clinic, hospital, or community health worker only")}),
+               recode(., "clinic" = "clinic, hospital, or community health worker only")}),
            scratched_bitten_action_specific = scratched_bitten_action, 
            scratched_bitten_action = ifelse(str_detect(scratched_bitten_action, "visit|soap"),
                                             "treated", 
@@ -86,9 +86,8 @@ get_behav <- function(country, download = FALSE){
            males_in_dwelling = ifelse(gender=="male", males_in_dwelling + 1, males_in_dwelling),
            rooms_in_dwelling_crowd = ifelse(rooms_in_dwelling == 0, 1, rooms_in_dwelling),
            crowding_index = people_in_dwelling/rooms_in_dwelling_crowd
-           
-    ) %>%
-    select(-rooms_in_dwelling_crowd)
+             
+    )
   
 }
 
@@ -102,18 +101,16 @@ illness_names_clean <-  make_clean_names(illness_names)
 # Create analysis dataframe
 get_logical <- function(dat) {
   
+  
   # select and widen covariate data
   covars <- dat %>%
-    select(participant_id,
-           age,
+    select(age,
            gender,
            length_lived,
-           crowding_index,
-           children_in_dwelling,
-           dwelling_permanent_structure,
-           pet_in_dwelling_last_year,
+           matches("dwelling"),
            water_treated,
            shared_water_last_year,
+           shared_water_life,
            matches("education"),
            occupation,
            matches("animal"),
@@ -144,11 +141,13 @@ get_logical <- function(dat) {
               .funs = funs(factor)) %>%
     #mutate numeric vectors
     mutate_at(.vars = vars(age,
-                           crowding_index),
+                           people_in_dwelling,
+                           children_in_dwelling,
+                           males_in_dwelling,
+                           rooms_in_dwelling),
               .funs = funs(as.numeric)) %>%
-    mutate(children_in_dwelling = ifelse(is.na(children_in_dwelling)|children_in_dwelling==0, FALSE, TRUE)) %>%
     #map yes to TRUE and all other responses to FALSE
-    mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-1], #hack to not apply criteria to participant id
+    mutate_if(.predicate = is.character,
               .funs = funs(
                 ifelse(str_detect(., '[Yy]es'), TRUE, FALSE))) %>%
     #expansion of factors to binary categorical outcomes
@@ -168,7 +167,8 @@ get_logical <- function(dat) {
            -travel_reason,
            -treatment,
            -scratched_bitten_action,
-           -ends_with("n_a"))
+           -ends_with("n_a")) %>%
+    mutate(participant_id = dat$participant_id)
   
   # remove most "last_year" covariates since more detailed info on these exposures will
   # come from exposures below, but keep "shared_water_last_year" and
@@ -206,8 +206,7 @@ get_logical <- function(dat) {
     mutate_if(is.integer, as.logical) %>%
     clean_names()
   
-  covars <- left_join(covars, illness) %>%
-    mutate_at(.vars = vars(illness_names_clean), ~replace_na(., FALSE))
+  covars <- left_join(covars, illness)
   covars
 }
 
@@ -217,8 +216,8 @@ get_outcomes <- function(dat, taxa_outcomes, illness_outcomes){
   taxa_to_exclude <- taxa_names[!taxa_names %in% taxa_outcomes]
   illness_to_exclude <- illness_names_clean[!illness_names_clean %in% illness_outcomes]
   
-  out <- dat 
-
+  out <- dat
+  
   if(length(taxa_to_exclude)>0){
     out <- out %>%
       select(-matches(!!paste(taxa_to_exclude, collapse = "|")))
@@ -229,23 +228,4 @@ get_outcomes <- function(dat, taxa_outcomes, illness_outcomes){
       select(-matches(!!paste(illness_to_exclude, collapse = "|")))
   }
   out
-}
-
-discretize_continuous <- function(dat, age_breaks, age_labels, crowding_index_breaks, crowding_index_labels){
-  
-  dat %>%
-    mutate(age_discrete = arules::discretize(age, method = "fixed",
-                                             breaks = age_breaks,
-                                             labels = age_labels),
-           crowding_index_discrete = arules::discretize(crowding_index, method = "fixed",
-                                                        breaks = crowding_index_breaks,
-                                                        labels = crowding_index_labels)) %>%
-    select(-age, -crowding_index) %>%
-    mutate(age_discrete = paste0("age_discrete_", age_discrete),
-      value_age_discrete = TRUE, 
-      crowding_index_discrete = paste0("crowding_index_discrete_", crowding_index_discrete),
-      value_crowding_index_discrete = TRUE) %>%
-    spread(age_discrete, value_age_discrete, fill = FALSE) %>%
-    spread(crowding_index_discrete, value_crowding_index_discrete, fill = FALSE) 
-  
 }
