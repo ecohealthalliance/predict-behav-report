@@ -17,87 +17,37 @@ country <- params$country
 
 # Read in data
 dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) 
-
-# Get Site names
-site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")))
-
-# Merge data and site names
-dat0 <- site_names %>%
-  filter(old %in% (dat$concurrent_sampling_site)) %>%
-  left_join(dat, by = c("old" = "concurrent_samplong_site")) %>%
-  rename(site = new)
-
-# Save output files
-rmarkdown::render(h("scripts/04-heatmaps.Rmd"),
-                  output_file = paste0(country, "-heatmaps.html"),
-                  output_dir = h("heatmaps"),
-                  params = list(country = country))
-
+fdat <- read_csv(h(paste0("data/formatted-behav-", country, ".csv")))
 ```
-
-```{r select taxa of interest, include = FALSE}
-
-fdat <- dat0 %>%
-  get_formatted_dat(taxa_names=c('rodents', 'bats', 'nhp', 'swine', 'poultry'), lifetime = FALSE, illness_var = c()) # select taxa names of interest for heatmap
-
-# default setting includes all taxa types
-
-# additional taxa options: camels; ungulates; pangolins; dogs; cats; birds; goats_sheep; carnivores; cattle
-
-```
-<small>_Click on the_ ▶ _︎arrows to expand sections._</small>
-
 
 <details>
 <summary>Taxa Contact</summary>
 ```{r heatmap, fig.width = 15, fig.height = 7.5}
-
 hm <- get_heatmap(fdat, title = "Taxa Contact")
-
-ggsave(plot = hm, file = h("heatmaps/", paste0(country, "-heatmap.png")), width = 15, heigh = 7.5)
-
+ggsave(plot = hm, file = h("outputs/heatmap-figs", paste0(country, "-heat-map.png")), width = 15, height = 7.5, units = "in")
 print(hm)
-
 ```
 </details>
 
 <details>
 <summary>Taxa Contact by Gender</summary>
-```{r heatmap, fig.width = 15, fig.height = 7.5}
-
-hm <- get_heatmap(bind_cols(dat0 %>% select(gender), fdat), group_var = "gender", title = "Taxa Contact by Gender")
-
-ggsave(plot = hm, file = h("heatmaps/", paste0(country, "-gender-heatmap.png")), width = 15, height = 7.5)
-
+```{r heatmap-gender, fig.width = 15, fig.height = 7.5}
+gender_dat <- bind_cols(dat %>% select(gender), fdat) %>%
+  mutate(gender = factor(gender, levels = c("female", "male"), ordered =TRUE))
+hm <- get_heatmap(gender_dat, group_var = "gender", title = "Taxa Contact by Gender")
+ggsave(plot = hm, file = h("outputs/heatmap-figs", paste0(country, "-gender-heat-map.png")), width = 15, height = 7.5, units = "in")
 print(hm)
-
 ```
 </details>
 
 <details>
 <summary>Taxa Contact by Education</summary>
-```{r heatmap, fig.width = 15, fig.height = 7.5}
-
-hm <- get_heatmap(bind_cols(dat0 %>% select(highest_education), fdat), group_var = "highest_education", title = "Taxa Contact by Education")
-
-ggsave(plot = hm, file = h("heatmaps/", paste0(country, "-education-heatmap.png")), width = 15, height = 7.5)
-
+```{r heatmap-edu, fig.width = 15, fig.height = 15}
+edu_dat <- bind_cols(dat %>% select(highest_education), fdat) %>%
+  mutate(highest_education = factor(highest_education, levels = c("none", "primary school", "secondary school", "college/university/professional"), ordered = TRUE))
+hm <- get_heatmap(edu_dat, group_var = "highest_education", title = "Taxa Contact by Education")
+ggsave(plot = hm, file = h("outputs/heatmap-figs", paste0(country, "-educ-heat-map.png")), width = 15, height = 15, units = "in")
 print(hm)
-
 ```
 </details>
 
-<details>
-<summary>Taxa Contact by Site</summary>
-```{r heatmap, fig.width = 15, fig.height = 7.5}
-
-# confirm that new site var names are correct
-
-hm <- get_heatmap(bind_cols(dat0 %>% select(site), fdat), group_var = "site", title = "")
-
-ggsave(plot = hm, file = h("heatmaps/", paste0(country, "site-heatmap.png")), width = 15, height = 7.5)
-
-print(hm)
-
-```
-</details>

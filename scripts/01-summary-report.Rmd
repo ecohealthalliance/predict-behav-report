@@ -16,7 +16,6 @@ country <- params$country
 
 # Read in data
 dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) 
-fdat <- read_csv(h(paste0("data/formatted-behav-", country, ".csv")))
 
 # Get Site names
 site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")))
@@ -867,24 +866,3 @@ format_sum_table(out, footer = TRUE)
 
 ```
 </details>
-<br />
-HEATMAP
-
-```{r get_fdat}
-fdat <- dat %>%
-  get_formatted_dat(taxa_names=c('rodents','nhp','bats','swine','poultry'), lifetime = FALSE, illness_var = c())
-```
-
-<details>
-<summary>Taxa Contact</summary>
-```{r heatmap, fig.width = 15, fig.height = 7.5}
-
-#sample heatmap - see heatmap report for additional maps
-
-hm <- get_heatmap(fdat, title = "Taxa Contact")
-
-print(hm)
-
-```
-</details>
-

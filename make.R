@@ -21,10 +21,18 @@ site_lookup <- read_csv(h("site-name-lookup.csv")) %>%
 
 write_csv(site_lookup, h(paste0("data/site-name-formatted-", country, ".csv")))
 
-# Run summary report
+# Run reports
+
+## Summary Report
 rmarkdown::render(h("scripts/01-summary-report.Rmd"),
                   output_file = paste0(country, "-behav-summary-report.html"),
-                  output_dir = h("summary-report"),
+                  output_dir = h("outputs", "reports"),
+                  params = list(country = country))
+
+
+rmarkdown::render(h("scripts/04-heatmaps.Rmd"),
+                  output_file = paste0(country, "-behav-heatmaps.html"),
+                  output_dir = h("outputs", "reports"),
                   params = list(country = country))
 
 
