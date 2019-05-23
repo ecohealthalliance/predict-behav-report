@@ -84,6 +84,12 @@ Version=1.0.1
 Source=CRAN
 Hash=9c7023d9c0a2fb1fad5fc2e16283925e
 
+[R/Package/arules]
+Package=arules
+Version=1.6-3
+Source=CRAN
+Hash=8796573371e5f98904f1d76b1503cde2
+
 [R/Package/askpass]
 Package=askpass
 Version=1.1
