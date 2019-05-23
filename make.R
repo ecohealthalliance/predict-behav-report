@@ -2,6 +2,7 @@
 # Load packages and functions 
 purrr::walk(list.files(here::here("R/"), full.names = TRUE),
             source, echo = FALSE, verbose = FALSE)
+set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 country <- "Indonesia" # Name country here
