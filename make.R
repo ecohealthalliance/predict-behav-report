@@ -12,8 +12,11 @@ taxa_outcomes <- c('rodents', 'nhp',  'bats', 'swine',   'poultry',
 dat <- get_behav(country, download = FALSE)
 write_csv(dat, h(paste0("data/raw-behav-", country, ".csv")))
 
-fdat <- get_formatted_dat(dat, taxa_names = taxa_outcomes)
+fdat <- get_logical(dat)
 write_csv(fdat, h(paste0("data/formatted-behav-", country, ".csv")))
+
+#TODO add function to select taxa and illness outcomes
+#TODO lasso workflow - have run T/F option and separate script for the running and figures
 
 # MAKE SURE site_name_lookup.csv is updated for your country
 site_lookup <- read_csv(h("site-name-lookup.csv")) %>% 

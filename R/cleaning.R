@@ -86,35 +86,13 @@ get_behav <- function(country, download = FALSE){
 }
 
 
-#' Create analysis dataframe
-#'
-#' Creates data frame ready for random forest
-#' @param dat data frame from which to create analysis data set created from get_self_reports or get_contaxa
-#' @param taxa_names vector of taxa types for which exposures will be included
-#' @param lifetime  If TRUE, report symptoms and predictors for lifetime, otherwise past year symptoms and all predictors
-#' @author matteo-V
-#' @importFrom dplyr %>% select mutate
-#' @importFrom rlang !! sym :=
-#' @importFrom plyr join_all
-#' @export
+taxa_names <- c('rodents', 'nhp',  'bats', 'swine',   'poultry',
+                'birds', 'cattle', 'goats_sheep', 'carnivores',
+                'camels', 'pangolins', 'ungulates', 'dogs', 'cats')
 
-get_formatted_dat <- function(dat,
-                              taxa_names = c('rodents',
-                                             'nhp',
-                                             'bats',
-                                             'swine',
-                                             'poultry',
-                                             'birds',
-                                             'cattle',
-                                             'goats_sheep',
-                                             'carnivores',
-                                             'camels',
-                                             'pangolins',
-                                             'ungulates',
-                                             'dogs',
-                                             'cats'),
-                              combine_illness = FALSE,
-                              illness_var = c()) {
+# Create analysis dataframe
+get_logical <- function(dat) {
+  
   
   # select and widen covariate data
   covars <- dat %>%
@@ -185,7 +163,7 @@ get_formatted_dat <- function(dat,
     mutate(participant_id = dat$participant_id)
   
   # remove most "last_year" covariates since more detailed info on these exposures will
-  # come from "get_clean_exposures()", but keep "shared_water_last_year" and
+  # come from exposures below, but keep "shared_water_last_year" and
   # "animals_in_food_last_year" as is
   last.year.vars <- grep("_last_year", colnames(covars), value = T)
   last.year.vars.to.keep <- c("shared_water_last_year", "animals_in_food_last_year")
@@ -207,25 +185,19 @@ get_formatted_dat <- function(dat,
     
     covars <- left_join(covars, exposures)
   }
-  # illness data
-  # if(length(illness_var)>0){
-  #   
-  #   illness_var_match <- paste(illness_var, collapse = "|")
-  #   illness_var_field <- paste(illness_var, collapse = "_OR_")
-  #   
-  #   if(combine_illness) {
-  #     illness <- dat %>%
-  #       get_self_reports(lifetime = lifetime) %>%
-  #       select(participant_id, matches(illness_var_match)) %>%
-  #       mutate(!!illness_var_field := suppressWarnings(as.factor(apply(select(.,matches(illness_var_match)), 1, any)))) %>%
-  #       select(participant_id, !!illness_var_field)
-  #   } else{illness <- dat %>%
-  #     get_self_reports(lifetime = lifetime) %>%
-  #     select(participant_id, matches(illness_var_match)) %>%
-  #     rename_at(vars(matches(illness_var_match)), ~gsub('.*[_]', '', .))
-  #   }
-  #   
-  #   covars <- left_join(covars, illness)
-  # }
+  
+  # get illness data
+  illness <- dat %>%
+    select(participant_id, symptoms_in_last_year) %>%
+    separate_rows(symptoms_in_last_year, sep = ";") %>%
+    mutate(symptoms_in_last_year = str_extract(symptoms_in_last_year, "ILI|SARI|encephalitis|hemorrhagic fever")) %>%
+    na.omit() %>%
+    table() %>%
+    as_tibble() %>%
+    spread(symptoms_in_last_year, n) %>%
+    mutate_if(is.integer, as.logical) %>%
+    clean_names()
+  
+  covars <- left_join(covars, illness)
   covars
 }
