@@ -1,26 +1,29 @@
+# Load packages and functions 
 purrr::walk(list.files(here::here("R/"), full.names = TRUE),
      source, echo = FALSE, verbose = FALSE)
 
 # User entered information
 country <- "Indonesia" # Name country here
-illness_outcomes <- c("ili", "sari", "encephalitis") #select illness of interest here (can select 0 through 3)
-taxa_outcomes <- c('rodents', 'nhp',  'bats', 'swine',   'poultry',
-                   'birds', 'cattle', 'goats_sheep', 'carnivores',
-                   'camels', 'pangolins', 'ungulates', 'dogs', 'cats') #select taxa contact of interest (can select 0 through 14)
+illness_outcomes <- c("ili", "sari", "encephalitis") # Select illness of interest here (`illness_names_clean` object (loaded in environment) to see full list)
+taxa_outcomes <- c("rodents", "bats") # Select taxa contact of interest (`taxa_names` object (loaded in environment) to see full list)
 
 # get data 
 dat <- get_behav(country, download = FALSE)
 write_csv(dat, h(paste0("data/raw-behav-", country, ".csv")))
 
-fdat <- get_logical(dat)
-write_csv(fdat, h(paste0("data/formatted-behav-", country, ".csv")))
+# get boolean values for non-numeric responses
+ldat <- get_logical(dat)
+write_csv(ldat, h(paste0("data/logic-behav-", country, ".csv")))
 
-#TODO add function to select taxa and illness outcomes
+# for analysis, select only taxa and illness outcomes of interest
+sdat <- get_outcomes(ldat, taxa_outcomes, illness_outcomes)
+write_csv(sdat, h(paste0("data/logic-outcome-behav-", country, ".csv")))
+
 #TODO lasso workflow - have run T/F option and separate script for the running and figures
 
 # MAKE SURE site_name_lookup.csv is updated for your country
 site_lookup <- read_csv(h("site-name-lookup.csv")) %>% 
-  get_site_names(dat, .)
+  get_site_names(dat, ., country)
 
 write_csv(site_lookup, h(paste0("data/site-name-formatted-", country, ".csv")))
 

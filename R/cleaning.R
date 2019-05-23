@@ -1,5 +1,5 @@
 # create data frame of site names
-get_site_names <- function(dat, site_lookup){ # input dataframe in format of site-name-lookup.csv
+get_site_names <- function(dat, site_lookup, country){ # input dataframe in format of site-name-lookup.csv
   
   n_respondents <- dat %>%
     group_by(concurrent_sampling_site) %>%
@@ -85,10 +85,12 @@ get_behav <- function(country, download = FALSE){
   
 }
 
-
 taxa_names <- c('rodents', 'nhp',  'bats', 'swine',   'poultry',
                 'birds', 'cattle', 'goats_sheep', 'carnivores',
                 'camels', 'pangolins', 'ungulates', 'dogs', 'cats')
+
+illness_names <- c("ILI", "SARI", "encephalitis", "hemorrhagic fever")
+illness_names_clean <-  make_clean_names(illness_names)
 
 # Create analysis dataframe
 get_logical <- function(dat) {
@@ -190,7 +192,7 @@ get_logical <- function(dat) {
   illness <- dat %>%
     select(participant_id, symptoms_in_last_year) %>%
     separate_rows(symptoms_in_last_year, sep = ";") %>%
-    mutate(symptoms_in_last_year = str_extract(symptoms_in_last_year, "ILI|SARI|encephalitis|hemorrhagic fever")) %>%
+    mutate(symptoms_in_last_year = str_extract(symptoms_in_last_year, paste(illness_names, collapse = "|"))) %>%
     na.omit() %>%
     table() %>%
     as_tibble() %>%
@@ -200,4 +202,24 @@ get_logical <- function(dat) {
   
   covars <- left_join(covars, illness)
   covars
+}
+
+# Subset data for outcomes of interest
+get_outcomes <- function(dat, taxa_outcomes, illness_outcomes){
+  
+  taxa_to_exclude <- taxa_names[!taxa_names %in% taxa_outcomes]
+  illness_to_exclude <- illness_names_clean[!illness_names_clean %in% illness_outcomes]
+  
+  out <- dat
+  
+  if(length(taxa_to_exclude)>0){
+    out <- out %>%
+      select(-matches(!!paste(taxa_to_exclude, collapse = "|")))
+  }
+  
+  if(length(illness_to_exclude)>0){
+    out <- out %>%
+      select(-matches(!!paste(illness_to_exclude, collapse = "|")))
+  }
+  out
 }
