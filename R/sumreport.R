@@ -1,12 +1,3 @@
-#'  make summary tables of response statistics
-#'
-#' @param dat humans and events datasets combined (e.g., left_join(humans, events, by = "event_name"))
-#' @param pretty_name dataframe of old and new place names
-#' @param group_var grouping variable
-#' @param factor_levels factors within the grouping var
-#' @param factor_lab default is same as levels
-#' @param table_lab table name - default is group_var
-#' @param asterisk whether to include asterisk on values
 get_sum_table <- function(dat,
                           pretty_names,
                           group_var,

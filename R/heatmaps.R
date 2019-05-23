@@ -1,12 +1,3 @@
-#' Main heatmap function
-#' 
-#' @param dat contaxa dataframe with T/F for taxa contact (get_logical)
-#' @param taxa_types string of taxa name for stratification
-#' @param contx_types string of contact name for stratification
-#' @param title plot title
-#' @param group_var name of column for facet wrapping (e.g., "gender").  Optional.
-#' @return eatmap object
-
 get_heatmap <- function(dat,
                         taxa_types = c("bats", "nhp", "poultry", "rodents", "swine", "birds",
                                        "cattle", "ungulates", "pangolins", "carnivores",

@@ -264,18 +264,6 @@ Version=0.1.0
 Source=CRAN
 Hash=d433bae00f14af3002b137add5c530b5
 
-[R/Package/emmatools]
-Package=emmatools
-Version=0.1.0
-Source=GitHub
-RemoteType=github
-RemoteHost=api.github.com
-RemoteRepo=emmatools
-RemoteUsername=emmamendelsohn
-RemoteRef=master
-RemoteSha=478b2bfd7b858a9140c09617785a2f838f101b96
-Hash=c6d660b76b2c5b4d578b093e6c3cb873
-
 [R/Package/evaluate]
 Package=evaluate
 Version=0.13

@@ -14,7 +14,7 @@ crowding_index_breaks <- c(0, 1, 3, 10000, Inf)
 crowding_index_labels <- c("less_than_1", "1_to_3", "3_plus", "no_rooms")
 
 download_fresh <- FALSE
-run_lasso <- TRUE # running the lasso may be slow
+run_lasso <- FALSE # running the lasso may be slow
 #-------------------------------------------------------------
 # Get data (can specify download = TRUE if needed)
 dat <- get_behav(country, download = download_fresh)
@@ -27,10 +27,10 @@ ldat <- dat %>%
 write_csv(ldat, h(paste0("data/logic-behav-", country, ".csv")))
 
 # Select only taxa and illness outcomes of interest
-sdat <- ldat %>%
-  select(-participant_id) %>%
-  get_outcomes(., taxa_outcomes, illness_outcomes) 
-write_csv(sdat, h(paste0("data/logic-outcome-behav-", country, ".csv")))
+# sdat <- ldat %>%
+#   select(-participant_id) %>%
+#   get_outcomes(., taxa_outcomes, illness_outcomes) 
+# write_csv(sdat, h(paste0("data/logic-outcome-behav-", country, ".csv")))
 
 # Load and process site names
 site_lookup <- read_csv(h("site-name-lookup.csv")) %>% 
@@ -60,7 +60,7 @@ rmarkdown::render(h("scripts/04-heatmaps.Rmd"),
 # Lasso
 # First, run the lasso for all outcome variables if specified
 if(run_lasso){
-  lasso <- get_lasso(sdat, illness_outcomes, taxa_outcomes)
+  lasso <- get_lasso(ldat, illness_outcomes, taxa_outcomes)
 }
 
 rmarkdown::render(h("scripts/05-lasso.Rmd"),

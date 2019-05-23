@@ -6,16 +6,18 @@ get_lasso <- function(dat, illness_outcomes, taxa_outcomes){
   map(outcomes, function(endpt){
     
     if(endpt %in% illness_outcomes){
-      dat <- get_outcomes(dat, taxa_outcomes = taxa_outcomes, illness_outcomes = endpt) 
+      dat <- get_outcomes(dat, taxa_outcomes = taxa_names, illness_outcomes = endpt) 
       endpt_mod <- endpt
     }
     if(endpt %in% taxa_outcomes){
-      dat <- get_outcomes(dat, taxa_outcomes = endpt, illness_outcomes = illness_outcomes) %>%
+      dat <- get_outcomes(dat, taxa_outcomes = endpt, illness_outcomes = illness_names_clean) %>%
         select(-starts_with(endpt)) %>%
         mutate(!!paste0(endpt, "_contact") := ifelse(!!sym(paste0("no_", endpt, "_contact")), FALSE, TRUE)) %>%
         select(-starts_with("no_"))
       endpt_mod <- paste0(endpt, "_contact")
     }
+    
+    dat <- dat %>% select(-participant_id) 
     
     write_csv(dat, h("lasso", paste(country, endpt, "lasso-dat.csv", sep = "-")))
     
