@@ -46,9 +46,9 @@ get_behav <- function(country, download = FALSE){
   out <- out %>%
     mutate_if(is.character, ~replace_na(., "N/A")) %>%
     mutate_at(.vars = vars(rooms_in_dwelling, people_in_dwelling, children_in_dwelling, males_in_dwelling), .funs = as.numeric) %>%
-    mutate(drinking_water_shared = recode(drinking_water_shared, "don't know" = "unknown"),
-           bathing_water_shared = recode(bathing_water_shared, "don't know" = "unknown"),
-           had_symptoms_in_last_year = recode(had_symptoms_in_last_year, "N/A" = "no"),
+    mutate(drinking_water_shared = dplyr::recode(drinking_water_shared, "don't know" = "unknown"),
+           bathing_water_shared = dplyr::recode(bathing_water_shared, "don't know" = "unknown"),
+           had_symptoms_in_last_year = dplyr::recode(had_symptoms_in_last_year, "N/A" = "no"),
            insect_vectors = str_replace_all(tolower(insect_vectors), c("sand fly" = "sand", 
                                                                        "tsetse fly" = "tsetse", 
                                                                        "housefly" = "other",
@@ -66,7 +66,7 @@ get_behav <- function(country, download = FALSE){
            treatment_specific = map_chr(str_split(treatment_specific, "; "), function(x){
              unique(x) %>%
                ifelse(length(.)==1, ., "multiple sources") %>%
-               recode(., "clinic" = "clinic, hospital, or community health worker only")}),
+               dplyr::recode(., "clinic" = "clinic, hospital, or community health worker only")}),
            scratched_bitten_action_specific = scratched_bitten_action, 
            scratched_bitten_action = ifelse(str_detect(scratched_bitten_action, "visit|soap"),
                                             "treated", 
@@ -206,7 +206,8 @@ get_logical <- function(dat) {
     mutate_if(is.integer, as.logical) %>%
     clean_names()
   
-  covars <- left_join(covars, illness)
+  covars <- left_join(covars, illness) %>%
+    mutate_at(.vars = vars(illness_names_clean), ~replace_na(., FALSE))
   covars
 }
 
@@ -216,8 +217,8 @@ get_outcomes <- function(dat, taxa_outcomes, illness_outcomes){
   taxa_to_exclude <- taxa_names[!taxa_names %in% taxa_outcomes]
   illness_to_exclude <- illness_names_clean[!illness_names_clean %in% illness_outcomes]
   
-  out <- dat
-  
+  out <- dat 
+
   if(length(taxa_to_exclude)>0){
     out <- out %>%
       select(-matches(!!paste(taxa_to_exclude, collapse = "|")))
