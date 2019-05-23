@@ -28,6 +28,16 @@ get_lasso <- function(dat, illness_outcomes, taxa_outcomes){
     
     write_rds(lasso_fit, h("lasso", paste(country, endpt, "lasso-fit.rds", sep = "-")))
     
+    coefs <- coef(lasso_fit) %>%
+      as.matrix() %>%
+      as.data.frame() %>%
+      rownames_to_column("variable") %>%
+      rename(effect=s0) %>%
+      mutate(effect = exp(effect)) %>%
+      arrange(-effect)
+    
+    write_csv(coefs, h("lasso", paste(country, endpt, "lasso-odds-ratios.rds", sep = "-")))
+    
   })
   
 }
@@ -375,7 +385,7 @@ plot_lasso_fit <- function(lasso_obj, dat, pretty_names = TRUE, vert_line = TRUE
 
   #add interaction columns to data
   for(i in seq_along(in_mod_int)){
-    dat %<>%
+    dat <- dat %>%
       mutate(!!in_mod_int[i] := !!as.name(in_mod_int_split[[i]][1]) & !!as.name(in_mod_int_split[[i]][2]))
   }
 
@@ -389,13 +399,13 @@ plot_lasso_fit <- function(lasso_obj, dat, pretty_names = TRUE, vert_line = TRUE
     mutate(prop_pos = `TRUE`/(`FALSE` + `TRUE`))
 
   if(pretty_names) {
-    coefs <- coefs  %>%
-      mutate(variable = stringi::stri_replace_all_fixed(variable, ":", " AND ")) %>%
-      mutate(variable = stringi::stri_replace_all_fixed(variable, "TRUE", "")) %>%
-      mutate(variable = stringi::stri_replace_all_fixed(variable,
-                                                        pretty_var_names(),
-                                                        names(pretty_var_names()),
-                                                        vectorize_all = FALSE))
+    if(pretty_names) {
+      coefs <- coefs  %>%
+        mutate(variable = gsub("action_|discrete_", "", variable)) %>%
+        mutate(variable = gsub(" to ", "-", variable)) %>%
+        mutate(variable = gsub(":", " AND ", variable)) %>%
+        mutate(variable = gsub("_", " ", variable))
+    }
   }
 
   if(!is.null(attr(lasso_obj, "bootstrap_support"))) {
@@ -413,7 +423,7 @@ plot_lasso_fit <- function(lasso_obj, dat, pretty_names = TRUE, vert_line = TRUE
 
   out_plot <- ggplot(coefs, aes(x = variable, y = effect, fill=positive)) +
     geom_point(pch = 21, stroke = 0.75, size = 4) +
-    scale_fill_manual(values = viridis::plasma(2, begin = 0.3, end = 0.75)) +
+    scale_fill_manual(values = c("#7E03A8FF", "#F89441FF")) +
     scale_y_continuous(breaks = log(c(0.1, 0.25, 0.5, .75, 1, 1.5, 2, 4, 10)), labels = exp) +
     coord_flip() +
     theme_fivethirtyeight() +
