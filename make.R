@@ -18,7 +18,7 @@ write_csv(fdat, h(paste0("data/formatted-behav-", country, ".csv")))
 #TODO add function to select taxa and illness outcomes
 #TODO lasso workflow - have run T/F option and separate script for the running and figures
 
-# MAKE SURE site_name_lookup.csv is updated for your country
+# MAKE SURE site-name-lookup.csv is updated for your country
 site_lookup <- read_csv(h("site-name-lookup.csv")) %>% 
   get_site_names(dat, .)
 
@@ -32,12 +32,18 @@ rmarkdown::render(h("scripts/01-summary-report.Rmd"),
                   output_dir = h("outputs", "reports"),
                   params = list(country = country))
 
+# rmarkdown::render(h("scripts/03-site-maps-report.Rmd"),
+#                   output_file = paste0(country, "-behav-site-maps-report.html"),
+#                   output_dir = h("outputs", "reports"),
+#                   params = list(country = country))
 
 rmarkdown::render(h("scripts/04-heatmaps.Rmd"),
                   output_file = paste0(country, "-behav-heatmaps.html"),
                   output_dir = h("outputs", "reports"),
                   params = list(country = country))
 
-
-
+# rmarkdown::render(h("scripts/05-lasso.Rmd"),
+#                   output_file = paste0(country, "-behav-lasso.html"),
+#                   output_dir = h("outputs", "reports"),
+#                   params = list(country = country))
 
