@@ -1,46 +1,106 @@
 new,old,country
-Faridpur Clinic Concurrent Site 1,Clinic Concurrent Site 1 and 4,Bangladesh
 Madaripur Concurrent Site 1,Concurrent Site 1,Bangladesh
 Dhaka Concurrent Site 2,Concurrent Site 2,Bangladesh
 Dinajpur Concurrent Site 3,Concurrent Site 3,Bangladesh
 Faridpur Concurrent Site 4,Concurrent Site 4,Bangladesh
-Bangladesh Independent Sites,Independent Site,Bangladesh
-Guangdong Clinic Concurrent Site 1,Clinic Concurrent Site 1,China
+Faridpur Clinic Concurrent Site 1,Clinic Concurrent Site 1 and 4,Bangladesh
+Dhaka Clinic Concurrent Site 2,Clinic Concurrent Site 2,Bangladesh
+Independent Sites,Independent Site,Bangladesh
+Chrey Thom Concurrent Site 1,Concurrent Site 1,Cambodia
+Varinh Concurrent Site 2,Concurrent Site 2,Cambodia
+Chrey Thom Clinic Concurrent Site 1,Clinic Concurrent Site 1,Cambodia
+Varinh Clinic Concurrent Site 2,Clinic Concurrent Site 2,Cambodia
+Independent Sites,Independent Site,Cambodia
+Sangmelima Concurrent Site 1,Concurrent Site 1,Cameroon
+Meyomessala Concurrent Site 2,Concurrent Site 2,Cameroon
+Sangmelima Clinic Concurrent Site 1,Clinic Concurrent Site 1,Cameroon
+Meyomessala Clinic Concurrent Site 2,Clinic Concurrent Site 2,Cameroon
+Independent Sites,Independent Site,Cameroon
 Yunnan-Jingning Concurrent Site 1,Concurrent Site 1,China
 Yunnan-Xishuangbanna Concurrent Site 2,Concurrent Site 2,China
 Yunnan-Chuxiong Concurrent Site 3,Concurrent Site 3,China
-China Independent Sites,Independent Site,China
-Concurrent Site 1,Concurrent Site 1,Egypt
-Concurrent Site 2,Concurrent Site 2,Egypt
-Concurrent Site 3,Concurrent Site 3,Egypt
-Egypt Independent Sites,Independent Site,Egypt
-Uttar Pradesh Clinic Concurrent Site 1,Clinic Concurrent Site 1,India
-Uttar Pradesh Concurrent Site 1,Concurrent Site 1,India
-North Sulawesi-Minahasa Clinic Concurrent Site 4,Clinic Concurrent Site 4,Indonesia
+Guangzhou Clinic Concurrent Site 1,Clinic Concurrent Site 1,China
+Independent Sites,Independent Site,China
+Kinshasa-Virunga National Park Concurrent Site 1,Concurrent Site 1,DR Congo
+Buta Concurrent Site 2,Concurrent Site 2,DR Congo
+Kinshasa Clinic Concurrent Site 1,Clinic Concurrent Site 1,DR Congo
+Independent Sites,Independent Site,DR Congo
+Giza Concurrent Site 1,Concurrent Site 1,Egypt
+Birqash Concurrent Site 2,Concurrent Site 2,Egypt
+Qalyubia Concurrent Site 3,Concurrent Site 3,Egypt
+Independent Sites,Independent Site,Egypt
+Awash Concurrent Site 1,Concurrent Site 1,Ethiopia
+Bati Concurrent Site 2,Concurrent Site 2,Ethiopia
+Awash Clinic Concurrent Site 1,Clinic Concurrent Site 1,Ethiopia
+Independent Sites,Independent Site,Ethiopia
+Buabeng-Fiema Concurrent Site 2,Concurrent Site 2,Ghana
+37 Military Clinic Concurrent Site 1,Clinic Concurrent Site 1,Ghana
+Buabeng-Fiema Clinic Concurrent Site 2,Clinic Concurrent Site 2,Ghana
+Independent Sites,Independent Site,Ghana
+Independent Sites,Independent Site,Guinea
+Bhabnauli Concurrent Site 1,Concurrent Site 1,India
+Partawal Clinic Concurrent Site 1,Clinic Concurrent Site 1,India
 West Sulawesi-Majene Concurrent Site 1,Concurrent Site 1,Indonesia
 North Sulawesi-Bolaang Mongondow Concurrent Site 2,Concurrent Site 2,Indonesia
 Southeast Sulawesi-Konawe Concurrent Site 3,Concurrent Site 3,Indonesia
 North Sulawesi-Minahasa Concurrent Site 4,Concurrent Site 4,Indonesia
-Indonesia Independent Sites,Independent Site,Indonesia
+North Sulawesi-Minahasa Clinic Concurrent Site 4,Clinic Concurrent Site 4,Indonesia
+Independent Sites,Independent Site,Indonesia
+Bonon Concurrent Site 1,Concurrent Site 1,Ivory Coast
 Bonon Clinic Concurrent Site 1,Clinic Concurrent Site 1,Ivory Coast
 Bouafle Clinic Concurrent Site 2,Clinic Concurrent Site 2,Ivory Coast
-Bouafle Concurrent Site 1,Concurrent Site 1,Ivory Coast
-Ivory Coast Independent Sites,Independent Site,Ivory Coast
-Concurrent Site 1,Concurrent Site 1,Jordan
-Concurrent Site 2,Concurrent Site 2,Jordan
-Jordan Independent Sites,Independent Site,Jordan
-Liberia Independent Sites,Independent Site,Liberia
+Independent Sites,Independent Site,Ivory Coast
+Ajlun Concurrent Site 1,Concurrent Site 1,Jordan
+Wadi Alseer Concurrent Site 2,Concurrent Site 2,Jordan
+Independent Sites,Independent Site,Jordan
+Laikipia Concurrent Site 1,Concurrent Site 1,Kenya
+Turkanasouth Concurrent Site 2,Concurrent Site 2,Kenya
+Independent Sites,Independent Site,Kenya
+Na Pa Kieb Concurrent Site 1,Concurrent Site 1,Lao PDR
+Independent Sites,Independent Site,Lao PDR
+Independent Sites,Independent Site,Liberia
 Gua Musang Concurrent Site 1,Concurrent Site 1,"Malaysia, Peninsular"
 Kuala Kangsar Concurrent Site 2,Concurrent Site 2,"Malaysia, Peninsular"
 Kuala Lipis Concurrent Site 3,Concurrent Site 3,"Malaysia, Peninsular"
-"Malaysia, Peninsular Independent Sites",Independent Site,"Malaysia, Peninsular"
-"Malaysia, Sabah Independent Sites",Independent Site,"Malaysia, Sabah"
+Independent Sites,Independent Site,"Malaysia, Peninsular"
+Independent Sites,Independent Site,"Malaysia, Sabah"
+Independent Sites,Independent Site,Mongolia
+Hmawbi Concurrent Site 1,Concurrent Site 1,Myanmar
+HpaAn Concurrent Site 2,Concurrent Site 2,Myanmar
+Hmawbi Clinic Concurrent Site 1,Clinic Concurrent Site 1,Myanmar
+Independent Sites,Independent Site,Myanmar
+Jadibuti Concurrent Site 1,Concurrent Site 1,Nepal
+Silinge Concurrent Site 2,Concurrent Site 2,Nepal
+PAHS Clinic Concurrent Site 1,Clinic Concurrent Site 1,Nepal
+CMC Clinic Concurrent Site 2,Clinic Concurrent Site 2,Nepal
+Independent Sites,Independent Site,Nepal
 Brazzaville Concurrent Site 1,Concurrent Site 1,Republic of Congo
-Republic of Congo Independent Sites,Independent Site,Republic of Congo
-Concurrent Site 1,Concurrent Site 1,South Sudan
-South Sudan Independent Sites,Independent Site,South Sudan
-Loei Clinic Concurrent Site 3,Clinic Concurrent Site 3,Thailand
-Chonburi  Concurrent Site 1,Concurrent Site 1,Thailand
+Independent Sites,Independent Site,Republic of Congo
+Musanze Concurrent Site 1,Concurrent Site 1,Rwanda
+Nyungwe National Park Concurrent Site 2,Concurrent Site 2,Rwanda
+Independent Sites,Independent Site,Rwanda
+Sindia Concurrent Site 1,Concurrent Site 1,Senegal
+Popeguine Clinic Concurrent Site 1,Concurrent Site 1,Senegal
+Independent Sites,Independent Site,Senegal
+Independent Sites,Independent Site,Sierra Leone
+Kinyiba Concurrent Site 1,Concurrent Site 1,South Sudan
+Independent Sites,Independent Site,South Sudan
+Kibondo Concurrent Site 1,Concurrent Site 1,Tanzania
+Kagera Concurrent Site 2,Concurrent Site 2,Tanzania
+Kigoma Concurrent Site 3,Concurrent Site 3,Tanzania
+Kagera Clinic Concurrent Site 2,Clinic Concurrent Site 2,Tanzania
+Kigoma Clinic Concurrent Site 3,Clinic Concurrent Site 3,Tanzania
+Independent Sites,Independent Site,Tanzania
+Chonburi Concurrent Site 1,Concurrent Site 1,Thailand
 Ratchaburi Concurrent Site 2,Concurrent Site 2,Thailand
 Loei Concurrent Site 3,Concurrent Site 3,Thailand
-Thailand Independent Sites,Independent Site,Thailand
+Loei Clinic Concurrent Site 3,Clinic Concurrent Site 3,Thailand
+Independent Sites,Independent Site,Thailand
+Bwindi Concurrent Site 1,Concurrent Site 1,Uganda
+Independent Sites,Independent Site,Uganda
+Ha Noi-Thach That Concurrent Site 1,Concurrent Site 1,Vietnam
+Dong Nai Concurrent Site 2,Concurrent Site 2,Vietnam
+Lang Son-Huu Lung Concurrent Site 3,Concurrent Site 3,Vietnam
+Dong Thap Concurrent Site 4,Concurrent Site 4,Vietnam
+Ha Noi-Thach That Clinic Concurrent Site 1,Clinic Concurrent Site 1,Vietnam
+Independent Sites,Independent Site,Vietnam

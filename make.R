@@ -45,12 +45,10 @@ rmarkdown::render(h("scripts/01-summary-report.Rmd"),
                   output_dir = h("outputs", "reports"),
                   params = list(country = country))
 
-# rmarkdown::render(h("scripts/05-lasso.Rmd"),
-#                   output_file = paste0(country, "-behav-lasso.html"),
+# rmarkdown::render(h("scripts/03-site-maps-report.Rmd"),
+#                   output_file = paste0(country, "-behav-site-maps-report.html"),
 #                   output_dir = h("outputs", "reports"),
-#                   params = list(country = country,
-#                                 illness_outcomes = illness_outcomes,
-#                                 taxa_outcomes = taxa_outcomes))
+#                   params = list(country = country))
 
 # Heatmap Report
 rmarkdown::render(h("scripts/04-heatmaps.Rmd"),
@@ -58,6 +56,8 @@ rmarkdown::render(h("scripts/04-heatmaps.Rmd"),
                   output_dir = h("outputs", "reports"),
                   params = list(country = country))
 
-
-
+# rmarkdown::render(h("scripts/05-lasso.Rmd"),
+#                   output_file = paste0(country, "-behav-lasso.html"),
+#                   output_dir = h("outputs", "reports"),
+#                   params = list(country = country))
 
