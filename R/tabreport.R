@@ -1,21 +1,3 @@
-#'  make tabular tables for binomial probabilities and mean comparisons
-#'
-#' @param dat humans and events datasets combined (e.g., left_join(humans, events, by = "event_name"))
-#' @param outcome_var outcome variable of interest (e.g., ili, sari, bats_contact, rodents_contact)
-#' @param pretty_name dataframe of old and new place names
-#' @param group_var grouping variable
-#' @param factor_levels factors within the grouping var
-#' @param factor_lab default is same as levels
-#' @param table_lab table name - default is group_var
-
-
-# support functions
-simple_cap <- function(x) {
-  s <- strsplit(x, " ")[[1]]
-  paste(toupper(substring(s, 1,1)), substring(s, 2),
-        sep="", collapse=" ")
-}
-
 binom_out <- function(x, n){
   binom.confint(x, n, methods = "wilson") %>%
     mutate_at(.vars = c("mean", "lower", "upper"), ~round(., 2)) %>%
@@ -37,7 +19,6 @@ norm_out <- function(x){
   }
   paste0(signif(a, 2), " (", signif(low, 2), "-", signif(high, 2), ")")
 }
-
 
 # function for categorical vars
 get_comp_table <- function(dat,

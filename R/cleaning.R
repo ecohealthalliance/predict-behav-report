@@ -99,8 +99,8 @@ taxa_names <- c('rodents', 'nhp',  'bats', 'swine',   'poultry',
 illness_names <- c("ILI", "SARI", "encephalitis", "hemorrhagic fever")
 illness_names_clean <-  make_clean_names(illness_names)
 
-# Create analysis dataframe
-get_logical <- function(dat) {
+# Create analysis dataframe with logical values for all categorical data
+get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_logical = TRUE, edu_logical = TRUE, include_symp_other_ppl = FALSE) { # input is output of get_behav
   
   # select and widen covariate data
   covars <- dat %>%
@@ -111,27 +111,21 @@ get_logical <- function(dat) {
            crowding_index,
            children_in_dwelling,
            dwelling_permanent_structure,
-           pet_in_dwelling_last_year,
            water_treated,
-           shared_water_last_year,
-           matches("education"),
+           water_used_by_animals,
            occupation,
-           matches("animal"),
            dedicated_location_for_waste,
-           matches("meat"),
+           matches("education"),
+           matches("last_year"),
            scratched_bitten_action,
-           matches("hunted"),
            worried_about_disease,
            risk_open_wound,
            travelled,
            travel_reason,
            treatment,
-           had_symptoms_in_last_year,
-           had_symptoms_in_last_year_other_people,
            illness_death,
-           -matches("_contact"),
-           -matches("_notes"), 
-           -matches("_life"))  %>%
+           -symptoms_in_last_year,
+           -symptoms_in_last_year_other_people) %>%
     #mutate character vectors to factors where appropriate
     mutate_at(.vars = vars(gender,
                            occupation,
@@ -153,61 +147,80 @@ get_logical <- function(dat) {
                 ifelse(str_detect(., '[Yy]es'), TRUE, FALSE))) %>%
     #expansion of factors to binary categorical outcomes
     ed2_expand_wide(occupation) %>%
-    ed2_expand_wide(highest_education) %>%
-    ed2_expand_wide(highest_education_mother) %>%
-    ed2_expand_wide(gender) %>%
     ed2_expand_wide(length_lived) %>%
     ed2_expand_wide(travel_reason) %>%
     ed2_expand_wide(treatment) %>%
     ed2_expand_wide(scratched_bitten_action) %>%
     select(-occupation,
-           -highest_education,
-           -highest_education_mother,
-           -gender,
            -length_lived,
            -travel_reason,
            -treatment,
            -scratched_bitten_action,
            -ends_with("n_a"))
   
-  # remove most "last_year" covariates since more detailed info on these exposures will
-  # come from exposures below, but keep "shared_water_last_year" and
-  # "animals_in_food_last_year" as is
-  last.year.vars <- grep("_last_year", colnames(covars), value = T)
-  last.year.vars.to.keep <- c("shared_water_last_year", "animals_in_food_last_year")
-  last.year.vars.to.exclude <- last.year.vars[!(last.year.vars %in% last.year.vars.to.keep)]
+  if(gender_logical){
+    covars <- covars %>%
+      ed2_expand_wide(gender) %>%
+      select(-gender)
+  }
   
-  covars <- select(covars, -last.year.vars.to.exclude)
+  if(edu_logical){
+    covars <- covars %>%
+      ed2_expand_wide(highest_education) %>%
+      ed2_expand_wide(highest_education_mother) %>%
+      select(-highest_education,
+             -highest_education_mother)
+  }
   
-  # get exposure data
-  for(taxa in taxa_names){
+  if(exclude_last_yr){
+    # remove most "last_year" covariates since more detailed info on these exposures will
+    # come from exposures below, but keep "shared_water_last_year" and
+    # "animals_in_food_last_year" as is
+    last.year.vars <- grep("_last_year", colnames(covars), value = T)
+    last.year.vars.to.keep <- c("shared_water_last_year", "animals_in_food_last_year")
+    last.year.vars.to.exclude <- last.year.vars[!(last.year.vars %in% last.year.vars.to.keep)]
     
-    contx_type <- paste0(taxa, '_contact')
-    no_contx_type <- paste0('no_', contx_type)
-    
-    exposures <- dat %>%
-      select(participant_id, !!sym(contx_type)) %>% 
-      ed2_expand_wide(!!sym(contx_type)) %>% #expand into wide frame of binary vars
-      rename( !!sym(no_contx_type) := n_a) %>% #use special assign := to work with !!sym(var)
-      select(-!!sym(contx_type)) #remove original multiresponse from final frame
-    
-    covars <- left_join(covars, exposures)
+    covars <- select(covars, -last.year.vars.to.exclude)
+  }
+  
+  if(add_contact){
+    # get exposure data
+    for(taxa in taxa_names){
+      
+      contx_type <- paste0(taxa, '_contact')
+      no_contx_type <- paste0('no_', contx_type)
+      
+      exposures <- dat %>%
+        select(participant_id, !!sym(contx_type)) %>% 
+        ed2_expand_wide(!!sym(contx_type)) %>% #expand into wide frame of binary vars
+        rename( !!sym(no_contx_type) := n_a) %>% #use special assign := to work with !!sym(var)
+        select(-!!sym(contx_type)) #remove original multiresponse from final frame
+      
+      covars <- left_join(covars, exposures)
+    }
   }
   
   # get illness data
-  illness <- dat %>%
-    select(participant_id, symptoms_in_last_year) %>%
-    separate_rows(symptoms_in_last_year, sep = ";") %>%
-    mutate(symptoms_in_last_year = str_extract(symptoms_in_last_year, paste(illness_names, collapse = "|"))) %>%
-    na.omit() %>%
-    table() %>%
-    as_tibble() %>%
-    spread(symptoms_in_last_year, n) %>%
-    mutate_if(is.integer, as.logical) %>%
-    clean_names()
+  illness <- dat %>% 
+    ed2_expand_wide(symptoms_in_last_year) %>%
+    select(participant_id,
+           "ili" =  "symptoms_in_last_year_fever_with_muscle_aches_cough_or_sore_throat_ili",
+           "sari" = "symptoms_in_last_year_fever_with_cough_and_shortness_of_breath_or_difficulty_breathing_sari",
+           "encephalitis" =  "symptoms_in_last_year_fever_with_headache_and_severe_fatigue_or_weakness_encephalitis",
+           "hemorrhagic_fever" = "symptoms_in_last_year_fever_with_bleeding_or_bruising_not_related_to_injury_hemorrhagic_fever")
   
-  covars <- left_join(covars, illness) %>%
-    mutate_at(.vars = vars(illness_names_clean), ~replace_na(., FALSE))
+  if(include_symp_other_ppl){
+    illness_other <- dat %>% 
+      ed2_expand_wide(symptoms_in_last_year_other_people) %>%
+      select(participant_id,
+             "other_people_ili" =  "symptoms_in_last_year_other_people_fever_with_muscle_aches_cough_or_sore_throat_ili",
+             "other_people_sari" = "symptoms_in_last_year_other_people_fever_with_cough_and_shortness_of_breath_or_difficulty_breathing_sari",
+             "other_people_encephalitis" =  "symptoms_in_last_year_other_people_fever_with_headache_and_severe_fatigue_or_weakness_encephalitis",
+             "other_people_hemorrhagic_fever" = "symptoms_in_last_year_other_people_fever_with_bleeding_or_bruising_not_related_to_injury_hemorrhagic_fever")
+    illness <- left_join(illness, illness_other)
+  }
+  
+  covars <- left_join(covars, illness) 
   covars
 }
 
@@ -218,7 +231,7 @@ get_outcomes <- function(dat, taxa_outcomes, illness_outcomes){
   illness_to_exclude <- illness_names_clean[!illness_names_clean %in% illness_outcomes]
   
   out <- dat 
-
+  
   if(length(taxa_to_exclude)>0){
     out <- out %>%
       select(-matches(!!paste(taxa_to_exclude, collapse = "|")))
@@ -231,6 +244,7 @@ get_outcomes <- function(dat, taxa_outcomes, illness_outcomes){
   out
 }
 
+# discretize continuous variables
 discretize_continuous <- function(dat, age_breaks, age_labels, crowding_index_breaks, crowding_index_labels){
   
   dat %>%
@@ -242,10 +256,39 @@ discretize_continuous <- function(dat, age_breaks, age_labels, crowding_index_br
                                                         labels = crowding_index_labels)) %>%
     select(-age, -crowding_index) %>%
     mutate(age_discrete = paste0("age_discrete_", age_discrete),
-      value_age_discrete = TRUE, 
-      crowding_index_discrete = paste0("crowding_index_discrete_", crowding_index_discrete),
-      value_crowding_index_discrete = TRUE) %>%
+           value_age_discrete = TRUE, 
+           crowding_index_discrete = paste0("crowding_index_discrete_", crowding_index_discrete),
+           value_crowding_index_discrete = TRUE) %>%
     spread(age_discrete, value_age_discrete, fill = FALSE) %>%
     spread(crowding_index_discrete, value_crowding_index_discrete, fill = FALSE) 
   
+}
+
+# Create analysis dataframe - reshape taxa and illness outcomes
+get_tab <- function(dat) { # input is output of get_behav
+  
+  tabs <- get_logical(dat, exclude_last_yr = FALSE, add_contact = FALSE, gender_logical = FALSE, edu_logical = FALSE, include_symp_other_ppl = TRUE) %>%
+    mutate_if(is.logical, ~ifelse(.x == TRUE, "yes", "no")) %>%
+    mutate_at(.vars = c("highest_education", "highest_education_mother"), 
+              ~recode(.x, 
+                      "secondary school" = "secondary school or higher",
+                      "college/university/professional" = "secondary school or higher")) 
+
+  # add contact
+  for (i in seq_along(taxa_names)){
+    contx_type <- paste0(taxa_names[i], "_contact")
+    contact_any <- paste0(taxa_names[i], "_contact_any")
+    contact_indirect <- paste0(taxa_names[i], '_contact_indirect')
+    contact_direct <- paste0(taxa_names[i], '_contact_direct')
+    
+    exposures <- dat %>%
+      select(participant_id, !!sym(contx_type)) %>% 
+      mutate(!!contact_any := ifelse(!!sym(contx_type) == "", "no", "yes"),
+             !!contact_indirect := ifelse(grepl("feces|house", !!sym(contx_type)), "no", "yes"),
+             !!contact_direct := ifelse(grepl("pet|handled|raised|eaten|found|scratched|hunted|slaughtered", !!sym(contx_type)), "no", "yes")) %>%
+      select(-!!sym(contx_type))
+    
+    tabs <- left_join(tabs, exposures)
+  }
+  tabs
 }

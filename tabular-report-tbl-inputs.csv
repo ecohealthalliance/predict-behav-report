@@ -1,0 +1,100 @@
+group_var,factor_levels,table_lab,report
+gender,male;female,Gender,both
+highest_education,none;primary school;secondary school or higher,"Education (highest level completed)
+Respondent",both
+highest_education_mother,none;primary school;secondary school or higher,"Education (highest level completed)
+Mother",both
+livelihoods_crop_production,yes;no,Crop Production,both
+livelihoods_wild_exotic_animal_trade_market_business,yes;no,Wild/Exotic Animal Trade Business,both
+livelihoods_rancher_farmer_animal_production_business,yes;no,Rancher/Farmer Animal Production Business,both
+livelihoods_meat_processing_slaughterhouse_abattoir,yes;no,"Meat Processing, Slaughterhouse, Abattoir",both
+livelihoods_hunter_trapper_fisher,yes;no,Hunter/Trapper/Fisher,both
+livelihoods_homemaker,yes;no,Homemaker,both
+dwelling_permanent_structure,yes;no,Dwelling Type,both
+water_treated,yes;no,Is Water Treated,both
+water_used_by_animals,yes;no,Drinking Water Source Used by Animals,both
+dedicated_location_for_waste,yes;no,Dedicated Location for Human Waste in Dwelling,both
+treatment_clinic_health_center,yes;no,Treatment at Clinic/Health Center,both
+treatment_hospital,yes;no,Treatment at Hospital,both
+treatment_mobile_clinic,yes;no,Treatment at Mobile Clinic,both
+treatment_community_health_worker,yes;no,Treatment from Community Health Worker,both
+treatment_traditional_healer,yes;no,Treatment at Traditional Healer,both
+treatment_dispensary_or_pharmacy,yes;no,Treatment at Dispensary/Pharmacy,both
+had_in_last_year_other_people,yes;no,Other(s) in Household had Symptoms (past year),illness
+other_people_ili,yes;no,Other(s) in Household had ILI Symptoms,illness
+other_people_sari,yes;no,Other(s) in Household had SARI Symptoms,illness
+other_people_encephalitis,yes;no,Other(s) in Household had Encephalitis Symptoms,illness
+other_people_hemorrhagic_fever,yes;no,Other(s) in Household had Hemorrhagic Fever Symptoms,illness
+had_in_last_year,yes;no,"Had Unusual Illness, Symptoms (past year)",contact
+ili,yes;no,ILI Symptoms,contact
+sari,yes;no,SARI Symptoms,contact
+encephalitis,yes;no,Encephalitis Symptoms,contact
+hemorrhagic_fever,yes;no,Hemorrhagic Fever Symptoms,contact
+travelled,yes;no,Travelled (past year),both
+travel_reason_work,yes;no,Travelled for Work,both
+travel_reason_visit_family,yes;no,Travelled to Visit Family,both
+travel_reason_religious_reasons,yes;no,Travelled for Religious Reasons,both
+travel_reason_holiday_vacation,yes;no,Travelled for Holiday/Vacation,both
+travel_reason_go_to_hospital_seek_medical_care,yes;no,Travelled for Medical Reasons,both
+travel_reason_go_to_market,yes;no,Travelled to the Market,both
+travel_reason_moved,yes;no,Travelled to Move,both
+pet_in_dwelling_last_year,yes;no,Pet in Dwelling,both
+handle_animals_last_year,yes;no,Handled Animals,both
+raised_animals_last_year,yes;no,Raised Animals,both
+shared_water_last_year,yes;no,Shared Water for Washing,both
+animal_feces_food_last_year,yes;no,Animal Feces in/near Food,both
+animals_in_food_last_year,yes;no,Eaten Food Touched/Damaged by Animals,both
+animals_in_dwelling_last_year,yes;no,Animals inside Dwelling,both
+cooked_meat_last_year,yes;no,Cooked/Handled Meat,both
+eaten_raw_meat_last_year,yes;no,Eaten Raw/Underooked Meat,both
+eaten_sick_animal_last_year,yes;no,Eaten Sick Animal,both
+eaten_dead_animal_last_year,yes;no,Found Dead Animal to Eat,both
+sold_dead_animal_last_year,yes;no,Found Dead Animal to Sell,both
+scratched_bitten_last_year,yes;no,Scratched/Bitten,both
+hunted_animal_last_year,yes;no,Hunted/Trapped Animal,both
+slaughtered_animal_last_year,yes;no,Slaughtered Animal,both
+rodents_contact_any,yes;no,Rodents Contact,illness
+rodents_contact_indirect,yes;no,Rodents Contact - Indirect,illness
+rodents_contact_direct,yes;no,Rodents Contact - Direct,illness
+bats_contact_any,yes;no,Bats Contact,illness
+bats_contact_indirect,yes;no,Bats Contact - Indirect,illness
+bats_contact_direct,yes;no,Bats Contact - Direct,illness
+nhp_contact_any,yes;no,Primates Contact,illness
+nhp_contact_indirect,yes;no,Primates Contact - Indirect,illness
+nhp_contact_direct,yes;no,Primates Contact - Direct,illness
+birds_contact_any,yes;no,Birds Contact,illness
+birds_contact_indirect,yes;no,Birds Contact - Indirect,illness
+birds_contact_direct,yes;no,Birds Contact - Direct,illness
+carnivores_contact_any,yes;no,Carnivores Contact,illness
+carnivores_contact_indirect,yes;no,Carnivores Contact - Indirect,illness
+carnivores_contact_direct,yes;no,Carnivores Contact - Direct,illness
+ungulates_contact_any,yes;no,Ungulates Contact,illness
+ungulates_contact_indirect,yes;no,Ungulates Contact - Indirect,illness
+ungulates_contact_direct,yes;no,Ungulates Contact - Direct,illness
+pangolins_contact_any,yes;no,Pangolins Contact,illness
+pangolins_contact_indirect,yes;no,Pangolins Contact - Indirect,illness
+pangolins_contact_direct,yes;no,Pangolins Contact - Direct,illness
+poultry_contact_any,yes;no,Poultry Contact,illness
+poultry_contact_indirect,yes;no,Poultry Contact - Indirect,illness
+poultry_contact_direct,yes;no,Poultry Contact - Direct,illness
+goats_sheep_contact_any,yes;no,Goat/Sheep Contact,illness
+goats_sheep_contact_indirect,yes;no,Goat/Sheep Contact - Indirect,illness
+goats_sheep_contact_direct,yes;no,Goat/Sheep Contact - Direct,illness
+camels_contact_any,yes;no,Camel Contact,illness
+camels_contact_indirect,yes;no,Camel Contact - Indirect,illness
+camels_contact_direct,yes;no,Camel Contact - Direct,illness
+swine_contact_any,yes;no,Swine Contact,illness
+swine_contact_indirect,yes;no,Swine Contact - Indirect,illness
+swine_contact_direct,yes;no,Swine Contact - Direct,illness
+cattle_contact_any,yes;no,Cattle Contact,illness
+cattle_contact_indirect,yes;no,Cattle Contact - Indirect,illness
+cattle_contact_direct,yes;no,Cattle Contact - Direct,illness
+dogs_contact_any,yes;no,Dog Contact,illness
+dogs_contact_indirect,yes;no,Dog Contact - Indirect,illness
+dogs_contact_direct,yes;no,Dog Contact - Direct,illness
+cats_contact_any,yes;no,Cat Contact,illness
+cats_contact_indirect,yes;no,Cat Contact - Indirect,illness
+cats_contact_direct,yes;no,Cat Contact - Direct,illness
+scratched_bitten_treated,treated;untreated,"Action Taken Last Time Scratched, Bitten or Cut While Butchering or Slaughtering",both
+risk_open_wound,yes;no,Risks Associated when Slaughtering or Butchering with Open Wound,both
+worried_about_disease,yes;no,Worried about Diseases in Live Animals in Market,both

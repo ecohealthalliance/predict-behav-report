@@ -7,3 +7,9 @@ header_true <- function(df) {
     slice(-1)
   return(df)
 }
+
+simple_cap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  paste(toupper(substring(s, 1,1)), substring(s, 2),
+        sep="", collapse=" ")
+}
