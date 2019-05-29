@@ -23,7 +23,6 @@ site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")))
 
 <small>_Click on the_ ▶ _︎arrows to expand sections._</small>
 
-SUMMARY
 <details>
 <summary>Site Characteristics</summary>
 ```{r site-general-table}
