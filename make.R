@@ -55,6 +55,13 @@ rmarkdown::render(h("scripts/01-summary-report.Rmd"),
                   output_dir = h("outputs", "reports"),
                   params = list(country = country))
 
+# Tabular Report
+rmarkdown::render(h("scripts/02-tabular-report.Rmd"),
+                  output_file = paste0(country, "-behav-tabular-report.html"),
+                  output_dir = h("outputs", "reports"),
+                  params = list(country = country))
+
+
 # rmarkdown::render(h("scripts/03-site-maps-report.Rmd"),
 #                   output_file = paste0(country, "-behav-site-maps-report.html"),
 #                   output_dir = h("outputs", "reports"),

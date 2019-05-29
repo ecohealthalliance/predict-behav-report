@@ -20,6 +20,22 @@ norm_out <- function(x){
   paste0(signif(a, 2), " (", signif(low, 2), "-", signif(high, 2), ")")
 }
 
+get_bars <- function(x, end){
+  x <- x[!is.na(x)]
+  a <-  mean(x)
+  s <-  sd(x)
+  n <- length(x)
+  error <- qt(0.975, df = n-1)*s/sqrt(n)
+  low <- a-error
+  high <- a+error
+  if(n < 3){
+    low <- min(x)
+    high <- max(x)
+  }
+  if(end=="low"){return(low)}
+  if(end=="high"){return(high)}
+}
+
 # function for categorical vars
 get_comp_table <- function(dat,
                            outcome_var,
@@ -28,12 +44,13 @@ get_comp_table <- function(dat,
                            group_var,
                            factor_levels=NULL,
                            factor_lab=factor_levels,
-                           table_lab = paste(group_var))
+                           table_lab = paste(group_var), 
+                           bars_only = FALSE)
 {
   if(!group_var %in% colnames(dat)){return()}
   
   if(outcome_class == "contact"){outcome_var <- paste0(outcome_var, "_any")}
-  outcome <- ifelse(outcome_var == "ili", "ILI", simple_cap(str_replace_all(outcome_var, "_", " ")))
+  outcome <- ifelse(outcome_var == "ili", "ILI", trimws(simple_cap(str_replace_all(outcome_var, "_|any", " "))))
   
   # Select data
   mdat <- eidith::ed2_expand_long(dat, !!sym(group_var), other_details = TRUE) %>%
@@ -41,7 +58,8 @@ get_comp_table <- function(dat,
     rename(!!group_var := !!paste0(group_var, "_val")) %>%
     select(-participant_id) %>% 
     gather(key = "outcome", value = "response", -concurrent_sampling_site, -!!group_var) %>%
-    mutate(response = ifelse(response=="yes", 1, 0)) 
+    mutate(response = ifelse(response=="yes", 1, 0),
+           outcome = gsub("_any", "", outcome)) 
   
   # Summarize data by site
   sdat <- mdat %>%
@@ -61,6 +79,16 @@ get_comp_table <- function(dat,
     mutate(concurrent_sampling_site = "Aggregate")
   
   sdat <- bind_rows(sdat, sdat_all)
+  
+  if(bars_only){
+    odat <- sdat %>%
+     mutate(mean = binom.confint(x = !!sym(outcome), n = `Total Count`, methods = "wilson")$mean,
+            lower = binom.confint(x = !!sym(outcome), n = `Total Count`, methods = "wilson")$lower,
+            upper = binom.confint(x = !!sym(outcome), n = `Total Count`, methods = "wilson")$upper) %>%
+      select(-`Binomial Probability (95% CI)`, - `Total Count`) %>%
+      clean_names()
+    return(odat)
+  }
   
   # Format for output
   odat <- sdat %>%
@@ -94,12 +122,13 @@ get_comp_table_num <- function(dat,
                                pretty_names,
                                group_var,
                                table_lab = paste(group_var),
-                               dist = "normal"){
+                               dist = "normal", 
+                               bars_only = FALSE){
   
   if(outcome_class == "contact"){outcome_var <- paste0(outcome_var, "_any")}
-  outcome <- ifelse(outcome_var == "ili", "ILI", simple_cap(str_replace_all(outcome_var, "_", " ")))
+  outcome <- ifelse(outcome_var == "ili", "ILI", trimws(simple_cap(str_replace_all(outcome_var, "_|any", " "))))
   
-    ci_func <- if(dist == "normal"){norm_out}
+   ci_func <- if(dist == "normal"){norm_out}
   
   # Select data
   mdat <- dat %>%
@@ -111,19 +140,34 @@ get_comp_table_num <- function(dat,
   # Summarize data by site
   sdat <- mdat %>%
     group_by(concurrent_sampling_site, response) %>%
-    summarize("Mean (95% CI)" := ci_func(!!sym(group_var)),
+    summarize(mean := mean(!!sym(group_var)),
+              lower := get_bars(!!sym(group_var), end="low"),
+              upper := get_bars(!!sym(group_var), end="high"),
+      "Mean (95% CI)" := ci_func(!!sym(group_var)),
               Count = n()) %>%
     ungroup() 
   
   # Summarize data all
   sdat_all <- mdat %>%
     group_by(response) %>%
-    summarize("Mean (95% CI)" := ci_func(!!sym(group_var)),
+    summarize(mean := mean(!!sym(group_var)),
+              lower := get_bars(!!sym(group_var), end="low"),
+              upper := get_bars(!!sym(group_var), end="high"),
+              "Mean (95% CI)" := ci_func(!!sym(group_var)),
               Count = n()) %>%
     ungroup() %>%
     mutate(concurrent_sampling_site = "Aggregate")
   
   sdat <- bind_rows(sdat, sdat_all) 
+  
+  if(bars_only){
+    odat <- sdat %>%
+      select(-`Mean (95% CI)`, -Count)
+    return(odat)
+  } else {
+    sdat <- sdat %>% select(-mean, -lower, -upper)
+  }
+  
   
   # Format for output
   odat <- sdat %>%
