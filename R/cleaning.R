@@ -285,8 +285,8 @@ get_tab <- function(dat) { # input is output of get_behav
     exposures <- dat %>%
       select(participant_id, !!sym(contx_type)) %>% 
       mutate(!!contact_any := ifelse(!!sym(contx_type) == "", "no", "yes"),
-             !!contact_indirect := ifelse(grepl("feces|house", !!sym(contx_type)), "no", "yes"),
-             !!contact_direct := ifelse(grepl("pet|handled|raised|eaten|found|scratched|hunted|slaughtered", !!sym(contx_type)), "no", "yes")) %>%
+             !!contact_indirect := ifelse(grepl("feces|house", !!sym(contx_type)), "yes", "no"),
+             !!contact_direct := ifelse(grepl("pet|handled|raised|eaten|found|scratched|hunted|slaughtered", !!sym(contx_type)), "yes", "no")) %>%
       select(-!!sym(contx_type))
     
     tabs <- left_join(tabs, exposures)
