@@ -17,7 +17,7 @@ get_lasso <- function(dat, illness_outcomes, taxa_outcomes){
       endpt_mod <- paste0(endpt, "_contact")
     }
     
-    dat <- dat %>% select(-participant_id) 
+    dat <- dat %>% select(-participant_id, -concurrent_sampling_site) 
     
     write_csv(dat, h("lasso", paste(country, endpt, "lasso-dat.csv", sep = "-")))
     

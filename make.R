@@ -9,13 +9,23 @@ country <- "Indonesia" # Name country here
 illness_outcomes <- c("ili") # Select illness of interest here (`illness_names_clean` object (loaded in environment) to see full list)
 taxa_outcomes <- c("rodents", "bats") # Select taxa contact of interest (`taxa_names` object (loaded in environment) to see full list)
 
+# Confirm endpoints are valid
+assertthat::assert_that(all(illness_outcomes %in% illness_names_clean), msg = "one or more illness_outcomes is not recognized")
+assertthat::assert_that(all(taxa_outcomes %in% taxa_names), msg = "one or more taxa_outcomes is not recognized")
+
+# Breaks for discretizing continuous variables
 age_breaks <- c(0, 18, 41, 61, Inf)
 age_labels <- c("under_18", "18_to_40", "41_to_60", "over_60")
 crowding_index_breaks <- c(0, 1, 3, 10000, Inf)
 crowding_index_labels <- c("less_than_1", "1_to_3", "3_plus", "no_rooms")
 
+# Download data from EIDITH? (must have local eidith if FALSE)
 download_fresh <- FALSE
-run_lasso <- FALSE # running the lasso may be slow
+
+# Run the lasso analysis?  (will be slow, depending on the number of outcomes, should only be run once or whenever there are changes to the data)
+run_lasso <- FALSE 
+#-------------------------------------------------------------
+
 #-------------------------------------------------------------
 # Get data (can specify download = TRUE if needed)
 dat <- get_behav(country, download = download_fresh) 

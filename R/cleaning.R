@@ -105,6 +105,7 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
   # select and widen covariate data
   covars <- dat %>%
     select(participant_id,
+           concurrent_sampling_site,
            age,
            gender,
            length_lived,
@@ -142,7 +143,7 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
               .funs = funs(as.numeric)) %>%
     mutate(children_in_dwelling = ifelse(is.na(children_in_dwelling)|children_in_dwelling==0, FALSE, TRUE)) %>%
     #map yes to TRUE and all other responses to FALSE
-    mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-1], #hack to not apply criteria to participant id
+    mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
               .funs = funs(
                 ifelse(str_detect(., '[Yy]es'), TRUE, FALSE))) %>%
     #expansion of factors to binary categorical outcomes

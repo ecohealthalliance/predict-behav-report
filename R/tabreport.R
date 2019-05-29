@@ -22,36 +22,26 @@ norm_out <- function(x){
 
 # function for categorical vars
 get_comp_table <- function(dat,
-                           outcome_var = outcome_var,
+                           outcome_var,
+                           outcome_class,
                            pretty_names,
                            group_var,
                            factor_levels=NULL,
                            factor_lab=factor_levels,
                            table_lab = paste(group_var))
 {
+  if(!group_var %in% colnames(dat)){return()}
   
-  # get outcome var
-  if(outcome_var %in% c("ili", "encephalitis", "hemorrhagic_fever", "sari")){
-    self_reports <- get_self_reports(dat) %>%
-      select(participant_id, ends_with(outcome_var)) %>%
-      rename(!!outcome_var := 2)
-  } else {
-    self_reports <- dat %>%
-      mutate(contact_any = ifelse(!!sym(outcome_var) == "", FALSE, TRUE)) %>%
-      select(participant_id, contact_any) %>%
-      rename(!!outcome_var := 2)
-  }
-  
-  outcome <- simple_cap(gsub("_", " ", outcome_var))
+  if(outcome_class == "contact"){outcome_var <- paste0(outcome_var, "_any")}
+  outcome <- ifelse(outcome_var == "ili", "ILI", simple_cap(str_replace_all(outcome_var, "_", " ")))
   
   # Select data
   mdat <- eidith::ed2_expand_long(dat, !!sym(group_var), other_details = TRUE) %>%
-    select(participant_id, concurrent_sampling_site, !!paste0(group_var, "_val")) %>%
+    select(participant_id, concurrent_sampling_site, !!paste0(group_var, "_val"), !!outcome_var) %>%
     rename(!!group_var := !!paste0(group_var, "_val")) %>%
-    left_join(self_reports) %>%
     select(-participant_id) %>% 
     gather(key = "outcome", value = "response", -concurrent_sampling_site, -!!group_var) %>%
-    mutate(response = ifelse(response, 1, 0)) 
+    mutate(response = ifelse(response=="yes", 1, 0)) 
   
   # Summarize data by site
   sdat <- mdat %>%
@@ -99,34 +89,24 @@ get_comp_table <- function(dat,
 
 # function for numeric vars
 get_comp_table_num <- function(dat,
-                               outcome_var = outcome_var,
+                               outcome_var,
+                               outcome_class,
                                pretty_names,
                                group_var,
                                table_lab = paste(group_var),
                                dist = "normal"){
-  # Get outcome var
-  if(outcome_var %in% c("ili", "encephalitis", "hemorrhagic_fever", "sari")){
-    self_reports <- get_self_reports(dat) %>%
-      select(participant_id, ends_with(outcome_var)) %>%
-      rename(!!outcome_var := 2)
-  } else {
-    self_reports <- dat %>%
-      mutate(contact_any = ifelse(!!sym(outcome_var) == "", FALSE, TRUE)) %>%
-      select(participant_id, contact_any) %>%
-      rename(!!outcome_var := 2)
-  }
   
-  outcome <- simple_cap(gsub("_", " ", outcome_var))
-  ci_func <- if(dist == "normal"){norm_out}
+  if(outcome_class == "contact"){outcome_var <- paste0(outcome_var, "_any")}
+  outcome <- ifelse(outcome_var == "ili", "ILI", simple_cap(str_replace_all(outcome_var, "_", " ")))
+  
+    ci_func <- if(dist == "normal"){norm_out}
   
   # Select data
   mdat <- dat %>%
-    select(participant_id, concurrent_sampling_site, !!group_var) %>%
-    left_join(self_reports) %>%
+    select(participant_id, concurrent_sampling_site, !!group_var, !!outcome_var) %>%
     select(-participant_id) %>% 
     gather(key = "outcome", value = "response", -concurrent_sampling_site, -!!group_var) %>%
-    mutate(response = ifelse(response, !!outcome, paste("No", !!outcome))) %>%
-    mutate(!!group_var := as.numeric(!!sym(group_var)))
+    mutate(response = ifelse(response=="yes", !!outcome, paste("No", !!outcome))) 
   
   # Summarize data by site
   sdat <- mdat %>%
