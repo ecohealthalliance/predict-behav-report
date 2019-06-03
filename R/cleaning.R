@@ -16,6 +16,7 @@ get_site_names <- function(dat, site_lookup, country){ # input dataframe in form
                      old = "Aggregate", country = country))
 }
 
+
 # get behavioral data
 get_behav <- function(country, download = FALSE){
   
@@ -45,7 +46,8 @@ get_behav <- function(country, download = FALSE){
   # recode 
   out <- out %>%
     mutate_if(is.character, ~replace_na(., "N/A")) %>%
-    mutate_at(.vars = vars(rooms_in_dwelling, people_in_dwelling, children_in_dwelling, males_in_dwelling), .funs = as.numeric) %>%
+    mutate_at(.vars = vars(rooms_in_dwelling, people_in_dwelling, children_in_dwelling, males_in_dwelling,
+                           site_latitude, site_longitude), .funs = as.numeric) %>%
     mutate(drinking_water_shared = dplyr::recode(drinking_water_shared, "don't know" = "unknown"),
            bathing_water_shared = dplyr::recode(bathing_water_shared, "don't know" = "unknown"),
            had_symptoms_in_last_year = dplyr::recode(had_symptoms_in_last_year, "N/A" = "no"),
