@@ -61,11 +61,11 @@ rmarkdown::render(h("scripts/02-tabular-report.Rmd"),
                   output_dir = h("outputs", "reports"),
                   params = list(country = country))
 
-
-# rmarkdown::render(h("scripts/03-site-maps-report.Rmd"),
-#                   output_file = paste0(country, "-behav-site-maps-report.html"),
-#                   output_dir = h("outputs", "reports"),
-#                   params = list(country = country))
+# Site Maps
+rmarkdown::render(h("scripts/03-site-maps.Rmd"),
+                   output_file = paste0(country, "-behav-site-maps.html"),
+                   output_dir = h("outputs", "reports"),
+                   params = list(country = country))
 
 # Heatmap 
 rmarkdown::render(h("scripts/04-heatmaps.Rmd"),
