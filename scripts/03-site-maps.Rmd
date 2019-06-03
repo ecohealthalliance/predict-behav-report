@@ -1,0 +1,628 @@
+---
+params:
+  country: "Indonesia"
+title: '<span style="color:red;">DRAFT</span> Mapping Behavioral Risk Data: `r params$country`'
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    keep_md: false
+    theme: readable
+    toc: true
+    toc_float: true
+    highlight: pygments
+---
+
+```{r setup, include=FALSE}
+
+purrr::walk(list.files(here::here("R/"), full.names = TRUE),
+            source, echo = FALSE, verbose = FALSE)
+
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, out.extra = '')
+country <- params$country
+
+# Read in data
+dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) %>%
+   mutate_at(.vars = vars(site_latitude, site_longitude), .funs = as.numeric)
+
+# Get Site names
+site_names <- read_csv(h("drafts/site_name_lookup.csv")) %>%
+  filter(country==!!country, old %in% (dat$concurrent_sampling_site)) %>%
+  right_join(dat, by = c("country" = "country", "old" = "concurrent_sampling_site")) %>%
+  rename(site_new=new, site_old=old)
+
+```
+
+## Data Description 
+
+These maps display data collected from questionnaires and interviews conducted by USAID's PREDICT project. These data were collected by the behavioral risk team and are related to knowledge, behaviors, and skills that are suspected to increase or reduce the risk of contracting a zoonotic viral disease. 
+
+Study sites were selected by PREDICT as priority surveillance sites with high risk for viral spillover, evolution, amplification, and spread (i.e., ‘hotspots’).  PREDICT study sites are prioritized by identifying areas considered high-risk for contact with multiple taxonomic groups known to be associated with zoonotic viral diversity and with ecological and epidemiological conditions associated with disease emergence. 
+
+This report is generated using current site data from PREDICT's secure [EIDITH](http://eidith.org) database via the EIDITH [R package](http://github.com/ecohealthalliance/eidith). Within individual countries, some of this data may be incomplete. 
+
+
+```{r summarize, include=FALSE}
+
+# Aggregate at the site level and get number of interviews conducted per site   
+dat0 <- site_names %>% 
+    group_by(country, site_new) %>% 
+    mutate(n = n(), lat = mean(site_latitude), long = mean(site_longitude), 
+           csite_new = paste(country, site_new, sep = " "),
+           csite_old = paste(country, site_old, sep = " ")) %>% 
+    ungroup() %>%
+    mutate(hovertext = paste0(csite_new, " (n = ", n, ")"))
+
+# Full dataset for use in maps
+dat1 <- dat0 %>% 
+     group_by(csite_new) %>% 
+     select(country, lat, long, csite_new, csite_old, site_new, site_old, n, hovertext) %>% 
+     unique()
+
+# Get administrative borders of countries of interest
+data(wrld_simpl)
+admin <- wrld_simpl[wrld_simpl@data$NAME %in% unique(dat1$country), ]
+
+# Set color palette 
+bins <- seq(min(dat1$n), max(dat1$n), length.out = 7) %>% round()
+pal <- colorBin(palette = brewer.pal(9, "Reds")[3:9], domain = dat1$n, 
+                na.color = "transparent", bins = bins)
+
+```
+## Questionnaires completed at each site
+
+Hover over sites for the name of each study site and the number of questionnaires completed in each site. 
+```{r map, include=FALSE}
+
+leaflet(dat1) %>%
+    setView(lng = mean(dat1$long), lat = mean(dat1$lat)-10, zoom = 3) %>%
+    addProviderTiles("OpenStreetMap.Mapnik") %>% 
+        addCircleMarkers( lng = ~long, lat = ~lat, color = "#000000", weight = 0.5,  
+        opacity = 100, radius = ~log(n) * 5, 
+        fillColor = ~pal(n), fillOpacity = 0.5,
+        label = ~hovertext,
+        labelOptions = lapply(1:nrow(dat1), function(x) {
+            labelOptions(direction='auto') })) %>%    
+    addPolygons(
+        data = admin, opacity = 100,
+        color = "#000000",
+        weight = 1, 
+        options = list(clickable = FALSE),
+        fill = F, 
+        highlightOptions = highlightOptions(weight = 3, bringToFront = TRUE)) %>%
+    addLegend("bottomleft", pal = pal, values = ~n,
+              title = "Questionnaires conducted",
+              opacity = 1) 
+
+```
+
+```{r percent, include=FALSE}
+
+# By site
+t <- dat1 %>% 
+    group_by(site_new) %>% 
+    summarise(n = sum(n)) %>% 
+    rename(site=site_new) %>%
+    arrange(-n)
+
+per <- percent(sum(t$n[1:3])/sum(t$n))
+
+```
+
+```{r table by site, include=TRUE}
+
+# By site
+DT::datatable(t, rownames = FALSE,
+options = list(pageLength = Inf)) %>%
+DT::formatStyle(c(1:3), `font-size` = '12px')
+
+```
+
+## Age pyramids in each study site
+
+Click on study sites for the age and gender breakdown of questionnaire respondants. 
+
+```{r age plot by site, include-FALSE}
+# Demos
+pyramids <- dat0 %>%
+    mutate(agebrack = cut(as.integer(age), breaks=c(0, 10, 20, 30, 40, 50, 60, 70, Inf),
+                          labels = c("under 10", "10 - 19", "21 - 29", "30 - 39",
+                                     "40 - 49", "50 - 59", "60 - 69", "70 +"), right = FALSE)) %>% 
+    group_by(site_new) %>%
+    mutate(concurrent_lat = mean(site_latitude)) %>%
+    mutate(concurrent_long = mean(site_longitude)) %>%
+    mutate(size = n()) %>%
+    ungroup()
+
+# Write functions to make the age pyramid graphs 
+age_pyramid <- function(dat, site) {
+    filt <- filter(dat1 == dat, site_new == site)
+    title <- paste0("Age distribution by gender in \n", site)
+    # Set color palette 
+    MyPalette <- c(male = viridis::viridis_pal()(3)[1], 
+               female = viridis::viridis_pal()(3)[2], 
+               other = viridis::viridis_pal()(3)[3])
+
+    # Generate the ggplot 
+    g <- ggplot(filt, aes(x = agebrack, y = ifelse(gender == "male",-1, 1), fill = gender)) + 
+        geom_col() + 
+        theme_avenir(base_family = "Avenir") + 
+        coord_flip() +
+        ggtitle(title) + 
+        labs(x = "age group", y = "count") + 
+        scale_fill_manual(values = MyPalette) 
+    plot(g)
+}
+
+```
+
+```{r age pyramid by site, eval = T}
+
+# Apply the age_pyramid graph function over all of the sites and save
+plots <- lapply(seq_along(unique(pyramids$site_new)), function(x) {
+    name <- unique(pyramids$site_new)[x]
+    png(filename = paste0(h("outputs/age-plots/"), name, ": age-dist.png"), width = 500, height = 300) 
+    age_pyramid(pyramids, unique(pyramids$site_new)[x])
+    dev.off()
+})
+
+```
+
+```{r pyramid in map, include=FALSE}
+
+#psub$pngpath
+psub <- pyramids %>% 
+    select(country, csite_new, csite_old, site_new, site_old, lat = concurrent_lat, long = concurrent_long, size) %>% 
+    group_by(site_new) %>% 
+    slice(1) %>% 
+    mutate(pngpath = paste0(h("outputs/age-plots/"), site_new, ": age-dist.png"))
+
+# Set HTML hover labels 
+psub$label <- mapply(
+    function(pngpath) {
+        htmltools::HTML(
+            sprintf(
+                "<div style='font-size:12px;width:300px;height:300px;float:left'>
+                <img src = %s> </img>
+                </div>",
+                knitr::image_uri(pngpath)
+            )
+        )
+    },
+    psub$pngpath, SIMPLIFY = F) %>%
+    set_names(psub$site_new)
+
+```
+
+```{r centroid, include=FALSE}
+
+# Get centroid of the polygon by taking the mean of the min and max x and y from the bounding box 
+lnglat <- apply(admin@bbox, 1, mean)
+
+popupImage3 <- function(x) {
+
+  stringr::str_replace(popupImage(x),
+                       "<image src='.+'",
+                       paste0("<image src='", knitr::image_uri(x), "'"))
+}
+
+leaflet(psub) %>%
+    setView(lng = mean(dat1$long), lat = mean(dat1$lat)-10, zoom = 3) %>% 
+    addProviderTiles("OpenStreetMap.Mapnik") %>% 
+    addCircleMarkers( 
+        data = psub, lng = psub$long, lat = psub$lat, color = "black", opacity = 1, weight = 1,
+        popup = c(popupImage3(psub$pngpath[1]),
+            popupImage3(psub$pngpath[2]),
+            popupImage3(psub$pngpath[3]),
+            popupImage3(psub$pngpath[4]),
+            popupImage3(psub$pngpath[5]) )) %>%
+    addPolygons(
+        data = admin, opacity = 100,
+        color = "#000000",
+        weight = 1, popup = NULL,
+        options = list(clickable = FALSE),
+        fill = F) 
+
+```
+
+## Lifetime and Annual hunting prevalence
+
+Hover over sites for proportions and total numbers of respondents who responded that they had hunted. 
+
+```{r, hunt}  
+
+# Proportions of people who have hunted in the last year and ever by site
+
+hunt <- dat0 %>% 
+    group_by(site_new) %>% 
+    mutate(hunted_animal_life = ifelse(hunted_animal_life == "yes", 1, 0)) %>% 
+    mutate(hunted_animal_last_year = ifelse(hunted_animal_last_year == "yes", 1, 0)) %>%
+    summarize(country = first(country), 
+              long = mean(site_longitude), 
+              lat = mean(site_latitude),
+              life = sum(hunted_animal_life), 
+              year = sum(hunted_animal_last_year),
+              life_prop = sum(hunted_animal_life)/n(), 
+              year_prop = sum(hunted_animal_last_year)/n(), 
+              n = n()) %>% 
+    mutate(lifelab = paste0(site_new, ": ",percent(life_prop), " (", life, "/", n, " respondents)"),
+           yearlab = paste0(site_new, ": ",percent(year_prop), " (", year, "/", n, " respondents)"))
+
+```
+
+```{r, color scales}
+
+# set new color scales 
+pbins <- seq(0, 1, by = .2)
+ppal_life <- colorBin(palette = brewer_pal(palette = "YlOrBr")(5), 
+                       domain = hunt1$life_prop, na.color = "transparent", bins = pbins) 
+ppal_year<- colorBin(palette = brewer_pal(palette = "YlOrBr")(5), 
+                      domain = hunt1$year_prop, na.color = "transparent", bins = pbins) 
+
+
+# map hunting
+leaflet(hunt) %>%
+    setView(lng = mean(dat1$long), lat = mean(dat1$lat)-10, zoom = 4) %>%
+    addProviderTiles("OpenStreetMap.Mapnik") %>%  
+    addCircleMarkers(
+        lng = ~long, lat = ~lat, 
+        color = "#b2b2b2", weight = 1, opacity = 100, 
+        radius = ~log(n)*3, fillColor = "#b2b2b2", fillOpacity = 0.2, 
+        group = "All Respondents") %>% 
+    addCircleMarkers(
+        lng = ~long, lat = ~lat, color = "#000000", weight = 1, opacity = 100,
+        fillColor = ~ppal_life(life_prop),
+        radius = ~log(life)*3,
+        fillOpacity = 0.8,
+         #clusterOptions = markerClusterOptions(),
+        group = "Ever Hunted",
+        label = ~lifelab) %>%
+    addCircleMarkers(
+        lng = ~long, lat = ~lat, color = "#000000", weight = 1, opacity = 100, 
+        radius = ~log(year)*3, 
+        fillColor = ~ppal_year(year_prop), fillOpacity = 0.8,
+        #clusterOptions = markerClusterOptions(), 
+        group = "Hunted This Year",
+        label = ~yearlab) %>% 
+      addLayersControl(position = "bottomright",
+          overlayGroups = c("All Respondents", "Ever Hunted", "Hunted This Year"),
+          options = layersControlOptions(collapsed = FALSE)
+     ) %>%
+    addLegend("bottomleft", pal = ppal_year, values = ~life, title = "% respondents in study site",
+              opacity = 1)
+
+```
+
+## Hunting by Site
+
+
+```{r, table 2 site}
+
+hunt %>% group_by(site_new) %>% 
+    summarise("n" = (n),
+              "ever hunted" = sum(life), 
+              "% ever hunted" = percent(sum(life)/sum(n), digits = 1), 
+              "hunted last year" = sum(year), 
+              "% hunted last year" = percent(sum(year)/sum(n), digits = 1)) %>% 
+    rename(site = site_new) %>%
+    arrange(desc(`n`)) %>% 
+    DT::datatable(., rownames = FALSE)
+
+```
+
+## Animal-related Risk Behaviors 
+
+Several questions asked about behaviors that lead to increased contact with animals. Some of these behaviors could indicate an increased risk of contracting a zoonotic disease. 
+
+They are as follows:  
+
+39. Has an animal lived as a pet in or near your dwelling?
+40. Have you handled live animals? 
+41. Have you raised live animals?
+42. Have you shared a water source with animals for washing? (y/n/dk)
+43. Have you seen animal feces in or near food before you have eaten it?
+44. Have you eaten food after an animal has touched or damaged it? For example, chew marks or scratches (y/n/dk)
+45. Do any animals come inside the dwelling where you live?
+46. Have you cooked or handled meat, organs or blood from a recently killed animal?
+47. Have you eaten raw or undercooked meat or organs or blood?
+48. Have you eaten an animal that you knew was not well /sick? (y/n/dk)
+49. Have you found a dead animal and collected it to eat or share? 
+50. Have you found a dead animal and collected it to sell it?
+51. Have you been scratched or bitten by an animal?
+54. Have you slaughtered an animal?
+55. Have you hunted or trapped an animal? 
+
+
+```{r, spread-and-gathered}
+
+# Get var names
+vec <- c(which(names(dat0) == "pet_in_dwelling_life"):which(names(dat0) == "slaughtered_animal_last_year"))
+
+# New enquotation because we have to create an "id" variable to deal with duplicate rows 
+id <- c("ID", names(dat1), names(dat0[vec]))
+ide <- enquo(id)
+
+# Spread, mutate, and gather the risk questions 
+dat_risk <- dat0 %>% 
+    ungroup() %>%
+    as.data.frame() %>% 
+    mutate(ID = row_number()) %>%
+    dplyr::select_(ide) %>% 
+    gather(-c(ID:hovertext), key = "variable", value = "value") %>% 
+    tidyr::separate(variable, into = c("var", "time_period"), sep = "_l") %>% 
+    mutate(time_period = paste0("l", time_period)) %>% 
+    spread(time_period, value) %>% 
+    mutate(last_year = ifelse(life == "don't know", "don't know", last_year)) %>% 
+    mutate(last_year = ifelse(last_year == "N/A", "no", last_year))
+
+# Joining the vars with the actual typed out questions 
+contact_names <- tibble(var = c("animals_in_dwelling", "animal_feces_food",
+                   "handle_animals", "pet_in_dwelling",
+                   "raised_animals", "cooked_meat",
+                   "shared_water", "animals_in_food",
+                   "slaughtered_animal", "eaten_sick_animal",
+                   "eaten_raw_meat", "eaten_dead_animal",
+                   "hunted_animal", "scratched_bitten",
+                   "sold_dead_animal"), 
+           question = c("Do any animals come inside the dwelling where you live?",
+                        "Have you seen animal feces in or near food before you have eaten it?",
+                        "Have you handled live animals?",
+                        "Has an animal lived as a pet in or near your dwelling?",
+                        "Have you raised live animals?",
+                        "Have you cooked or handled meat, organs or blood from a recently killed animal?",
+                        "Have you shared a water source with animals for washing?",
+                        "Have you eaten food after an animal has touched or damaged it?",
+                        "Have you slaughtered an animal?",
+                        "Have you eaten an animal that you knew was not well /sick?",
+                        "Have you eaten raw or undercooked meat or organs or blood?",
+                        "Have you found a dead animal and collected it to eat or share?",
+                        "Have you hunted or trapped an animal?",
+                        "Have you been scratched or bitten by an animal?",
+                        "Have you found a dead animal and collected it to sell it?"))
+
+```
+
+
+```{r, site_props}
+
+# Get proportions of activities at sites 
+site_props <- dat_risk %>% 
+    mutate(last_year = case_when(
+        last_year == "yes" ~ 1, 
+        last_year == "no" ~ 0, 
+        TRUE ~ 99
+    )) %>% 
+    mutate(last_year = ifelse(last_year == 99, NA, last_year)) %>% 
+    mutate(life = ifelse(life == 99, NA, life)) %>% 
+    group_by(csite_new, n, var, csite_old) %>% 
+    summarise(last_year = sum(last_year, na.rm = TRUE),
+              last_year_prop = sum(last_year, na.rm = TRUE)/n()) %>% 
+    left_join(., contact_names, by = "var")
+
+# per site proportions 
+get_props <- function(site, sortvar = last_year_prop, dat1 = site_props) {
+    x <- dat1 %>% 
+        filter(csite_new == site) %>% 
+        arrange(-last_year_prop)
+    return(x)
+}
+
+```
+
+```{r, contact prevalence by site}
+
+contact_prev <- function(site, dat = site_props) {
+    y <- filter(dat, csite_new == site)
+    title <- paste0("Prevalance of animal-related behaviors in the last year in \n", site)
+    sub <- paste0("Based on questionnaire responses from ", y$n[1], " individuals")
+    # Generate the ggplot 
+    name = paste0(h("outputs/animal-contact-figs/"), y$csite_new[1], "-animal-contact.png")
+    png(name, width = 13, height = 5, units = "in", res = 300)
+    g <- ggplot(y, aes(x = reorder(question, last_year_prop), y = last_year_prop, 
+                       fill = reorder(question, last_year_prop))) + 
+        geom_col() + 
+        theme_avenir(base_family = "Avenir") + 
+        coord_flip() +
+        ggtitle(title) + 
+        ylim(0, 1) + 
+        labs(x = NULL, y = "proportion of respondents answering `yes`", subtitle = sub) + 
+        scale_fill_manual(values = rev(viridis_pal()(15))) + 
+        geom_text(aes(label = scales::percent(last_year_prop)), size = 3, hjust = -0.25) + 
+        guides(fill = F)
+    plot(g)
+    dev.off()
+}
+
+x <- map(dat1$csite_new, contact_prev)
+
+```
+
+Prevalence of these behaviors varies greatly by site. The map below shows similar frequencies of behaviors over the past year in each study site. This data was collected between `r min(human$date_of_interview)` and `r max(human$date_of_interview)`. 
+
+```{r, animal-contact-leaflet}
+
+# animal contact figures
+popupImage4 <- function(x, width = 300, height = 115) {
+  
+  stringr::str_replace(leafpop::popupImage(x, width = width, height = height),
+                       "<image src='.+'",
+                       paste0("<image src='", knitr::image_uri(x), "'"))
+}
+
+psub <- dat1 %>% 
+    mutate(pngpath = paste0(h("outputs/animal-contact-figs"), csite_new, ".png"))
+
+leaflet(psub) %>%
+    setView(lng = mean(dat1$long), lat = mean(dat1$lat)-10, zoom = 3) %>% 
+    addProviderTiles("OpenStreetMap.Mapnik") %>% 
+    addCircleMarkers( 
+        data = psub2, lng = ~long, lat = ~lat, color = "black", opacity = 1, weight = 1,
+        popup = c(
+            popupImage4(psub2$pngpath[1]),
+            popupImage4(psub2$pngpath[2]),
+            popupImage4(psub2$pngpath[3]),
+            popupImage4(psub2$pngpath[4]),
+            popupImage4(psub2$pngpath[5]) )) %>%
+    addPolygons(
+        data = admin, opacity = 100,
+        color = "#000000",
+        weight = 1, popup = NULL,
+        options = list(clickable = FALSE),
+        fill = F) 
+
+```
+
+
+```{r}
+
+coords <- dat0 %>% 
+    group_by(csite_new) %>% 
+    select(country, lat, long, site_new, n, hovertext) %>% 
+    unique()
+
+# taxa 
+taxa <- dat0 %>% 
+    select(participant_id, country, csite_new, n, lat, long, bats_contact, nhp_contact, rodents_contact, poultry_contact, swine_contact)
+
+# subset
+# dat1 <- dat1 %>%
+#   select(csite_new, country, lat, long, site_new, n, hovertext)
+
+# Sum
+sum_taxa <- function(col, dat = taxa, cntry = NA, site = NA) {
+    
+    vars <- c('cooked/handled', 'slaughtered', 'hunted/trapped', 'eaten raw/undercooked', 
+              'scratched/bitten', 'in house', 'handled', 'raised', 'pets', 'found dead/collected',
+              'feces in or near food', 'eaten sick')
+    
+    if(!is.na(cntry)) {
+        dat <- filter(dat, country == cntry)
+    } 
+    if(!is.na(site)) {
+        dat <- filter(dat, csite_new == site)
+    }
+    
+    if(is.na(cntry) & !is.na(site)) cntry <- strsplit(site, " ")[[1]][1]
+    if(is.na(cntry) & is.na(site)) {
+        cntry <- rep("", length(vars)) 
+        site <- rep("all", length(vars))
+    }
+     
+    tx <- unlist(dat[ , col])
+    total <- sum(!is.na(tx))
+    txn <- purrr::map_int(1:length(vars), ~ sum(str_detect(tx, vars[.x] )))
+    y <- data.frame(cntry, site, col, vars, txn, total, stringsAsFactors = FALSE) 
+    y <- mutate(y, prop = txn/total, col = str_split(col, "_")[[1]][1])
+    y <- mutate(y, col = ifelse(col == "nhp", "non-human primates", col))
+}
+
+
+ggplot_taxa <- function(s, c, dat = all_by_taxa) {
+    
+    d <- filter(dat, s == site, c == col)
+    
+    title <- paste0("Contact with ", c , " in \n", s)
+    cap <- paste0("Based on questionnaire responses from ", d[1, "total"], " individuals")
+    
+    # generate the ggplot 
+    name = paste0(h("outputs/taxa-site-maps/"), c, "/", s, ".png")
+    png(name, width = 7, height = 5, units = "in", res = 300)
+    g <- ggplot(d, aes(x = reorder(vars, prop), y = prop, 
+                       fill = reorder(vars, prop))) + 
+        geom_col() + 
+        theme_avenir(base_family = "Avenir") + 
+        coord_flip() +
+        ggtitle(title) + 
+        ylim(0, 1) + 
+        labs(x = NULL, y = "proportion of respondents who had each kind of contact", caption = cap) + 
+        scale_fill_manual(values = rev(viridis_pal()(12))) + 
+        geom_text(aes(label = scales::percent(prop)), size = 3, hjust = -0.25) + 
+        guides(fill = F)
+    plot(g)
+    dev.off()
+}
+
+
+# using sum_taxa to get a list of data frames 
+# for EACH SITE, we'll generate 3 plots 
+taxa_cols <- c("nhp_contact", "bats_contact", "rodents_contact")
+animals <- c("non-human primates", "bats", "rodents")
+
+global_sum_taxa <- map_df(taxa_cols, sum_taxa) 
+
+# et all of the data frame 
+all_by_taxa <- map_df(taxa_cols, function(x) {
+    map_df(unique(taxa$csite_new), function(z) {
+        sum_taxa(col = x, site = z) 
+    } )
+})
+
+```
+
+```{r, eval = FALSE}
+
+# and get all of the plots 
+map(animals, function(x) {
+    map(unique(taxa$csite_new), function(z) {
+        ggplot_taxa(z, x)
+    })
+})
+
+
+```
+
+## Contact patterns by taxa 
+
+The following map breaks down the various risk-related behaviors and contact patterns by the three primary taxa of interest - rodents, bats, and non-human primates.
+
+In the next map, zoom into a cluster to show the sites in that location. Click on a taxa icon to display the frequencies of various kinds of interactions. Click and unclick taxa layers in the bottom left corner to display or hide that taxa.
+
+```{r, taxa-site-maps-leaflet}
+
+coords <- coords %>% 
+  mutate(npath = popupImage3(paste0(h("outputs/taxa-site-maps/non-human primates/"), csite_new, ".png")), 
+         bpath = popupImage3(paste0(h("outputs/taxa-site-maps/bats/"), csite_new, ".png")), 
+         rpath = popupImage3(paste0(h("outputs/taxa-site-maps/rodents/"), csite_new, ".png")))
+
+# define icons 
+primate <- makeIcon(
+    iconUrl = h("site-maps/assets/primate.png"),
+    iconWidth = 50, iconHeight = 46,
+    iconAnchorX = 25, iconAnchorY = 45
+)
+
+bat <- makeIcon(
+    iconUrl = h("site-maps/assets/bat.png"),
+    iconWidth = 50, iconHeight = 37,
+    iconAnchorX = 35, iconAnchorY = 36
+)
+
+rodent <- makeIcon(
+    iconUrl = h("site-maps/assets/rodent.png"),
+    iconWidth = 50, iconHeight = 25,
+    iconAnchorX = 25, iconAnchorY = 24
+)
+
+leaflet(coords) %>%
+    setView(lng = mean(coords$long), lat = mean(coords$lat), zoom = 4) %>% 
+    addProviderTiles("OpenStreetMap.Mapnik") %>% 
+    # addLabelOnlyMarkers(lng = ~long, lat = ~lat, ~str_extract_all(concurrent_sampling_site, "[:digit:]")) %>% 
+    addMarkers(lng = ~(long+.05), lat = ~lat, icon = primate, popup = ~npath, 
+               clusterOptions = markerClusterOptions(), 
+               group = "Non-Human Primates") %>% 
+    addMarkers(lng = ~(long-.05), lat = ~lat, icon = bat, popup = ~bpath, 
+               clusterOptions = markerClusterOptions(),
+               group = "Bats") %>%
+    addMarkers(lng = ~long, lat = ~(lat-.04), icon = rodent, popup = ~rpath, 
+               clusterOptions = markerClusterOptions(), 
+               group = "Rodents") %>% 
+    addLayersControl(position = "bottomleft",
+                     overlayGroups = c("Non-Human Primates", "Bats", "Rodents"),
+                     options = layersControlOptions(collapsed = FALSE)) %>%
+    addPolygons(
+        data = admin, opacity = 100,
+        color = "#000000",
+        weight = 1, popup = NULL,
+        options = list(clickable = FALSE),
+        fill = F)
+
+```
