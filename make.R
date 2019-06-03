@@ -6,8 +6,8 @@ set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 country <- "Indonesia" # Name country here
-illness_outcomes <- c("ili") # Select illness of interest here (`illness_names_clean` object (loaded in environment) to see full list)
-taxa_outcomes <- c("rodents", "bats") # Select taxa contact of interest (`taxa_names` object (loaded in environment) to see full list)
+illness_outcomes <- c("ili", "sari", "encephalitis", "hemorrhagic_fever") # Select illness of interest here (`illness_names_clean` object (loaded in environment) to see full list)
+taxa_outcomes <- c("rodents") # Select taxa contact of interest (`taxa_names` object (loaded in environment) to see full list)
 
 # Confirm endpoints are valid
 assertthat::assert_that(all(illness_outcomes %in% illness_names_clean), msg = "one or more illness_outcomes is not recognized")
@@ -46,6 +46,26 @@ site_lookup <- read_csv(h("site-name-lookup.csv")) %>%
   get_site_names(dat, ., country)
 write_csv(site_lookup, h(paste0("data/site-name-formatted-", country, ".csv")))
 
+# Format data for creation of site maps
+
+# Full data  with site names
+fdat <- site_lookup %>%
+  filter(!new %in% c("Aggregate")) %>%
+  right_join(dat, by = c("country" = "country", "old" = "concurrent_sampling_site")) %>%
+  group_by(new) %>% 
+  mutate(n = n(), lat = mean(site_latitude), long = mean(site_longitude), 
+         site = paste(country, new, sep = " ")) %>% 
+  ungroup() %>%
+  mutate(hovertext = paste0(site, " (n = ", n, ")"))
+write_csv(fdat, h(paste0("data/site-maps-full-", country, ".csv")))
+
+# data aggregated by site for mapping
+adat <- fdat %>%
+group_by(site) %>% 
+  select(country, lat, long, site, new, old, n, hovertext) %>% 
+  unique()
+write_csv(adat, h(paste0("data/site-maps-agg-", country, ".csv")))
+  
 #-------------------------------------------------------------
 # Run reports
 
