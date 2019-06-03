@@ -28,6 +28,7 @@ get_behav <- function(country, download = FALSE){
   event <- eidith::ed2_events() %>% 
     filter(project == "P2") %>%
     select(event_name, concurrent_sampling_site, country, season,
+           site_latitude, site_longitude,
            human_density_impact, disease_transmission_interfaces,
            veterinarian_care, sampling_area_size, humans_present,
            rodents_present, bats_present, nhp_present, poultry_present,
