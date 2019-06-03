@@ -21,14 +21,17 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, out.extra =
 country <- params$country
 
 # Read in data
-dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) %>%
-   mutate_at(.vars = vars(site_latitude, site_longitude), .funs = as.numeric)
+dat0 <- read_csv(h(paste0("data/site-maps-full-", country, ".csv")))
+dat1 <- read_csv(h(paste0("data/site-maps-agg-", country, ".csv")))
 
-# Get Site names
-site_names <- read_csv(h("drafts/site_name_lookup.csv")) %>%
-  filter(country==!!country, old %in% (dat$concurrent_sampling_site)) %>%
-  right_join(dat, by = c("country" = "country", "old" = "concurrent_sampling_site")) %>%
-  rename(site_new=new, site_old=old)
+# Get administrative borders of countries of interest
+data(wrld_simpl)
+admin <- wrld_simpl[wrld_simpl@data$NAME %in% unique(dat1$country), ]
+
+# Set color palette 
+bins <- seq(min(dat1$n), max(dat1$n), length.out = 7) %>% round()
+pal <- colorBin(palette = brewer.pal(9, "Reds")[3:9], domain = dat1$n, 
+                na.color = "transparent", bins = bins)
 
 ```
 
@@ -41,33 +44,6 @@ Study sites were selected by PREDICT as priority surveillance sites with high ri
 This report is generated using current site data from PREDICT's secure [EIDITH](http://eidith.org) database via the EIDITH [R package](http://github.com/ecohealthalliance/eidith). Within individual countries, some of this data may be incomplete. 
 
 
-```{r summarize, include=FALSE}
-
-# Aggregate at the site level and get number of interviews conducted per site   
-dat0 <- site_names %>% 
-    group_by(country, site_new) %>% 
-    mutate(n = n(), lat = mean(site_latitude), long = mean(site_longitude), 
-           csite_new = paste(country, site_new, sep = " "),
-           csite_old = paste(country, site_old, sep = " ")) %>% 
-    ungroup() %>%
-    mutate(hovertext = paste0(csite_new, " (n = ", n, ")"))
-
-# Full dataset for use in maps
-dat1 <- dat0 %>% 
-     group_by(csite_new) %>% 
-     select(country, lat, long, csite_new, csite_old, site_new, site_old, n, hovertext) %>% 
-     unique()
-
-# Get administrative borders of countries of interest
-data(wrld_simpl)
-admin <- wrld_simpl[wrld_simpl@data$NAME %in% unique(dat1$country), ]
-
-# Set color palette 
-bins <- seq(min(dat1$n), max(dat1$n), length.out = 7) %>% round()
-pal <- colorBin(palette = brewer.pal(9, "Reds")[3:9], domain = dat1$n, 
-                na.color = "transparent", bins = bins)
-
-```
 ## Questionnaires completed at each site
 
 Hover over sites for the name of each study site and the number of questionnaires completed in each site. 
@@ -99,9 +75,8 @@ leaflet(dat1) %>%
 
 # By site
 t <- dat1 %>% 
-    group_by(site_new) %>% 
+    group_by(site) %>% 
     summarise(n = sum(n)) %>% 
-    rename(site=site_new) %>%
     arrange(-n)
 
 per <- percent(sum(t$n[1:3])/sum(t$n))
@@ -127,7 +102,7 @@ pyramids <- dat0 %>%
     mutate(agebrack = cut(as.integer(age), breaks=c(0, 10, 20, 30, 40, 50, 60, 70, Inf),
                           labels = c("under 10", "10 - 19", "21 - 29", "30 - 39",
                                      "40 - 49", "50 - 59", "60 - 69", "70 +"), right = FALSE)) %>% 
-    group_by(site_new) %>%
+    group_by(site) %>%
     mutate(concurrent_lat = mean(site_latitude)) %>%
     mutate(concurrent_long = mean(site_longitude)) %>%
     mutate(size = n()) %>%
@@ -135,7 +110,7 @@ pyramids <- dat0 %>%
 
 # Write functions to make the age pyramid graphs 
 age_pyramid <- function(dat, site) {
-    filt <- filter(dat1 == dat, site_new == site)
+    filt <- filter(dat1 == dat, site == site)
     title <- paste0("Age distribution by gender in \n", site)
     # Set color palette 
     MyPalette <- c(male = viridis::viridis_pal()(3)[1], 
@@ -158,10 +133,10 @@ age_pyramid <- function(dat, site) {
 ```{r age pyramid by site, eval = T}
 
 # Apply the age_pyramid graph function over all of the sites and save
-plots <- lapply(seq_along(unique(pyramids$site_new)), function(x) {
-    name <- unique(pyramids$site_new)[x]
+plots <- lapply(seq_along(unique(pyramids$site)), function(x) {
+    name <- unique(pyramids$site)[x]
     png(filename = paste0(h("outputs/age-plots/"), name, ": age-dist.png"), width = 500, height = 300) 
-    age_pyramid(pyramids, unique(pyramids$site_new)[x])
+    age_pyramid(pyramids, unique(pyramids$site)[x])
     dev.off()
 })
 
@@ -171,10 +146,10 @@ plots <- lapply(seq_along(unique(pyramids$site_new)), function(x) {
 
 #psub$pngpath
 psub <- pyramids %>% 
-    select(country, csite_new, csite_old, site_new, site_old, lat = concurrent_lat, long = concurrent_long, size) %>% 
-    group_by(site_new) %>% 
+    select(country, site, new, old, lat = concurrent_lat, long = concurrent_long, size) %>% 
+    group_by(site) %>% 
     slice(1) %>% 
-    mutate(pngpath = paste0(h("outputs/age-plots/"), site_new, ": age-dist.png"))
+    mutate(pngpath = paste0(h("outputs/age-plots/"), site, ": age-dist.png"))
 
 # Set HTML hover labels 
 psub$label <- mapply(
@@ -189,7 +164,7 @@ psub$label <- mapply(
         )
     },
     psub$pngpath, SIMPLIFY = F) %>%
-    set_names(psub$site_new)
+    set_names(psub$site)
 
 ```
 
@@ -233,7 +208,7 @@ Hover over sites for proportions and total numbers of respondents who responded 
 # Proportions of people who have hunted in the last year and ever by site
 
 hunt <- dat0 %>% 
-    group_by(site_new) %>% 
+    group_by(site) %>% 
     mutate(hunted_animal_life = ifelse(hunted_animal_life == "yes", 1, 0)) %>% 
     mutate(hunted_animal_last_year = ifelse(hunted_animal_last_year == "yes", 1, 0)) %>%
     summarize(country = first(country), 
@@ -244,8 +219,8 @@ hunt <- dat0 %>%
               life_prop = sum(hunted_animal_life)/n(), 
               year_prop = sum(hunted_animal_last_year)/n(), 
               n = n()) %>% 
-    mutate(lifelab = paste0(site_new, ": ",percent(life_prop), " (", life, "/", n, " respondents)"),
-           yearlab = paste0(site_new, ": ",percent(year_prop), " (", year, "/", n, " respondents)"))
+    mutate(lifelab = paste0(site, ": ",percent(life_prop), " (", life, "/", n, " respondents)"),
+           yearlab = paste0(site, ": ",percent(year_prop), " (", year, "/", n, " respondents)"))
 
 ```
 
@@ -297,13 +272,12 @@ leaflet(hunt) %>%
 
 ```{r, table 2 site}
 
-hunt %>% group_by(site_new) %>% 
+hunt %>% group_by(site) %>% 
     summarise("n" = (n),
               "ever hunted" = sum(life), 
               "% ever hunted" = percent(sum(life)/sum(n), digits = 1), 
               "hunted last year" = sum(year), 
               "% hunted last year" = percent(sum(year)/sum(n), digits = 1)) %>% 
-    rename(site = site_new) %>%
     arrange(desc(`n`)) %>% 
     DT::datatable(., rownames = FALSE)
 
@@ -393,7 +367,7 @@ site_props <- dat_risk %>%
     )) %>% 
     mutate(last_year = ifelse(last_year == 99, NA, last_year)) %>% 
     mutate(life = ifelse(life == 99, NA, life)) %>% 
-    group_by(csite_new, n, var, csite_old) %>% 
+    group_by(site, n, var, old) %>% 
     summarise(last_year = sum(last_year, na.rm = TRUE),
               last_year_prop = sum(last_year, na.rm = TRUE)/n()) %>% 
     left_join(., contact_names, by = "var")
@@ -401,7 +375,7 @@ site_props <- dat_risk %>%
 # per site proportions 
 get_props <- function(site, sortvar = last_year_prop, dat1 = site_props) {
     x <- dat1 %>% 
-        filter(csite_new == site) %>% 
+        filter(site == site) %>% 
         arrange(-last_year_prop)
     return(x)
 }
@@ -411,11 +385,11 @@ get_props <- function(site, sortvar = last_year_prop, dat1 = site_props) {
 ```{r, contact prevalence by site}
 
 contact_prev <- function(site, dat = site_props) {
-    y <- filter(dat, csite_new == site)
+    y <- filter(dat, site == site)
     title <- paste0("Prevalance of animal-related behaviors in the last year in \n", site)
     sub <- paste0("Based on questionnaire responses from ", y$n[1], " individuals")
     # Generate the ggplot 
-    name = paste0(h("outputs/animal-contact-figs/"), y$csite_new[1], "-animal-contact.png")
+    name = paste0(h("outputs/animal-contact-figs/"), y$site[1], "-animal-contact.png")
     png(name, width = 13, height = 5, units = "in", res = 300)
     g <- ggplot(y, aes(x = reorder(question, last_year_prop), y = last_year_prop, 
                        fill = reorder(question, last_year_prop))) + 
@@ -432,7 +406,7 @@ contact_prev <- function(site, dat = site_props) {
     dev.off()
 }
 
-x <- map(dat1$csite_new, contact_prev)
+x <- map(dat1$site, contact_prev)
 
 ```
 
@@ -448,14 +422,14 @@ popupImage4 <- function(x, width = 300, height = 115) {
                        paste0("<image src='", knitr::image_uri(x), "'"))
 }
 
-psub <- dat1 %>% 
-    mutate(pngpath = paste0(h("outputs/animal-contact-figs"), csite_new, ".png"))
+psub2 <- dat1 %>% 
+    mutate(pngpath = paste0(h("outputs/animal-contact-figs"), site, ".png"))
 
-leaflet(psub) %>%
+leaflet(psub2) %>%
     setView(lng = mean(dat1$long), lat = mean(dat1$lat)-10, zoom = 3) %>% 
     addProviderTiles("OpenStreetMap.Mapnik") %>% 
     addCircleMarkers( 
-        data = psub2, lng = ~long, lat = ~lat, color = "black", opacity = 1, weight = 1,
+        data = psub, lng = ~long, lat = ~lat, color = "black", opacity = 1, weight = 1,
         popup = c(
             popupImage4(psub2$pngpath[1]),
             popupImage4(psub2$pngpath[2]),
@@ -475,17 +449,17 @@ leaflet(psub) %>%
 ```{r}
 
 coords <- dat0 %>% 
-    group_by(csite_new) %>% 
-    select(country, lat, long, site_new, n, hovertext) %>% 
+    group_by(site) %>% 
+    select(country, lat, long, site, n, hovertext) %>% 
     unique()
 
 # taxa 
 taxa <- dat0 %>% 
-    select(participant_id, country, csite_new, n, lat, long, bats_contact, nhp_contact, rodents_contact, poultry_contact, swine_contact)
+    select(participant_id, country, site, n, lat, long, bats_contact, nhp_contact, rodents_contact, poultry_contact, swine_contact)
 
 # subset
 # dat1 <- dat1 %>%
-#   select(csite_new, country, lat, long, site_new, n, hovertext)
+#   select(site, country, lat, long, new, n, hovertext)
 
 # Sum
 sum_taxa <- function(col, dat = taxa, cntry = NA, site = NA) {
@@ -498,7 +472,7 @@ sum_taxa <- function(col, dat = taxa, cntry = NA, site = NA) {
         dat <- filter(dat, country == cntry)
     } 
     if(!is.na(site)) {
-        dat <- filter(dat, csite_new == site)
+        dat <- filter(dat, site == site)
     }
     
     if(is.na(cntry) & !is.na(site)) cntry <- strsplit(site, " ")[[1]][1]
@@ -551,7 +525,7 @@ global_sum_taxa <- map_df(taxa_cols, sum_taxa)
 
 # et all of the data frame 
 all_by_taxa <- map_df(taxa_cols, function(x) {
-    map_df(unique(taxa$csite_new), function(z) {
+    map_df(unique(taxa$site), function(z) {
         sum_taxa(col = x, site = z) 
     } )
 })
@@ -562,7 +536,7 @@ all_by_taxa <- map_df(taxa_cols, function(x) {
 
 # and get all of the plots 
 map(animals, function(x) {
-    map(unique(taxa$csite_new), function(z) {
+    map(unique(taxa$site), function(z) {
         ggplot_taxa(z, x)
     })
 })
@@ -579,9 +553,9 @@ In the next map, zoom into a cluster to show the sites in that location. Click o
 ```{r, taxa-site-maps-leaflet}
 
 coords <- coords %>% 
-  mutate(npath = popupImage3(paste0(h("outputs/taxa-site-maps/non-human primates/"), csite_new, ".png")), 
-         bpath = popupImage3(paste0(h("outputs/taxa-site-maps/bats/"), csite_new, ".png")), 
-         rpath = popupImage3(paste0(h("outputs/taxa-site-maps/rodents/"), csite_new, ".png")))
+  mutate(npath = popupImage3(paste0(h("outputs/taxa-site-maps/non-human primates/"), site, ".png")), 
+         bpath = popupImage3(paste0(h("outputs/taxa-site-maps/bats/"), site, ".png")), 
+         rpath = popupImage3(paste0(h("outputs/taxa-site-maps/rodents/"), site, ".png")))
 
 # define icons 
 primate <- makeIcon(
