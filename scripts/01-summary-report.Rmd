@@ -840,6 +840,7 @@ risk_table2 <- get_sum_table(dat,
                                                "it can make you sick", 
                                                "it can poison you", 
                                                "it can infect you with a disease", 
+                                               "other",
                                                "N/A"),
                              table_lab = "Specific Risks Associated when Slaughtering or Butchering with Open Wound",
                              asterisk = TRUE)
