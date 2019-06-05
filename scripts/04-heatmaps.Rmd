@@ -18,6 +18,13 @@ country <- params$country
 # Read in data
 dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) 
 ldat <- read_csv(h(paste0("data/logic-behav-", country, ".csv")))
+
+# Get site names
+site_names <- read_csv(h("site-name-lookup.csv")) %>%
+  filter(country == !!country,
+    old %in% (dat$concurrent_sampling_site)) %>%
+  left_join(dat, by = c("country" = "country", "old" = "concurrent_sampling_site")) 
+
 ```
 
 <details>
@@ -47,6 +54,16 @@ edu_dat <- bind_cols(dat %>% select(highest_education), ldat) %>%
   mutate(highest_education = factor(highest_education, levels = c("none", "primary school", "secondary school", "college/university/professional"), ordered = TRUE))
 hm <- get_heatmap(edu_dat, group_var = "highest_education", title = "Taxa Contact by Education")
 ggsave(plot = hm, file = h("outputs/heatmap-figs", paste0(country, "-educ-heat-map.png")), width = 15, height = 15, units = "in")
+print(hm)
+```
+</details>
+
+<details>
+<summary>Taxa Contact by Site</summary>
+```{r heatmap-site, fig.width = 20, fig.height = 15}
+site_dat <- bind_cols(site_names %>% dplyr::select(new), ldat)
+hm <- get_heatmap(site_dat, group_var = "new", title = "Taxa Contact by Site")
+ggsave(plot = hm, file = h("outputs/heatmap-figs", paste0(country, "-site-heat-map.png")), width = 20, height = 15, units = "in")
 print(hm)
 ```
 </details>
