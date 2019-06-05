@@ -23,7 +23,7 @@ ldat <- read_csv(h(paste0("data/logic-behav-", country, ".csv")))
 site_names <- read_csv(h("site-name-lookup.csv")) %>%
   filter(country == !!country,
     old %in% (dat$concurrent_sampling_site)) %>%
-  left_join(dat, by = c("country" = "country", "old" = "concurrent_sampling_site")) 
+  right_join(dat, by = c("country" = "country", "old" = "concurrent_sampling_site")) 
 
 ```
 
