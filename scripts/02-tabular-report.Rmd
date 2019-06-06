@@ -1,8 +1,8 @@
 ---
 params:
   country: "Indonesia"
-  illness_outcomes: "ili"
-  taxa_outcomes: "bats"
+  illness_outcomes: "sari"
+  taxa_outcomes: "rodents"
 title: '<span style="color:red;">DRAFT</span> Tabular Summary: `r params$country`'
 date: "`r Sys.Date()`"
 output:
@@ -116,6 +116,7 @@ cat_plots <- map(outcomes, function(endpt){
     
   })
 })
+names(cat_plots) <- outcomes
 ```
 
 ```{r make-tbls-num, include=FALSE}
@@ -182,6 +183,7 @@ num_plots <- map(outcomes, function(endpt){
       theme(axis.text.x = element_text(angle = 60, hjust = 1))
   })
 })
+names(num_plots) <- outcomes
 ```
 
 
@@ -189,18 +191,31 @@ num_plots <- map(outcomes, function(endpt){
 src <- map_chr(seq_along(outcomes), ~ {
   tab_name <- outcomes[.x]
   knit_expand(text = c("<details>",
-                       "<summary>Categorical {{tab_name}}</summary>",
+                       "<summary>Categorical Tables: {{tab_name}}</summary>",
                        "```{r tab-cat-{{.x}}, echo = FALSE, align = 'left'}", 
                        "cat_tables[[{{.x}}]]",
                        "```",
                        "</details>",
                        "<details>",
-                       "<summary>Numeric {{tab_name}}</summary>",
+                       "<summary>Confidence Interval Plots: {{tab_name}}</summary>",
+                       "```{r plot-cat-{{.x}}, echo = FALSE, align = 'left', results='hide'}", 
+                       "cat_plots[[{{.x}}]]",
+                       "```",
+                       "</details>",
+                       "<details>",
+                       "<summary>Numeric Tables: {{tab_name}}</summary>",
                        "```{r tab-num-{{.x}}, echo = FALSE, align = 'left'}", 
                        "num_tables[[{{.x}}]]",
                        "```",
+                       "</details>",
+                       "<details>",
+                       "<summary>Mean Plots: {{tab_name}}</summary>",
+                       "```{r plot-num-{{.x}}, echo = FALSE, align = 'left', results='hide'}", 
+                       "num_plots[[{{.x}}]]",
+                       "```",
                        "</details>"))
 })
+
 ```
 
 `r knit_child(text = src)`
