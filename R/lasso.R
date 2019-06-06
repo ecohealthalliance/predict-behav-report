@@ -19,7 +19,7 @@ get_lasso <- function(dat, illness_outcomes, taxa_outcomes){
     
     dat <- dat %>% select(-participant_id, -concurrent_sampling_site) 
     
-    write_csv(dat, h("lasso", paste(country, endpt, "lasso-dat.csv", sep = "-")))
+    write_csv(dat, h("data", "lasso", paste(country, endpt, "lasso-dat.csv", sep = "-")))
     
     # create matrix
     lasso_matrix <- dat %>%
@@ -38,7 +38,7 @@ get_lasso <- function(dat, illness_outcomes, taxa_outcomes){
       mutate(effect = exp(effect)) %>%
       arrange(-effect)
     
-    write_csv(coefs, h("data/lasso", paste(country, endpt, "lasso-odds-ratios.rds", sep = "-")))
+    write_csv(coefs, h("data", "lasso", paste(country, endpt, "lasso-odds-ratios.rds", sep = "-")))
     
   })
   
