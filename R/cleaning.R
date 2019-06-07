@@ -76,6 +76,8 @@ get_behav <- function(country, download = FALSE){
                                             ifelse(str_detect(scratched_bitten_action, "someone|bandage|rinse|nothing"),
                                                    "untreated",
                                                    "N/A")),
+           scratched_bitten_treated = ifelse(str_detect("treated", scratched_bitten_action), "yes", 
+                                             ifelse(str_detect("untreated", scratched_bitten_action), "no", NA)),
            risk_open_wound_specific = str_replace_all(risk_open_wound, c("yes, " = "",
                                                                          "but" = "there are risks, but",
                                                                          "^no$" = "N/A",
@@ -121,6 +123,7 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
            dedicated_location_for_waste,
            matches("education"),
            matches("last_year"),
+           scratched_bitten_treated,
            scratched_bitten_action,
            worried_about_disease,
            risk_open_wound,
@@ -154,7 +157,7 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
     ed2_expand_wide(length_lived) %>%
     ed2_expand_wide(travel_reason) %>%
     ed2_expand_wide(treatment) %>%
-    ed2_expand_wide(scratched_bitten_action) %>%
+   ed2_expand_wide(scratched_bitten_action) %>%
     select(-occupation,
            -length_lived,
            -travel_reason,
