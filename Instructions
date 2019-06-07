@@ -1,0 +1,48 @@
+PREDICT Behavioral Repository: Instructions
+
+1. Install all packages required for project
+# in console, type: renv::init()
+
+2. Open make.R script
+# Step 1: to load packages and functions, run lines 3-5
+
+# Step 2: enter country, illness, and taxa contact variables of interest (must be in quotations)
+    ## line 8: country: select ONE country
+    ## line 9: illness_outcomes: select up to 4 illness outcomes (separated by commas)
+          ### "sari", "ili", "encephalitis", "hemorrhagic_fever"
+    ## line 10: taxa_outcomes: select up to 14 taxa types (separated by commas)
+          ### "rodents", "bats", "nhp", "birds", "poultry", "carnivores", "ungulates", "pangolins",
+             "goats_sheep", "camels", "swine", "cattle", "dogs", "cats"
+             
+# Step 3: Run lines 13-20
+
+# Step 4: Download eidith data: (NOT ALWAYS REQUIRED)
+    ## if TRUE new eidith data will download (only neccessary if there are new eidith updates)
+    ## if FALSE previous version of eidith will be used (recommended)
+
+# Step 5: Run Lasso (NOT ALWAYS REQUIRED)
+    ## if TRUE lasso will run for all selected taxa_outcomes and illness_outcomes
+          ### the lasso takes a long time to run
+          ### once the lasso has been run for a particular taxa or illness outcome, it does not
+          need to be run again 
+    ## if FALSE all previously run lassos will be included (recommended)
+    
+  *** WARNING: if the outcomes of interest have low or no positive responses (low prevalence),
+  then the lasso will ultimately fail (i.e. you will receive an error message); prior to running the   lasso, ensure that the prevalence of each outcome within your country is at least 10%
+
+# Step 6: Create data files
+   ## run lines 32-68
+
+# Step 7: Create figures and reports
+   ## run lines 74-108 (only need to run if outcomes have been changed)
+   ## you can also select to run individual reports indicated by their heading:
+        ### Summary report (lines 74-77)
+        ### Tabular report (lines 80-83)
+        ### Site maps report (lines 86-89)
+        ### Heatmap figures (lines 92-95)
+        ### Lasso (lines 99-108)
+  ## all figures and reports can be found in the outputs folder
+  
+  *** When running reports - make sure all 'params' (country, illness_outcomes, taxa_outcomes) in the report 
+  header match what is listed in the make.R script (lines 8-10)
+        
