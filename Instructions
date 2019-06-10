@@ -28,7 +28,7 @@ PREDICT Behavioral Repository: Instructions
     ## if FALSE all previously run lassos will be included (recommended)
     
   *** WARNING: if the outcomes of interest have low or no positive responses (low prevalence),
-  then the lasso will ultimately fail (i.e. you will receive an error message); prior to running the   lasso, ensure that the prevalence of each outcome within your country is at least 10%
+  then the lasso will ultimately fail (i.e. you will receive an error message); prior to running the   lasso, ensure that the prevalence of each outcome within your country is at least 10%.
 
 # Step 6: Create data files
    ## run lines 32-68
@@ -44,5 +44,5 @@ PREDICT Behavioral Repository: Instructions
   ## all figures and reports can be found in the outputs folder
   
   *** When running reports - make sure all 'params' (country, illness_outcomes, taxa_outcomes) in the report 
-  header match what is listed in the make.R script (lines 8-10)
+  header match what is listed in the make.R script (lines 8-10). All report scrips can be found in the scripts folder.
         
