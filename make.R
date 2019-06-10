@@ -29,7 +29,7 @@ run_lasso <- FALSE
 #-------------------------------------------------------------
 # Get data (can specify download = TRUE if needed)
 dat <- get_behav(country, download = download_fresh) 
-write_csv(dat, h(paste0("data/raw-behav-", country, ".csv"))) # used in summary report
+write_csv(dat, h(paste0("data/raw-behav-", country, ".csv"))) # used in summary report and site maps
 
 # Format data for analysis 
 ldat <- dat %>%
@@ -45,27 +45,6 @@ write_csv(tdat, h(paste0("data/tab-behav-", country, ".csv"))) # used in tabular
 site_lookup <- read_csv(h("site-name-lookup.csv")) %>% 
   get_site_names(dat, ., country)
 write_csv(site_lookup, h(paste0("data/site-name-formatted-", country, ".csv")))
-
-# Format data for creation of site maps
-
-# Full data  with site names
-fdat <- read_csv(h("site-name-lookup.csv")) %>%
-  filter(!new %in% c("Aggregate")) %>%
-  right_join(dat, by = c("country" = "country", "old" = "concurrent_sampling_site")) %>%
-  group_by(new) %>% 
-  mutate(n = n(), lat = mean(site_latitude), long = mean(site_longitude)) %>% 
-  ungroup() %>%
-  rename(csite = new) %>%
-  mutate(hovertext = paste0(csite, " (n = ", n, ")"))
-write_csv(fdat, h(paste0("data/site-maps-full-", country, ".csv")))
-
-# data aggregated by site for mapping
-adat <- fdat %>%
-group_by(csite) %>% 
-  select(country, lat, long, old, n, hovertext) %>% 
-  unique()
-write_csv(adat, h(paste0("data/site-maps-agg-", country, ".csv")))
-  
 #-------------------------------------------------------------
 # Run reports
 
