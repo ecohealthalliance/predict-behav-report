@@ -79,7 +79,9 @@ rmarkdown::render(h("scripts/01-summary-report.Rmd"),
 rmarkdown::render(h("scripts/02-tabular-report.Rmd"),
                   output_file = paste0(country, "-behav-tabular-report.html"),
                   output_dir = h("outputs", "reports"),
-                  params = list(country = country))
+                  params = list(country = country,
+                                illness_outcomes = illness_outcomes,
+                                taxa_outcomes = taxa_outcomes))
 
 # Site Maps
 rmarkdown::render(h("scripts/03-site-maps.Rmd"),

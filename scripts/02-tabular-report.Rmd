@@ -17,8 +17,8 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 country <- params$country
 illness_outcomes <- params$illness
-taxa_outcomes <- paste0(params$taxa_outcomes, "_contact")
-outcomes <- c(illness_outcomes, taxa_outcomes)
+taxa_contact_outcomes <- paste0(params$taxa_outcomes, "_contact")
+outcomes <- c(illness_outcomes, taxa_contact_outcomes)
 
 # Read in data
 dat <- read_csv(h(paste0("data/tab-behav-", country, ".csv"))) 
@@ -42,7 +42,7 @@ table_inputs_num <- tribble(
 cat_tables <- map(outcomes, function(endpt){
   
   if(endpt %in% illness_outcomes){outcome_class <- "illness"} 
-  if(endpt %in% taxa_outcomes){outcome_class <- "contact"} 
+  if(endpt %in% taxa_contact_outcomes){outcome_class <- "contact"} 
   
   table_inputs_select <- table_inputs %>%
     filter(report %in% c("both", outcome_class))
@@ -87,7 +87,7 @@ names(cat_tables) <- outcomes
 cat_plots <- map(outcomes, function(endpt){
   
   if(endpt %in% illness_outcomes){outcome_class <- "illness"} 
-  if(endpt %in% taxa_outcomes){outcome_class <- "contact"} 
+  if(endpt %in% taxa_contact_outcomes){outcome_class <- "contact"} 
   
   table_inputs_select <- table_inputs %>%
     filter(report %in% c("both", outcome_class))
@@ -123,7 +123,7 @@ names(cat_plots) <- outcomes
 num_tables <- map(outcomes, function(endpt){
   
   if(endpt %in% illness_outcomes){outcome_class <- "illness"}
-  if(endpt %in% taxa_outcomes){outcome_class <- "contact"}
+  if(endpt %in% taxa_contact_outcomes){outcome_class <- "contact"}
   
   tbs <- map_df(1:nrow(table_inputs_num), function(i){
     # for(i in 1:nrow(table_inputs)){
@@ -163,7 +163,7 @@ names(num_tables) <- outcomes
 num_plots <- map(outcomes, function(endpt){
   
   if(endpt %in% illness_outcomes){outcome_class <- "illness"}
-  if(endpt %in% taxa_outcomes){outcome_class <- "contact"}
+  if(endpt %in% taxa_contact_outcomes){outcome_class <- "contact"}
   
   map(1:nrow(table_inputs_num), function(i){
     # for(i in 1:nrow(table_inputs)){
