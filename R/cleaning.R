@@ -76,8 +76,6 @@ get_behav <- function(country, download = FALSE){
                                             ifelse(str_detect(scratched_bitten_action, "someone|bandage|rinse|nothing"),
                                                    "untreated",
                                                    "N/A")),
-           scratched_bitten_treated = ifelse(str_detect("treated", scratched_bitten_action), "yes", 
-                                             ifelse(str_detect("untreated", scratched_bitten_action), "no", NA)),
            risk_open_wound_specific = str_replace_all(risk_open_wound, c("yes, " = "",
                                                                          "but" = "there are risks, but",
                                                                          "^no$" = "N/A",
@@ -105,7 +103,7 @@ illness_names <- c("ILI", "SARI", "encephalitis", "hemorrhagic fever")
 illness_names_clean <-  make_clean_names(illness_names)
 
 # Create analysis dataframe with logical values for all categorical data
-get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_logical = TRUE, edu_logical = TRUE, include_symp_other_ppl = FALSE) { # input is output of get_behav
+get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_logical = TRUE, edu_logical = TRUE, scratch_logical = TRUE, include_symp_other_ppl = FALSE) { # input is output of get_behav
   
   # select and widen covariate data
   covars <- dat %>%
@@ -123,7 +121,6 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
            dedicated_location_for_waste,
            matches("education"),
            matches("last_year"),
-           scratched_bitten_treated,
            scratched_bitten_action,
            worried_about_disease,
            risk_open_wound,
@@ -157,12 +154,12 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
     ed2_expand_wide(length_lived) %>%
     ed2_expand_wide(travel_reason) %>%
     ed2_expand_wide(treatment) %>%
-   ed2_expand_wide(scratched_bitten_action) %>%
+   #ed2_expand_wide(scratched_bitten_action) %>%
     select(-occupation,
            -length_lived,
            -travel_reason,
            -treatment,
-           -scratched_bitten_action,
+           #-scratched_bitten_action,
            -ends_with("n_a"))
   
   if(gender_logical){
@@ -177,6 +174,13 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
       ed2_expand_wide(highest_education_mother) %>%
       select(-highest_education,
              -highest_education_mother)
+  }
+  
+  if(scratch_logical){
+    covars <- covars %>%
+      ed2_expand_wide(scratched_bitten_action) %>%
+      select(-scratched_bitten_action,
+             -scratched_bitten_action_n_a)
   }
   
   if(exclude_last_yr){
@@ -278,7 +282,7 @@ discretize_continuous <- function(dat, age_breaks, age_labels, crowding_index_br
 # Create analysis dataframe - reshape taxa and illness outcomes
 get_tab <- function(dat) { # input is output of get_behav
   
-  tabs <- get_logical(dat, exclude_last_yr = FALSE, add_contact = FALSE, gender_logical = FALSE, edu_logical = FALSE, include_symp_other_ppl = TRUE) %>%
+  tabs <- get_logical(dat, exclude_last_yr = FALSE, add_contact = FALSE, gender_logical = FALSE, edu_logical = FALSE, scratch_logical = FALSE, include_symp_other_ppl = TRUE) %>%
     mutate_if(is.logical, ~ifelse(.x == TRUE, "yes", "no")) %>%
     mutate_at(.vars = c("highest_education", "highest_education_mother"), 
               ~recode(.x, 
@@ -291,7 +295,6 @@ get_tab <- function(dat) { # input is output of get_behav
     contact_any <- paste0(taxa_names[i], "_contact_any")
     contact_indirect <- paste0(taxa_names[i], '_contact_indirect')
     contact_direct <- paste0(taxa_names[i], '_contact_direct')
-    
     exposures <- dat %>%
       select(participant_id, !!sym(contx_type)) %>% 
       mutate(!!contact_any := ifelse(!!sym(contx_type) == "", "no", "yes"),
