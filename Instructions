@@ -34,7 +34,7 @@ PREDICT Behavioral Repository: Instructions
    ## run lines 32-68
 
 # Step 7: Create figures and reports
-   ## run lines 74-108 (only need to run if outcomes have been changed)
+   ## run lines 74-108 (only need to run if illness and/or taxa outcomes have been changed)
    ## you can also select to run individual reports indicated by their heading:
         ### Summary report (lines 74-77)
         ### Tabular report (lines 80-83)
