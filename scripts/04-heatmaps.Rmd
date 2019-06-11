@@ -1,6 +1,6 @@
 ---
 params:
-  country: "Indonesia"
+  country: ""
 title: '<span style="color:red;">DRAFT</span> Heatmaps: `r params$country`'
 date: "`r Sys.Date()`"
 output:
