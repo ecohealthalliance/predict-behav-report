@@ -40,6 +40,8 @@ print(hm)
 <summary>Taxa Contact by Gender</summary>
 ```{r heatmap-gender, fig.width = 15, fig.height = 7.5}
 gender_dat <- bind_cols(dat %>% select(gender), ldat) %>%
+  mutate(gender = na_if(gender, "other")) %>%
+  na.omit() %>%
   mutate(gender = factor(gender, levels = c("female", "male"), ordered =TRUE))
 hm <- get_heatmap(gender_dat, group_var = "gender", title = "Taxa Contact by Gender")
 ggsave(plot = hm, file = h("outputs/heatmap-figs", paste0(country, "-gender-heat-map.png")), width = 15, height = 7.5, units = "in")
@@ -51,6 +53,8 @@ print(hm)
 <summary>Taxa Contact by Education</summary>
 ```{r heatmap-edu, fig.width = 15, fig.height = 15}
 edu_dat <- bind_cols(dat %>% select(highest_education), ldat) %>%
+  mutate(highest_education = na_if(highest_education, "missing")) %>%
+  na.omit() %>%
   mutate(highest_education = factor(highest_education, levels = c("none", "primary school", "secondary school", "college/university/professional"), ordered = TRUE))
 hm <- get_heatmap(edu_dat, group_var = "highest_education", title = "Taxa Contact by Education")
 ggsave(plot = hm, file = h("outputs/heatmap-figs", paste0(country, "-educ-heat-map.png")), width = 15, height = 15, units = "in")
