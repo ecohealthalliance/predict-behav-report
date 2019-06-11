@@ -17,7 +17,7 @@ PREDICT Behavioral Repository: Instructions
 # Step 3: Run lines 13-20
 
 # Step 4: Download eidith data: (NOT ALWAYS REQUIRED)
-    ## if TRUE new eidith data will download (only neccessary if there are new eidith updates)
+    ## if TRUE new eidith data will download (only necessary if there are new eidith updates)
     ## if FALSE previous version of eidith will be used (recommended)
 
 # Step 5: Run Lasso (NOT ALWAYS REQUIRED)
@@ -43,6 +43,4 @@ PREDICT Behavioral Repository: Instructions
         ### Lasso (lines 99-108)
   ## all figures and reports can be found in the outputs folder
   
-  *** When running reports - make sure all 'params' (country, illness_outcomes, taxa_outcomes) in the report 
-  header match what is listed in the make.R script (lines 8-10). All report scrips can be found in the scripts folder.
         
