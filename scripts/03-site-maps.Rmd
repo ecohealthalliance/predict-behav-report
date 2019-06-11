@@ -128,7 +128,7 @@ age_pyramid <- function(adat, site) {
     # Generate the ggplot 
     g <- ggplot(filt, aes(x = agebrack, y = ifelse(gender == "male",-1, 1), fill = gender)) + 
         geom_col() + 
-        theme_avenir(base_family = "Avenir") + 
+        theme_map(base_family = "") +
         coord_flip() +
         ggtitle(title) + 
         labs(x = "age group", y = "count") + 
@@ -403,7 +403,7 @@ contact_prev <- function(site, adat = site_props) {
     g <- ggplot(y, aes(x = reorder(question, last_year_prop), y = last_year_prop, 
                        fill = reorder(question, last_year_prop))) + 
         geom_col() + 
-        theme_avenir(base_family = "Avenir") + 
+        theme_map(base_family = "") +
         coord_flip() +
         ggtitle(title) + 
         ylim(0, 1) + 
@@ -515,7 +515,7 @@ ggplot_taxa <- function(s, c, df = all_by_taxa) {
     g <- ggplot(d, aes(x = reorder(vars, prop), y = prop, 
                        fill = reorder(vars, prop))) + 
         geom_col() + 
-        theme_avenir(base_family = "Avenir") + 
+        theme_map(base_family = "") +
         coord_flip() +
         ggtitle(title) + 
         ylim(0, 1) + 
