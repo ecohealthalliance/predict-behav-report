@@ -3,7 +3,7 @@ params:
   country: ""
   illness_outcomes: ""
   taxa_outcomes: ""
-title: '<span style="color:red;">DRAFT</span> Tabular Summary: `r params$country`'
+title: '<span style="color:red;">DRAFT</span> Tabular Report: `r params$country`'
 date: "`r Sys.Date()`"
 output:
   html_document:
