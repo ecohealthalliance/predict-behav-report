@@ -1,4 +1,4 @@
-# create data frame of site names
+# Create data frame of site names
 get_site_names <- function(dat, site_lookup, country){ # input dataframe in format of site-name-lookup.csv
   
   n_respondents <- dat %>%
@@ -17,7 +17,7 @@ get_site_names <- function(dat, site_lookup, country){ # input dataframe in form
 }
 
 
-# get behavioral data
+# Get behavioral data
 get_behav <- function(country, download = FALSE){
   
   if(download){
@@ -101,6 +101,7 @@ taxa_names <- c('rodents', 'nhp',  'bats', 'swine',   'poultry',
 
 illness_names <- c("ILI", "SARI", "encephalitis", "hemorrhagic fever")
 illness_names_clean <-  make_clean_names(illness_names)
+
 
 # Create analysis dataframe with logical values for all categorical data
 get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_logical = TRUE, edu_logical = TRUE, scratch_logical = TRUE, include_symp_other_ppl = FALSE) { # input is output of get_behav
@@ -239,6 +240,7 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
   covars
 }
 
+
 # Subset data for outcomes of interest
 get_outcomes <- function(dat, taxa_outcomes, illness_outcomes){
   
@@ -259,7 +261,8 @@ get_outcomes <- function(dat, taxa_outcomes, illness_outcomes){
   out
 }
 
-# discretize continuous variables
+
+# Discretize continuous variables
 discretize_continuous <- function(dat, age_breaks, age_labels, crowding_index_breaks, crowding_index_labels){
   
   dat %>%
@@ -308,3 +311,11 @@ get_tab <- function(dat) { # input is output of get_behav
 }
 
 
+# Prevalence function ---- TO DO
+get_prevalence <- function(dat) {
+  
+  prevalence <- get_outcomes(prop.table(table(outcomes)))
+}
+  
+  
+  
