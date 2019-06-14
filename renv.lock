@@ -24,12 +24,6 @@ Version=0.6
 Source=CRAN
 Hash=5d68f48f3fb5d677a9923d4f815cac20
 
-[R/Package/KernSmooth]
-Package=KernSmooth
-Version=2.23-15
-Source=CRAN
-Hash=cbd323c8c5b089cea79861f5dd79ea35
-
 [R/Package/MASS]
 Package=MASS
 Version=7.3-51.4
@@ -114,6 +108,12 @@ Version=0.1-3
 Source=CRAN
 Hash=98474bb1d2468b052cdf9c94abebc97f
 
+[R/Package/binom]
+Package=binom
+Version=1.1-1
+Source=CRAN
+Hash=35627474cde5eb4a6963777f63e7b55c
+
 [R/Package/bit]
 Package=bit
 Version=1.1-14
@@ -155,18 +155,6 @@ Package=cellranger
 Version=1.1.0
 Source=CRAN
 Hash=2dca890fda2e0910eeacb38a2c27af72
-
-[R/Package/class]
-Package=class
-Version=7.3-15
-Source=CRAN
-Hash=0a15f04d424e4c25bc348f22c57657bb
-
-[R/Package/classInt]
-Package=classInt
-Version=0.3-3
-Source=CRAN
-Hash=414fc3e714aa853949bf1cd15f7432ee
 
 [R/Package/cli]
 Package=cli
@@ -228,35 +216,17 @@ Version=0.6.19
 Source=CRAN
 Hash=becb277fbec47bb47863575682db79ea
 
-[R/Package/dotCall64]
-Package=dotCall64
-Version=1.0-0
-Source=CRAN
-Hash=e8a956261fc11987b7c149d76da3ff1a
-
 [R/Package/dplyr]
 Package=dplyr
 Version=0.8.1
 Source=CRAN
 Hash=f12a3d93821301ac73c0e6337f58a4da
 
-[R/Package/e1071]
-Package=e1071
-Version=1.7-1
-Source=CRAN
-Hash=1993f622b00e01f3458e2e16d7395a09
-
 [R/Package/eidith]
 Package=eidith
 Version=0.4.1
-Source=GitHub
-RemoteType=github
-RemoteHost=api.github.com
-RemoteRepo=eidith
-RemoteUsername=ecohealthalliance
-RemoteRef=master
-RemoteSha=7cf5b18cc7b63e78023b545b486f539f32340afc
-Hash=c4c043f04a9103aa38c69c7cf3073639
+Source=unknown
+Hash=6255c8dda6b36194eedfab10da597df5
 
 [R/Package/ellipsis]
 Package=ellipsis
@@ -275,12 +245,6 @@ Package=fansi
 Version=0.4.0
 Source=CRAN
 Hash=a7730510208607abde04cfe3808e78e0
-
-[R/Package/fields]
-Package=fields
-Version=9.8-1
-Source=CRAN
-Hash=13b5814d8fa1b21eebc493b27f450523
 
 [R/Package/flextable]
 Package=flextable
@@ -347,6 +311,12 @@ Package=ggthemes
 Version=4.2.0
 Source=CRAN
 Hash=58304d96b0eabcfee138d1bd3a52fee2
+
+[R/Package/glmnet]
+Package=glmnet
+Version=2.0-16
+Source=CRAN
+Hash=2e22e132d72c4e4dce73f3ac70c4ba07
 
 [R/Package/glue]
 Package=glue
@@ -468,12 +438,6 @@ Version=0.2.2
 Source=CRAN
 Hash=c11c47f14490dbed7013c37a1a217cc1
 
-[R/Package/leafem]
-Package=leafem
-Version=0.0.1
-Source=CRAN
-Hash=15bd47c2eac249b953842556349ecce4
-
 [R/Package/leaflet]
 Package=leaflet
 Version=2.0.2
@@ -498,23 +462,11 @@ Version=1.5
 Source=CRAN
 Hash=c079d05aaae9556f4dbeea615a764871
 
-[R/Package/maps]
-Package=maps
-Version=3.3.0
-Source=CRAN
-Hash=a01c0c98959e56b80bd1d07d86be6942
-
 [R/Package/maptools]
 Package=maptools
 Version=0.9-5
 Source=CRAN
 Hash=dd5782b9eca7b9eab7e840dfc496a1f2
-
-[R/Package/mapview]
-Package=mapview
-Version=2.7.0
-Source=CRAN
-Hash=be6a6620ef379b5a3ec615870cad6b43
 
 [R/Package/markdown]
 Package=markdown
@@ -684,12 +636,6 @@ Version=1.4-3
 Source=CRAN
 Hash=2a4502151d63bef34044c6f22fd8d2a8
 
-[R/Package/rgeos]
-Package=rgeos
-Version=0.4-3
-Source=CRAN
-Hash=57cd6365978ebf12ceee6fcc9ee34f9f
-
 [R/Package/rlang]
 Package=rlang
 Version=0.3.4
@@ -698,15 +644,9 @@ Hash=cbb4e132f8198b1f9b20a0bfc5fa07ab
 
 [R/Package/rmarkdown]
 Package=rmarkdown
-Version=1.13.1
-Source=GitHub
-RemoteType=github
-RemoteHost=api.github.com
-RemoteRepo=rmarkdown
-RemoteUsername=rstudio
-RemoteRef=master
-RemoteSha=54091728ec47e91bdd22f720e41dc60833898b5d
-Hash=ae0925fcaf4d6ea9f167f95c91b9118a
+Version=1.13
+Source=CRAN
+Hash=7721b7c5664b10ead98225b08b7bc0a8
 
 [R/Package/rprojroot]
 Package=rprojroot
@@ -726,18 +666,6 @@ Version=0.3.4
 Source=CRAN
 Hash=5a4be171aa15de640120e6bb221c4bca
 
-[R/Package/rworldmap]
-Package=rworldmap
-Version=1.3-6
-Source=CRAN
-Hash=2cc377654b26c37837a4c5a51518e7d0
-
-[R/Package/satellite]
-Package=satellite
-Version=1.0.1
-Source=CRAN
-Hash=6ad74a11929e8ad1e7d776cfc065e5b0
-
 [R/Package/scales]
 Package=scales
 Version=1.0.0
@@ -749,12 +677,6 @@ Package=selectr
 Version=0.4-1
 Source=CRAN
 Hash=1fb5dfb3e338005d14339d1f89fbc15c
-
-[R/Package/sf]
-Package=sf
-Version=0.7-4
-Source=CRAN
-Hash=a41ab67826c1b4e2b5f135039208c880
 
 [R/Package/shiny]
 Package=shiny
@@ -779,12 +701,6 @@ Package=sp
 Version=1.3-1
 Source=CRAN
 Hash=906135c810c46dd0c6488d2a6b5bc8c6
-
-[R/Package/spam]
-Package=spam
-Version=2.2-2
-Source=CRAN
-Hash=7c05d4a994b660ba57ca5b67717cddc6
 
 [R/Package/stringi]
 Package=stringi
@@ -839,12 +755,6 @@ Package=tinytex
 Version=0.13
 Source=CRAN
 Hash=48aae1a86a8099ecd595be90a5ec9fb8
-
-[R/Package/units]
-Package=units
-Version=0.6-3
-Source=CRAN
-Hash=e92fe48e5dd30726cb79b6b20acf11d8
 
 [R/Package/utf8]
 Package=utf8

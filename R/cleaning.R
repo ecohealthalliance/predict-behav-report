@@ -7,13 +7,16 @@ get_site_names <- function(dat, site_lookup, country){ # input dataframe in form
     ungroup() 
   
   site_lookup %>%
+    rename(full_site_name = new) %>%
     filter(country == !!country,
            old %in% unique(dat$concurrent_sampling_site)) %>%
     left_join(n_respondents, by = c("old" = "concurrent_sampling_site")) %>%
-    mutate(new = paste0(new, " (n = ", n, ")")) %>%
-    select(-n) %>%
-    bind_rows(tibble(new = paste0("Aggregate (n = ", sum(n_respondents$n), ")" ),
-                     old = "Aggregate", country = country))
+    mutate(new = paste0(full_site_name, " (n = ", n, ")")) %>%
+    bind_rows(tibble(full_site_name = "Aggregate",
+                     n = sum(n_respondents$n),
+                     new = paste0("Aggregate (n = ", sum(n_respondents$n), ")" ),
+                     old = "Aggregate", 
+                     country = country))
 }
 
 
