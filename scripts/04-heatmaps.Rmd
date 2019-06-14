@@ -16,21 +16,22 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 country <- params$country
 
 # Read in data
-dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) 
+#dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) 
+hdat <- read_csv(h(paste0("data/heatmaps-", country, ".csv")))
 ldat <- read_csv(h(paste0("data/logic-behav-", country, ".csv")))
 
 # Get site names
 site_names <- read_csv(h("site-name-lookup.csv")) %>%
   filter(country == !!country,
     old %in% (dat$concurrent_sampling_site)) %>%
-  right_join(dat, by = c("country" = "country", "old" = "concurrent_sampling_site")) 
+  right_join(hdat, by = c("country" = "country", "old" = "concurrent_sampling_site")) 
 
 ```
 
 <details>
 <summary>Taxa Contact</summary>
 ```{r heatmap, fig.width = 15, fig.height = 7.5}
-hm <- get_heatmap(ldat, title = "Taxa Contact")
+hm <- get_heatmap(hdat, title = "Taxa Contact")
 ggsave(plot = hm, file = h("outputs/heatmap-figs", paste0(country, "-heat-map.png")), width = 15, height = 7.5, units = "in")
 print(hm)
 ```
@@ -39,7 +40,7 @@ print(hm)
 <details>
 <summary>Taxa Contact by Gender</summary>
 ```{r heatmap-gender, fig.width = 15, fig.height = 7.5}
-gender_dat <- bind_cols(dat %>% select(gender), ldat) %>%
+gender_dat <- bind_cols(hdat %>% select(gender), ldat) %>%
   mutate(gender = na_if(gender, "other")) %>%
   na.omit() %>%
   mutate(gender = factor(gender, levels = c("female", "male"), ordered =TRUE))
@@ -52,12 +53,26 @@ print(hm)
 <details>
 <summary>Taxa Contact by Education</summary>
 ```{r heatmap-edu, fig.width = 15, fig.height = 15}
-edu_dat <- bind_cols(dat %>% select(highest_education), ldat) %>%
+edu_dat <- bind_cols(hdat %>% select(highest_education), ldat) %>%
   mutate(highest_education = na_if(highest_education, "missing")) %>%
   na.omit() %>%
   mutate(highest_education = factor(highest_education, levels = c("none", "primary school", "secondary school", "college/university/professional"), ordered = TRUE))
 hm <- get_heatmap(edu_dat, group_var = "highest_education", title = "Taxa Contact by Education")
 ggsave(plot = hm, file = h("outputs/heatmap-figs", paste0(country, "-educ-heat-map.png")), width = 15, height = 15, units = "in")
+print(hm)
+```
+</details>
+
+<details>
+<summary>Taxa Contact by Age Group</summary>
+```{r heatmap-age, fig.width = 15, fig.height = 15}
+hdat <- hdat %>%
+  mutate(age_group = cut(age, 
+                    breaks=c(0, 17, 40, 60, Inf), 
+                    labels=c("under 18", "18 to 40", "41 to 60", "over 60")))
+age_dat <- bind_cols(hdat %>% select(age_group), ldat)
+hm <- get_heatmap(age_dat, group_var = "age_group", title = "Taxa Contact by Age Group")
+ggsave(plot = hm, file = h("outputs/heatmap-figs", paste0(country, "-age-heat-map.png")), width = 15, height = 15, units = "in")
 print(hm)
 ```
 </details>
