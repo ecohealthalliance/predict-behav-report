@@ -125,7 +125,8 @@ iwalk(age_split, function(x, y){
   
   ggplot(x, aes(x = agebrack, y = ifelse(gender == "male",-1, 1), fill = gender)) + 
     geom_col() + 
-    theme_avenir(base_family = "Avenir") + 
+    theme_fivethirtyeight() +
+    #theme_avenir(base_family = "Avenir") + 
     coord_flip() +
     labs(x = "age group", y = "count", title = title) + 
     scale_fill_manual(values = MyPalette) 
@@ -330,7 +331,7 @@ iwalk(contact_split, function(x, y){
   ggplot(x, aes(x = reorder(question, last_year_prop), y = last_year_prop,
                 fill = reorder(question, last_year_prop))) +
     geom_col() +
-    theme_avenir(base_family = "Avenir") +
+    theme_fivethirtyeight() +
     coord_flip() +
     ggtitle(title) +
     ylim(0, 1) +
@@ -409,7 +410,7 @@ iwalk(taxa_split, function(x, y){
   ggplot(x, aes(x = reorder(contact_type, prop), y = prop,
                 fill = reorder(contact_type, prop))) +
     geom_col() +
-    theme_avenir(base_family = "Avenir") +
+    theme_fivethirtyeight() +
     coord_flip() +
     ggtitle(title) +
     ylim(0, 1) +
