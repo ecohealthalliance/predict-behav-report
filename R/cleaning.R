@@ -313,8 +313,5 @@ get_tab <- function(dat) { # input is output of get_behav
 
 # Prevalence function ---- TO DO
 get_prevalence <- function(dat) {
-  
-  prevalence <- 
-  
 }
 
