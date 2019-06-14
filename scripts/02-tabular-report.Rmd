@@ -75,7 +75,8 @@ cat_tables <- map(outcomes, function(endpt){
     bold(i = i_index, j = 1) %>%
     bold(bold = TRUE, part = "header") %>%
     theme_booktabs() %>%
-    align(i = NULL, j = NULL, align = "left", part = "all") %>%
+    align(i = NULL, j = NULL, align = "center", part = "all") %>%
+    align(i = NULL, j = 1, align = "left", part = "body") %>%
     vline(j = seq(from = 4, to = ncol(tbs)-3, by=3), border = officer::fp_border() ) %>%
     hline(i = i_index[2:length(i_index)]-1, border = officer::fp_border() )
 })
@@ -151,7 +152,8 @@ num_tables <- map(outcomes, function(endpt){
     bold(i = i_index, j = 1) %>%
     bold(bold = TRUE, part = "header") %>%
     theme_booktabs() %>%
-    align(i = NULL, j = NULL, align = "left", part = "all") %>%
+    align(i = NULL, j = NULL, align = "center", part = "all") %>%
+    align(i = NULL, j = 1, align = "left", part = "body") %>%
     vline(j = seq(from = 3, to = ncol(tbs)-2, by=2), border = officer::fp_border() )  %>%
     hline(i = i_index[2:length(i_index)]-1, border = officer::fp_border() )
 })
