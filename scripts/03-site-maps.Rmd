@@ -300,13 +300,13 @@ They are as follows:
 39. Has an animal lived as a pet in or near your dwelling?
 40. Have you handled live animals? 
 41. Have you raised live animals?
-42. Have you shared a water source with animals for washing? (y/n/dk)
+42. Have you shared a water source with animals for washing? (yes/no/don't know)
 43. Have you seen animal feces in or near food before you have eaten it?
-44. Have you eaten food after an animal has touched or damaged it? For example, chew marks or scratches (y/n/dk)
+44. Have you eaten food after an animal has touched or damaged it? For example, chew marks or scratches (yes/no/don't know)
 45. Do any animals come inside the dwelling where you live?
 46. Have you cooked or handled meat, organs or blood from a recently killed animal?
 47. Have you eaten raw or undercooked meat or organs or blood?
-48. Have you eaten an animal that you knew was not well /sick? (y/n/dk)
+48. Have you eaten an animal that you knew was not well/sick? (yes/no/don't know)
 49. Have you found a dead animal and collected it to eat or share? 
 50. Have you found a dead animal and collected it to sell it?
 51. Have you been scratched or bitten by an animal?
