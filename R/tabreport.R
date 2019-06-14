@@ -86,6 +86,10 @@ get_comp_table <- function(dat,
             lower = binom.confint(x = !!sym(outcome), n = `Total Count`, methods = "wilson")$lower,
             upper = binom.confint(x = !!sym(outcome), n = `Total Count`, methods = "wilson")$upper) %>%
       select(-`Binomial Probability (95% CI)`, - `Total Count`) %>%
+      mutate(!!group_var := factor(!!sym(group_var), 
+                                   levels=factor_levels, 
+                                   labels = factor_lab)) %>%
+      filter(!is.na(!!sym(group_var))) %>%
       clean_names()
     return(odat)
   }

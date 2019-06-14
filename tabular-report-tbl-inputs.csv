@@ -95,6 +95,6 @@ dogs_contact_direct,yes;no,Dog Contact - Direct,illness
 cats_contact_any,yes;no,Cat Contact,illness
 cats_contact_indirect,yes;no,Cat Contact - Indirect,illness
 cats_contact_direct,yes;no,Cat Contact - Direct,illness
-scratched_bitten_treated,yes;no,"Treated Wound Last Time Scratched, Bitten or Cut While Butchering or Slaughtering",both
+scratched_bitten_action,treated;untreated,"Action Taken Last Time Scratched, Bitten or Cut While Butchering or Slaughtering",both
 risk_open_wound,yes;no,Risks Associated when Slaughtering or Butchering with Open Wound,both
 worried_about_disease,yes;no,Worried about Diseases in Live Animals in Market,both

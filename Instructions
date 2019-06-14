@@ -1,48 +1,150 @@
 PREDICT Behavioral Repository: Instructions
 
-1. Install all packages required for project
+
+PART 1: Install all packages required for project
+*** PART 1 ONLY NEEDS TO BE DONE ONCE
+
 # in console, type: renv::init()
+# in the console, you will see the following message:
+      This project has already been initialized. What would you like to do? 
 
-2. Open make.R script
-# Step 1: to load packages and functions, run lines 3-5
+      1: Restore the project from the lockfile.
+      2: Re-initialize the project, discovering and installing R package dependencies as required.
+      3: Activate the project without installing or snapshotting any packages.
+      
+      # select: 1
 
-# Step 2: enter country, illness, and taxa contact variables of interest (must be in quotations)
+
+PART 2: Open make.R script from the predict-behav-report folder
+
+***Unless otherwise noted, this script will need to be run in sequential order every time you want to 
+create a new report
+
+Step 1: to load previouslly installed packages (Step 1) and functions, highlight and run lines 3-5
+
+Step 2: enter country, illness, and taxa contact variables of interest (must be in quotations)
+
     ## line 8: country: select ONE country
-    ## line 9: illness_outcomes: select up to 4 illness outcomes (separated by commas)
-          ### "sari", "ili", "encephalitis", "hemorrhagic_fever"
-    ## line 10: taxa_outcomes: select up to 14 taxa types (separated by commas)
-          ### "rodents", "bats", "nhp", "birds", "poultry", "carnivores", "ungulates", "pangolins",
+    
+    ## line 9: illness_outcomes: select up to 4 illness outcomes (separated by commas; note spelling)
+            ### "sari", "ili", "encephalitis", "hemorrhagic_fever"
+          
+    ## line 10: taxa_outcomes: select up to 14 taxa types (separated by commas; note spelling)
+            ### "rodents", "bats", "nhp", "birds", "poultry", "carnivores", "ungulates", "pangolins",
              "goats_sheep", "camels", "swine", "cattle", "dogs", "cats"
              
-# Step 3: Run lines 13-20
-
-# Step 4: Download eidith data: (NOT ALWAYS REQUIRED)
-    ## if TRUE new eidith data will download (only neccessary if there are new eidith updates)
-    ## if FALSE previous version of eidith will be used (recommended)
-
-# Step 5: Run Lasso (NOT ALWAYS REQUIRED)
-    ## if TRUE lasso will run for all selected taxa_outcomes and illness_outcomes
-          ### the lasso takes a long time to run
-          ### once the lasso has been run for a particular taxa or illness outcome, it does not
-          need to be run again 
-    ## if FALSE all previously run lassos will be included (recommended)
+# After selecting the params (i.e. country, illness_outcomes and taxa_outcomes), highlight and run lines 8-10
+      
+             
+Step 3: Highlight and run lines 13-20
     
-  *** WARNING: if the outcomes of interest have low or no positive responses (low prevalence),
-  then the lasso will ultimately fail (i.e. you will receive an error message); prior to running the   lasso, ensure that the prevalence of each outcome within your country is at least 10%
+    ## lines 13-14 creates an error if any illness_outcomes and/or taxa_outcomes are misspelled
+    
+    ## lines 17-20 create discrete categories for continuous variables to be used in the lasso
 
-# Step 6: Create data files
-   ## run lines 32-68
 
-# Step 7: Create figures and reports
-   ## run lines 74-108 (only need to run if outcomes have been changed)
-   ## you can also select to run individual reports indicated by their heading:
-        ### Summary report (lines 74-77)
-        ### Tabular report (lines 80-83)
-        ### Site maps report (lines 86-89)
-        ### Heatmap figures (lines 92-95)
-        ### Lasso (lines 99-108)
-  ## all figures and reports can be found in the outputs folder
-  
-  *** When running reports - make sure all 'params' (country, illness_outcomes, taxa_outcomes) in the report 
-  header match what is listed in the make.R script (lines 8-10)
+Step 4: Download EIDITH command: (NOT ALWAYS REQUIRED)
+
+    ## if TRUE, eidith data will download (this is not always required and only necessary if there have
+    been recent updates made to eidith
+    
+    ## if FALSE, the most recently downloaded version eidith will be used (recommended)
+    
+
+Step 5: Run Lasso command: (NOT ALWAYS REQUIRED)
+
+    ## if TRUE, the lasso will run for all selected taxa_outcomes and illness_outcomes
+    (the lasso runs in lines 100-102)
+    
+            ### note 1: The lasso takes a long time to run
+            ### note 2: Once the lasso has been run for a specific taxa or illness, it is saved in the outputs  
+            folder and does not need to be run again.
+          
+    ## if FALSE, the lasso will not run (recommended)
+    
+            ### note 1: You can still run the lasso report if you select FALSE - you just need to make sure that
+            you have already run the lasso with your selected taxa and illness outcomes. This can be checked in
+            the outputs/lasso-figs folder.
+    
+    
+*** WARNING: If the outcomes of interest (taxa or illness) have low or no positive responses (low prevalence), then the lasso will ultimately fail (i.e. you will receive an error message when you try to create the lasso report in lines 104-109). Prior to running the lasso, check that the prevalence of each outcome you selected is at least 10%. Instructions for checking outcome prevalence are listed at the end of this document.
+
+
+Step 6: Create csv files to be used in the reports
+
+   ## Highlight and run lines 31-67
+   
+   ## If you selected download_fresh <- TRUE (see: Step 4), a new version of eidith will download at line 31
+   
+        ### If this is your first time downloading EIDITH in R, you will be asked for your EIDITH_NAME
+        and EIDTH_PASSWORD. These will only need to be entered once
         
+        ### You will see the following message in the console:
+        
+              Local EIDITH database is missing tables.
+              Would you like to download missing tables? 
+
+                  1: Yes
+                  2: No
+                  
+              #### select: 2
+              #### this message will appear every time you select download_fresh <- TRUE
+    
+    ## csv files can be found in the data folder
+    
+    
+Step 7: Create figures and reports
+
+   ## Highlight and run lines 73-109 
+   
+        ### Note: You only need to run these lines if illness and/or taxa outcomes have been changed,
+        otherwise, the reports and figures will already be in the outputs folder
+  
+   ## You can also opt to run individual reports indicated by their heading in the make.R script:
+        
+        ### Summary report (lines 73-78)
+        
+        ### Tabular report (lines 81-84)
+        
+        ### Site-maps report (lines 87-90)
+        
+        ### Heatmap figures (lines 93-96)
+        
+        ### Lasso (lines 100-109)
+        
+  ## All figures and reports can be found in the outputs folder
+  
+  
+Additional Information  
+  
+*** Every time the illness_outcomes and/or taxa_outcomes are changed in the make.R script,
+new Tabular reports and Lasso reports are generated in the outputs/reports folder. Unless you change the   country of analysis, the Summary report, Sitemaps report, and Heatmap figures will remain the same.
+
+
+*** Determine prevalence of taxa and illness outcomes
+
+  ## This should be done prior to running the lasso in order to ensure that there is no error
+  
+  ## Steps:
+  
+      ### 1. Run lines 3 through 32 in the make.R script
+      
+      ### 2. Type the following code into the console:
+      
+                
+
+
+*** Thoughts:
+- Can CI plots be similar sizes; the plots with long var names are very small (ex: occupation)
+- Allow people to be able to select taxa for heatmaps
+- Change title of summary report in script
+- how to do a 10% check - command to type into console
+------> crosstable with counts and percent: 
+
+
+
+
+#comments for Emma:
+renv.lock
+- update nlme (does not correctly install)
+- add binom package

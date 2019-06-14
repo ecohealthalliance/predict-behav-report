@@ -6,8 +6,8 @@ set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 country <- "Indonesia" # Name country here
-illness_outcomes <- c("sari", "hemorrhagic_fever") # Select illness of interest here (`illness_names_clean` object (loaded in environment) to see full list)
-taxa_outcomes <- c("rodents") # Select taxa contact of interest (`taxa_names` object (loaded in environment) to see full list)
+illness_outcomes <- c("ili") # Select illness of interest here (`illness_names_clean` object (loaded in environment) to see full list)
+taxa_outcomes <- c("bats") # Select taxa contact of interest (`taxa_names` object (loaded in environment) to see full list)
 
 # Confirm endpoints are valid
 assertthat::assert_that(all(illness_outcomes %in% illness_names_clean), msg = "one or more illness_outcomes is not recognized")
@@ -23,7 +23,7 @@ crowding_index_labels <- c("less_than_1", "1_to_3", "3_plus", "no_rooms")
 download_fresh <- FALSE
 
 # Run the lasso analysis?  (will be slow, depending on the number of outcomes, should only be run once or whenever there are changes to the data)
-run_lasso <- FALSE 
+run_lasso <- FALSE
 #-------------------------------------------------------------
 
 #-------------------------------------------------------------
@@ -58,7 +58,9 @@ rmarkdown::render(h("scripts/01-summary-report.Rmd"),
 rmarkdown::render(h("scripts/02-tabular-report.Rmd"),
                   output_file = paste0(country, "-behav-tabular-report.html"),
                   output_dir = h("outputs", "reports"),
-                  params = list(country = country))
+                  params = list(country = country,
+                                illness_outcomes = illness_outcomes,
+                                taxa_outcomes = taxa_outcomes))
 
 # Site Maps
 rmarkdown::render(h("scripts/03-site-maps.Rmd"),
