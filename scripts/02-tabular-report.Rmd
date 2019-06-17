@@ -108,12 +108,14 @@ cat_plots <- map(outcomes, function(endpt){
     if(is.null(pdat)){return()}
     pdat %>%
       mutate(concurrent_sampling_site = factor(concurrent_sampling_site, levels = site_names$old)) %>%
-      ggplot(., aes(x=concurrent_sampling_site, color = !!sym(table_inputs_select$group_var[i]))) +
+      ggplot(., aes(x=concurrent_sampling_site, color = !!sym(table_inputs_select$table_lab[i]))) +
       geom_errorbar(aes(ymin = lower, ymax = upper),  position=position_dodge(.9)) +
       geom_point(aes(y = mean), position=position_dodge(.9)) +
-      labs(title = "", x="", y=paste("Binomial Probability of", trimws(simple_cap(str_replace_all(endpt, "_", " "))))) +
+      labs(title = "", color = table_inputs_select$table_lab[i],
+           x="", y=paste("Binomial Probability of", unique(pdat$outcome))) +
       theme_classic() +
-      theme(axis.text.x = element_text(angle = 60, hjust = 1))
+      theme(axis.text.x = element_text(angle = 60, hjust = 1),
+            legend.position = c("top"))
     
   })
 })

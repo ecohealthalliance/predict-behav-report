@@ -84,13 +84,14 @@ get_comp_table <- function(dat,
     odat <- sdat %>%
      mutate(mean = binom.confint(x = !!sym(outcome), n = `Total Count`, methods = "wilson")$mean,
             lower = binom.confint(x = !!sym(outcome), n = `Total Count`, methods = "wilson")$lower,
-            upper = binom.confint(x = !!sym(outcome), n = `Total Count`, methods = "wilson")$upper) %>%
+            upper = binom.confint(x = !!sym(outcome), n = `Total Count`, methods = "wilson")$upper,
+            outcome = outcome) %>%
       select(-`Binomial Probability (95% CI)`, - `Total Count`) %>%
       mutate(!!group_var := factor(!!sym(group_var), 
                                    levels=factor_levels, 
                                    labels = factor_lab)) %>%
       filter(!is.na(!!sym(group_var))) %>%
-      clean_names()
+      rename(!!sym(table_lab) := !!sym(group_var))
     return(odat)
   }
   
