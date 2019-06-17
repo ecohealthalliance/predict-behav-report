@@ -17,7 +17,7 @@ get_lasso <- function(dat, illness_outcomes, taxa_outcomes){
       endpt_mod <- paste0(endpt, "_contact")
     }
     
-    dat <- dat %>% select(-participant_id, -concurrent_sampling_site) 
+    dat <- dat %>% select(-participant_id) 
     
     write_csv(dat, h("data", "lasso", paste(country, endpt, "lasso-dat.csv", sep = "-")))
     
@@ -68,7 +68,7 @@ make_matrix <- function(dat,
 
     # Define demographic variables of interest
     demo.vars <- c("gender", "highest_education", "highest_education_mother",
-                   "length_lived", "age")
+                   "length_lived", "age", "concurrent_site")
 
     # Define a string to match demographic variables
     demo.vars.search.string <- paste(paste0("^", demo.vars), collapse = "|")

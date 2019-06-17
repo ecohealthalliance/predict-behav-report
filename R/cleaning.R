@@ -107,7 +107,8 @@ illness_names_clean <-  make_clean_names(illness_names)
 
 
 # Create analysis dataframe with logical values for all categorical data
-get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_logical = TRUE, edu_logical = TRUE, scratch_logical = TRUE, include_symp_other_ppl = FALSE) { # input is output of get_behav
+get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_logical = TRUE, edu_logical = TRUE, 
+                        scratch_logical = TRUE, concurrent_site_logical = TRUE, include_symp_other_ppl = FALSE) { # input is output of get_behav
   
   # select and widen covariate data
   covars <- dat %>%
@@ -186,6 +187,13 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
       select(-scratched_bitten_action,
              -scratched_bitten_action_n_a)
   }
+  
+ if(concurrent_site_logical){
+   covars <- covars %>%
+     ed2_expand_wide(concurrent_sampling_site) %>%
+     select(-concurrent_sampling_site) %>%
+     rename_all(.funs = ~str_remove(., "concurrent_sampling_site_"))
+ }
   
   if(exclude_last_yr){
     # remove most "last_year" covariates since more detailed info on these exposures will
@@ -288,7 +296,7 @@ discretize_continuous <- function(dat, age_breaks, age_labels, crowding_index_br
 # Create analysis dataframe - reshape taxa and illness outcomes
 get_tab <- function(dat) { # input is output of get_behav
   
-  tabs <- get_logical(dat, exclude_last_yr = FALSE, add_contact = FALSE, gender_logical = FALSE, edu_logical = FALSE, scratch_logical = FALSE, include_symp_other_ppl = TRUE) %>%
+  tabs <- get_logical(dat, exclude_last_yr = FALSE, add_contact = FALSE, gender_logical = FALSE, edu_logical = FALSE, scratch_logical = FALSE, concurrent_site_logical = FALSE, include_symp_other_ppl = TRUE) %>%
     mutate_if(is.logical, ~ifelse(.x == TRUE, "yes", "no")) %>%
     mutate(gender = na_if(gender, "other")) %>%
     mutate_at(.vars = c("highest_education_mother"), 
