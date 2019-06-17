@@ -30,7 +30,7 @@ for (endpt in c(illness_outcomes, taxa_outcomes)){
   if(!is.infinite(lasso_fit$lambda)){
     p <- plot_lasso_fit(lasso_fit, model_dat, pretty_names = TRUE, vert_line = FALSE) 
     
-    ggsave(plot = p, file = h("outputs/lasso-figs", paste(country, endpt, "lasso.png", sep = "-")), width = 10, height = 7, units = "in")
+    ggsave(plot = p, file = h("outputs/lasso-figs", paste(country, endpt, "lasso.png", sep = "-")), width = 10, height = 10, units = "in")
   }else{
     p <- "Lasso did not converge"
   }
@@ -39,7 +39,7 @@ for (endpt in c(illness_outcomes, taxa_outcomes)){
 ```
 
 
-```{r plots,  results='asis', fig.align='center', fig.width=10, fig.height=7}
+```{r plots,  results='asis', fig.align='center', fig.width=10, fig.height=10}
 # show lasso for each outcome
 for (endpt in c(illness_outcomes, taxa_outcomes)){
   
