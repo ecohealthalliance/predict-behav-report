@@ -75,11 +75,13 @@ rmarkdown::render(h("scripts/04-heatmaps.Rmd"),
                   params = list(country = country))
 
 # Lasso
-# First, run the lasso for all outcome variables if specified
+# First, run the script to make sure each outcome has at least 10% prevalence
+
+# Second, run the lasso for all outcome variables if specified
 if(run_lasso){
   lasso <- get_lasso(ldat, illness_outcomes, taxa_outcomes)
 }
-
+# Third, run the report
 rmarkdown::render(h("scripts/05-lasso.Rmd"),
                   output_file = paste0(country, "-behav-lasso.html"),
                   output_dir = h("outputs", "reports"),
