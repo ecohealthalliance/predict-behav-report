@@ -290,11 +290,11 @@ get_tab <- function(dat) { # input is output of get_behav
   
   tabs <- get_logical(dat, exclude_last_yr = FALSE, add_contact = FALSE, gender_logical = FALSE, edu_logical = FALSE, scratch_logical = FALSE, include_symp_other_ppl = TRUE) %>%
     mutate_if(is.logical, ~ifelse(.x == TRUE, "yes", "no")) %>%
+    mutate(gender = na_if(gender, "other")) %>%
     mutate_at(.vars = c("highest_education_mother"), 
               ~recode(.x, 
                       "secondary school" = "secondary school or higher",
-                      "college/university/professional" = "secondary school or higher")) 
-
+                      "college/university/professional" = "secondary school or higher"))
   # add contact
   for (i in seq_along(taxa_names)){
     contx_type <- paste0(taxa_names[i], "_contact")
