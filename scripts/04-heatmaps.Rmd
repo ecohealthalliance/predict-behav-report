@@ -31,7 +31,7 @@ site_names <- read_csv(h("site-name-lookup.csv")) %>%
 <details>
 <summary>Taxa Contact</summary>
 ```{r heatmap, fig.width = 15, fig.height = 7.5}
-hm <- get_heatmap(dat, title = "Taxa Contact")
+hm <- get_heatmap(ldat, title = "Taxa Contact")
 ggsave(plot = hm, file = h("outputs/heatmap-figs", paste0(country, "-heat-map.png")), width = 15, height = 7.5, units = "in")
 print(hm)
 ```
