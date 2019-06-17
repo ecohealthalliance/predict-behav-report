@@ -1,6 +1,6 @@
 group_var,factor_levels,table_lab,report
 gender,male;female,Gender,both
-highest_education,none;primary school;secondary school or higher,"Education (highest level completed)
+highest_education,none;primary school;secondary school;college/university/professional,"Education (highest level completed)
 Respondent",both
 highest_education_mother,none;primary school;secondary school or higher,"Education (highest level completed)
 Mother",both
