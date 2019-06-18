@@ -7,11 +7,13 @@ set.seed(99)
 # User entered information
 country <- "Indonesia" # Name country here
 illness_outcomes <- c("ili") # Select illness of interest here (`illness_names_clean` object (loaded in environment) to see full list)
-taxa_outcomes <- c("bats") # Select taxa contact of interest (`taxa_names` object (loaded in environment) to see full list)
+heatmap_taxa_outcomes <- taxa_names # Select taxa contact of interest for heatmaps (`taxa_names` object (loaded in environment) to see full list)
+tabular_lasso_taxa_outcomes <- c("bats") # Select taxa contact of interest for lasso and tabular reports (`taxa_names` object (loaded in environment) to see full list)
 
 # Confirm endpoints are valid
 assertthat::assert_that(all(illness_outcomes %in% illness_names_clean), msg = "one or more illness_outcomes is not recognized")
-assertthat::assert_that(all(taxa_outcomes %in% taxa_names), msg = "one or more taxa_outcomes is not recognized")
+assertthat::assert_that(all(heatmap_taxa_outcomes %in% taxa_names), msg = "one or more heatmap_taxa_outcomes is not recognized")
+assertthat::assert_that(all(tabular_lasso_taxa_outcomes %in% tabular_lasso_taxa_outcomes), msg = "one or more heatmap_taxa_outcomes is not recognized")
 
 # Breaks for discretizing continuous variables
 age_breaks <- c(0, 18, 41, 61, Inf)
@@ -60,7 +62,7 @@ rmarkdown::render(h("scripts/02-tabular-report.Rmd"),
                   output_dir = h("outputs", "reports"),
                   params = list(country = country,
                                 illness_outcomes = illness_outcomes,
-                                taxa_outcomes = taxa_outcomes))
+                                taxa_outcomes = tabular_lasso_taxa_outcomes))
 
 # Site Maps
 rmarkdown::render(h("scripts/03-site-maps.Rmd"),
@@ -72,14 +74,15 @@ rmarkdown::render(h("scripts/03-site-maps.Rmd"),
 rmarkdown::render(h("scripts/04-heatmaps.Rmd"),
                   output_file = paste0(country, "-behav-heatmaps.html"),
                   output_dir = h("outputs", "reports"),
-                  params = list(country = country))
+                  params = list(country = country,
+                                taxa_outcomes = heatmap_taxa_outcomes))
 
 # Lasso
 # First, run the script to make sure each outcome has at least 10% prevalence
 
 # Second, run the lasso for all outcome variables if specified
 if(run_lasso){
-  lasso <- get_lasso(ldat, illness_outcomes, taxa_outcomes)
+  lasso <- get_lasso(ldat, illness_outcomes, tabular_lasso_taxa_outcomes)
 }
 # Third, run the report
 rmarkdown::render(h("scripts/05-lasso.Rmd"),
@@ -87,5 +90,5 @@ rmarkdown::render(h("scripts/05-lasso.Rmd"),
                   output_dir = h("outputs", "reports"),
                   params = list(country = country,
                                 illness_outcomes = illness_outcomes,
-                                taxa_outcomes = taxa_outcomes))
+                                taxa_outcomes = tabular_lasso_taxa_outcomes))
 
