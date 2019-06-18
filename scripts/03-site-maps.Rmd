@@ -105,7 +105,7 @@ Click on study sites for the age and gender breakdown of questionnaire respondan
 ```{r get-age-dat}
 age <-  fdat %>%
   mutate( agebrack = cut(as.integer(age), breaks=c(0, 10, 20, 30, 40, 50, 60, 70, Inf),
-                         labels = c("under 10", "10 - 19", "21 - 29", "30 - 39",
+                         labels = c("under 10", "10 - 19", "20 - 29", "30 - 39",
                                     "40 - 49", "50 - 59", "60 - 69", "70 +"), right = FALSE),
           age_pngpath = paste0(h("outputs/age-figs/"), country, "-", site_name, "-age-dist.png"))
 
@@ -114,26 +114,28 @@ age <-  fdat %>%
 ```{r gen-age-plots}
 age_split <- split(age, age$full_site_name)
 
-MyPalette <- c(male = viridis::viridis_pal()(3)[1], 
-               female = viridis::viridis_pal()(3)[2], 
-               other = viridis::viridis_pal()(3)[3])
+pal <- c(male = viridis::viridis_pal()(3)[1], 
+         female = viridis::viridis_pal()(3)[2], 
+         other = viridis::viridis_pal()(3)[3])
 
 iwalk(age_split, function(x, y){
   
   title <- paste0("Age distribution by gender in \n", y)
   path <- unique(x$age_pngpath)
   
-  ggplot(x, aes(x = agebrack, y = ifelse(gender == "male",-1, 1), fill = gender)) + 
+  p <- ggplot(x, aes(x = agebrack, y = ifelse(gender == "male",-1, 1), fill = gender)) + 
     geom_col() + 
+    scale_y_continuous(labels = abs) +
     theme_fivethirtyeight() +
     #theme_avenir(base_family = "Avenir") + 
     coord_flip() +
     labs(x = "age group", y = "count", title = title) + 
-    scale_fill_manual(values = MyPalette) 
+    scale_fill_manual(values = pal) +
+    theme(axis.title = element_text()) +
+    theme(legend.position = "right", legend.direction = "vertical")
   
-  ggsave(filename = path)
+  ggsave(filename = path, plot = p, width = 8, height = 6)
   
-
 })
 
 ```
@@ -142,18 +144,16 @@ iwalk(age_split, function(x, y){
 ```{r map-age-plots}
 age_map <- age %>%
   select(country, full_site_name, site_latitude, site_longitude, n, age_pngpath) %>% 
-  distinct()
+  distinct() 
+
+age_popup <- map(1:nrow(age_map), ~popup_image_mod(age_map$age_pngpath[[.]])) %>% unlist()
 
 leaflet(age_map) %>%
   setView(lng = mean(age_map$site_longitude), lat = mean(age_map$site_latitude)-10, zoom = 3) %>% 
   addProviderTiles("OpenStreetMap.Mapnik") %>% 
   addCircleMarkers( 
     data = age_map, lng = age_map$site_longitude, lat = age_map$site_latitude, color = "black", opacity = 1, weight = 1,
-    popup = c(popup_image_mod(age_map$age_pngpath[1]),
-              popup_image_mod(age_map$age_pngpath[2]),
-              popup_image_mod(age_map$age_pngpath[3]),
-              popup_image_mod(age_map$age_pngpath[4]),
-              popup_image_mod(age_map$age_pngpath[5]) )) %>%
+    popup =  age_popup) %>%
   addPolygons(
     data = admin, opacity = 100,
     color = "#000000",
@@ -259,7 +259,7 @@ They are as follows:
 46. Have you cooked or handled meat, organs or blood from a recently killed animal?
 47. Have you eaten raw or undercooked meat or organs or blood?
 48. Have you eaten an animal that you knew was not well/sick? (yes/no/don't know)
-49. Have you found a dead animal and collected it to eat or share? 
+49. Have you found a dead animal and collected it to eat or share?
 50. Have you found a dead animal and collected it to sell it?
 51. Have you been scratched or bitten by an animal?
 54. Have you slaughtered an animal?
@@ -323,26 +323,32 @@ contact <- fdat %>%
 contact_split <- split(contact, contact$full_site_name)
 
 iwalk(contact_split, function(x, y){
-
-  title <- paste0("Prevalance of animal-related behaviors in the last year in \n", y)
-  sub <- paste0("Based on questionnaire responses from ", unique(x$n), " individuals")
+  
+  title <- paste0("Prevalance of animal-related behaviors in the last year in ", y)
+  cap <- paste0("Based on questionnaire responses from ", unique(x$n), " individuals")
   path <- unique(x$contact_pngpath)
-
-  ggplot(x, aes(x = reorder(question, last_year_prop), y = last_year_prop,
-                fill = reorder(question, last_year_prop))) +
+  
+  p <- ggplot(x, aes(x = reorder(question, last_year_prop), y = last_year_prop,
+                     fill = reorder(question, last_year_prop))) +
     geom_col() +
+    geom_text(aes(label = scales::percent(last_year_prop)), size = 15, hjust = -0.25) +
     theme_fivethirtyeight() +
     coord_flip() +
-    ggtitle(title) +
     ylim(0, 1) +
-    labs(x = NULL, y = "proportion of respondents answering `yes`", subtitle = sub) +
+    labs(x = NULL, 
+         y = "proportion of respondents answering `yes`", 
+         title = title,
+         caption = cap) +
     scale_fill_manual(values = rev(viridis::viridis_pal()(15))) +
-    geom_text(aes(label = scales::percent(last_year_prop)), size = 3, hjust = -0.25) +
-    guides(fill = F) +
-    
+    theme(text = element_text(size = 40), 
+          axis.text.y = element_text(size = 55),
+          axis.text.x = element_blank(),
+     plot.title = element_text(hjust=1),
+     plot.subtitle = element_text(hjust=-3)) +
+    guides(fill = F) 
 
-  ggsave(filename = path)
-
+  
+  ggsave(filename = path, plot = p, width = 45, height = 20 )
 })
 ```
 
@@ -353,17 +359,15 @@ contact_map <- contact %>%
   select(country, full_site_name, site_latitude, site_longitude,  contact_pngpath) %>%
   distinct()
 
+# may need to try this to get image size working: https://stackoverflow.com/questions/53523494/control-the-size-of-popupimage-from-leaflet-in-r-shiny
+contact_popup <- map(1:nrow(contact_map), ~popup_image_mod(contact_map$contact_pngpath[[.]])) %>% unlist()
+
 leaflet(contact_map) %>%
   setView(lng = mean(contact_map$site_longitude), lat = mean(contact_map$site_latitude)-10, zoom = 3) %>%
   addProviderTiles("OpenStreetMap.Mapnik") %>%
   addCircleMarkers(
     data = contact_map, lng = ~site_longitude, lat = ~site_latitude, color = "black", opacity = 1, weight = 1,
-    popup = c(
-      popup_image_mod(contact_map$contact_pngpath[1], width = 300, height = 115),
-      popup_image_mod(contact_map$contact_pngpath[2], width = 300, height = 115),
-      popup_image_mod(contact_map$contact_pngpath[3], width = 300, height = 115),
-      popup_image_mod(contact_map$contact_pngpath[4], width = 300, height = 115),
-      popup_image_mod(contact_map$contact_pngpath[5], width = 300, height = 115) )) %>%
+    popup = contact_popup) %>%
   addPolygons(
     data = admin, opacity = 100,
     color = "#000000",
