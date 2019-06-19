@@ -216,7 +216,8 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
       exposures <- dat %>%
         select(participant_id, !!sym(contx_type)) %>% 
         ed2_expand_wide(!!sym(contx_type)) %>% #expand into wide frame of binary vars
-        rename( !!sym(no_contx_type) := !!paste0(contx_type, "_n_a")) %>% #use special assign := to work with !!sym(var)
+        #rename( !!sym(no_contx_type) := !!paste0(contx_type, "_n_a")) %>% #use special assign := to work with !!sym(var)
+        rename( !!sym(no_contx_type) := n_a) %>% #use special assign := to work with !!sym(var)
         select(-!!sym(contx_type)) #remove original multiresponse from final frame
       
       covars <- left_join(covars, exposures)
