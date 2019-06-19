@@ -6,9 +6,9 @@ set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 country <- "Indonesia" # Name country here
-illness_outcomes <- c("ili") # Select illness of interest here (`illness_names_clean` object (loaded in environment) to see full list)
-heatmap_taxa_outcomes <- taxa_names # Select taxa contact of interest for heatmaps (`taxa_names` object (loaded in environment) to see full list)
-tabular_lasso_taxa_outcomes <- c("bats") # Select taxa contact of interest for lasso and tabular reports (`taxa_names` object (loaded in environment) to see full list)
+illness_outcomes <- c("ili") # Select illness of interest here (`illness_names_clean` object (loaded in environment) to see full list). Accepts NULL.
+heatmap_taxa_outcomes <- taxa_names # Select taxa contact of interest for heatmaps (`taxa_names` object (loaded in environment) to see full list). Does NOT accept NULL.
+tabular_lasso_taxa_outcomes <- c("bats") # Select taxa contact of interest for lasso and tabular reports (`taxa_names` object (loaded in environment) to see full list). Accepts NULL.
 
 # Confirm endpoints are valid
 assertthat::assert_that(all(illness_outcomes %in% illness_names_clean), msg = "one or more illness_outcomes is not recognized")

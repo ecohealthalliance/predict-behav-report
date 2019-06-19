@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 country <- params$country
 illness_outcomes <- params$illness
-taxa_contact_outcomes <- paste0(params$taxa_outcomes, "_contact")
+taxa_contact_outcomes <- if(!is.null(params$taxa_outcomes)){ paste0(params$taxa_outcomes, "_contact") }
 outcomes <- c(illness_outcomes, taxa_contact_outcomes)
 
 # Read in data
