@@ -171,17 +171,20 @@ num_plots <- map(outcomes, function(endpt){
   
   map(1:nrow(table_inputs_num), function(i){
     # for(i in 1:nrow(table_inputs)){
-    get_comp_table_num(dat,
+    pdat <- get_comp_table_num(dat,
                        outcome_var = endpt,
                        outcome_class = outcome_class,
                        pretty_names = site_names,
                        group_var = table_inputs_num$group_var[i],
                        table_lab = table_inputs_num$table_lab[i],
-                       bars_only = TRUE) %>%
+                       bars_only = TRUE) 
+    
+        if(is.null(pdat)){return()}
+    pdat %>%
       mutate(concurrent_sampling_site = factor(concurrent_sampling_site, levels = site_names$old)) %>%
       ggplot(., aes(x=concurrent_sampling_site, color = response)) +
       geom_errorbar(aes(ymin = lower, ymax = upper),  position=position_dodge(.9)) +
-      geom_point(aes(y = mean), position=position_dodge(.9)) +
+      geom_point(aes(y = median), position=position_dodge(.9)) +
       labs(title = "", x="", y= simple_cap(table_inputs_num$group_var[i]), color = "") +
       theme_classic() +
       theme(axis.text.x = element_text(angle = 60, hjust = 1))
@@ -213,7 +216,7 @@ src <- map_chr(seq_along(outcomes), ~ {
                        "```",
                        "</details>",
                        "<details>",
-                       "<summary>Mean Plots: {{tab_name}}</summary>",
+                       "<summary>Median Plots: {{tab_name}}</summary>",
                        "```{r plot-num-{{.x}}, echo = FALSE, align = 'left', results='hide'}", 
                        "num_plots[[{{.x}}]]",
                        "```",
