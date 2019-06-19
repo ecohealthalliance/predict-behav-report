@@ -489,7 +489,7 @@ liv_table <- bind_rows(liv_table_all, liv_table_pri)
 
 # Age (run separate because calculating %tiles)
 age_total <- dat %>%
-  mutate(age = as.numeric(age)) %>%
+  mutate(age = floor(as.numeric(age))) %>%
   summarise(Mean = mean(age), 
             Minimum = min(age), 
             `First Quartile` = quantile(age, 0.25), 
@@ -501,7 +501,7 @@ age_total <- dat %>%
   select(-value)
 
 age_table <- dat %>%
-  mutate(age = as.numeric(age)) %>%
+  mutate(age = floor(as.numeric(age))) %>%
   group_by(concurrent_sampling_site) %>%
   summarise(Mean = mean(age),
             Minimum = min(age),

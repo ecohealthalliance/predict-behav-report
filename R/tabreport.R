@@ -7,7 +7,7 @@ binom_out <- function(x, n){
 
 norm_out <- function(x){
   x <- x[!is.na(x)]
-  a <-  mean(x)
+  a <-  median(x)
   s <-  sd(x)
   n <- length(x)
   error <- qt(0.975, df = n-1)*s/sqrt(n)
@@ -22,7 +22,7 @@ norm_out <- function(x){
 
 get_bars <- function(x, end){
   x <- x[!is.na(x)]
-  a <-  mean(x)
+  a <-  median(x)
   s <-  sd(x)
   n <- length(x)
   error <- qt(0.975, df = n-1)*s/sqrt(n)
@@ -127,13 +127,13 @@ get_comp_table_num <- function(dat,
                                pretty_names,
                                group_var,
                                table_lab = paste(group_var),
-                               dist = "normal", 
+                               dist = "percentile bootstrap", 
                                bars_only = FALSE){
   
   if(outcome_class == "contact"){outcome_var <- paste0(outcome_var, "_any")}
   outcome <- ifelse(outcome_var == "ili", "ILI", trimws(simple_cap(str_replace_all(outcome_var, "_|any", " "))))
   
-   ci_func <- if(dist == "normal"){norm_out}
+   ci_func <- if(dist == "percentile bootstrap"){norm_out}
   
   # Select data
   mdat <- dat %>%
@@ -145,20 +145,21 @@ get_comp_table_num <- function(dat,
   # Summarize data by site
   sdat <- mdat %>%
     group_by(concurrent_sampling_site, response) %>%
-    summarize(mean := mean(!!sym(group_var)),
+    summarize(median := median(!!sym(group_var)),
               lower := get_bars(!!sym(group_var), end="low"),
               upper := get_bars(!!sym(group_var), end="high"),
-      "Mean (95% CI)" := ci_func(!!sym(group_var)),
+              #"Mean (95% CI)" := ci_func(!!sym(group_var)),
+              "Median (95% CI)" := ci_func(!!sym(group_var)),
               Count = n()) %>%
     ungroup() 
   
   # Summarize data all
   sdat_all <- mdat %>%
     group_by(response) %>%
-    summarize(mean := mean(!!sym(group_var)),
+    summarize(median := median(!!sym(group_var)),
               lower := get_bars(!!sym(group_var), end="low"),
               upper := get_bars(!!sym(group_var), end="high"),
-              "Mean (95% CI)" := ci_func(!!sym(group_var)),
+              "Median (95% CI)" := ci_func(!!sym(group_var)),
               Count = n()) %>%
     ungroup() %>%
     mutate(concurrent_sampling_site = "Aggregate")
@@ -167,10 +168,10 @@ get_comp_table_num <- function(dat,
   
   if(bars_only){
     odat <- sdat %>%
-      select(-`Mean (95% CI)`, -Count)
+      select(-`Median (95% CI)`, -Count)
     return(odat)
   } else {
-    sdat <- sdat %>% select(-mean, -lower, -upper)
+    sdat <- sdat %>% select(-median, -lower, -upper)
   }
   
   
@@ -180,7 +181,7 @@ get_comp_table_num <- function(dat,
                                              levels = pretty_names$old, 
                                              labels = pretty_names$new)) %>%
     gather(variable, value, -(response:concurrent_sampling_site)) %>%
-    mutate(variable = factor(variable, levels = c("Count", "Mean (95% CI)"))) %>%
+    mutate(variable = factor(variable, levels = c("Count", "Median (95% CI)"))) %>%
     mutate(univar = interaction(variable, concurrent_sampling_site), concurrent_sampling_site = NULL, variable = NULL) %>%
     spread(univar, value) %>%
     arrange(response) %>%

@@ -146,9 +146,8 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
                            scratched_bitten_action),
               .funs = funs(factor)) %>%
     #mutate numeric vectors
-    mutate_at(.vars = vars(age,
-                           crowding_index),
-              .funs = funs(as.numeric)) %>%
+    mutate(crowding_index = as.numeric(crowding_index)) %>%
+    mutate(age = floor(as.numeric(age))) %>%
     mutate(children_in_dwelling = ifelse(is.na(children_in_dwelling)|children_in_dwelling==0, FALSE, TRUE)) %>%
     #map yes to TRUE and all other responses to FALSE
     mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
@@ -216,6 +215,7 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
       exposures <- dat %>%
         select(participant_id, !!sym(contx_type)) %>% 
         ed2_expand_wide(!!sym(contx_type)) %>% #expand into wide frame of binary vars
+        #rename( !!sym(no_contx_type) := !!paste0(contx_type, "_n_a")) %>% #use special assign := to work with !!sym(var)
         rename( !!sym(no_contx_type) := n_a) %>% #use special assign := to work with !!sym(var)
         select(-!!sym(contx_type)) #remove original multiresponse from final frame
       
