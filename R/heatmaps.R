@@ -64,7 +64,7 @@ get_heatmap <- function(dat,
   }else{
     hdat <- hdat %>%
       complete(contx, nesting(!!sym(group_var), taxa), fill = list(n = 0)) %>%
-      left_join(cdat) %>%
+      left_join(cdat, by = group_var) %>%
       mutate(perc = round(100* n/tot)) %>%
       mutate(lab = paste0(perc, "%", " (", n, ")"))
   }
@@ -86,3 +86,4 @@ get_heatmap <- function(dat,
   }
   p
 }
+

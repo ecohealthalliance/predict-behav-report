@@ -21,10 +21,10 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, error = FA
 country <- params$country
 
 # Read in data
-dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) 
+dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv")), col_types = cols()) 
 
 # Get Site names
-site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")))
+site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")), col_types = cols())
 
 # Cleaning
 fdat <- dat %>% 
@@ -56,7 +56,7 @@ This report is generated using current site data from PREDICT's secure [EIDITH](
 ## Questionnaires completed at each site
 
 Hover over sites for the name of each study site and the number of questionnaires completed in each site. 
-```{r map-questionnaires, eval=TRUE}
+```{r map-questionnaires}
 
 quest <- fdat %>%
   select(country, site_latitude, site_longitude, full_site_name, site_name, concurrent_sampling_site, n, hovertext) %>% 
@@ -89,7 +89,7 @@ leaflet(quest) %>%
 
 ```
 
-```{r table-questionnaires, eval=TRUE}
+```{r table-questionnaires}
 quest %>%
   arrange(-n) %>%
   select(site = full_site_name, n)  %>%
@@ -111,7 +111,7 @@ age <-  fdat %>%
 
 ```
 
-```{r gen-age-plots}
+```{r gen-age-plots, message = FALSE}
 age_split <- split(age, age$full_site_name)
 
 pal <- c(male = viridis::viridis_pal()(3)[1], 
@@ -319,7 +319,7 @@ contact <- fdat %>%
 
 ```
 
-```{r gen-contact-plots}
+```{r gen-contact-plots, message = FALSE}
 contact_split <- split(contact, contact$full_site_name)
 
 iwalk(contact_split, function(x, y){
@@ -397,7 +397,7 @@ taxa <- map_df(taxa_cols, function(x){
 })
 ```
 
-```{r gen-taxa-plots}
+```{r gen-taxa-plots, message = FALSE}
 taxa$split <- paste(taxa$full_site_name, taxa$taxa, sep = " - ")
 taxa_split <- split(taxa, taxa$split)
 
@@ -422,7 +422,7 @@ iwalk(taxa_split, function(x, y){
     scale_fill_manual(values = rev(viridis::viridis_pal()(12))) +
     geom_text(aes(label = scales::percent(prop)), size = 3, hjust = -0.25) +
     guides(fill = F)
-  ggsave(filename = path)
+  ggsave(filename = path, width = 7, height = 5)
 
 })
 ```

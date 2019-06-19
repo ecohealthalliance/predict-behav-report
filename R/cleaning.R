@@ -43,7 +43,7 @@ get_behav <- function(country, download = FALSE){
            bathing_water_shared, drinking_water_source) %>%
     rename(drinking_water_source_site = drinking_water_source)
   
-  out <- left_join(human, event) %>%
+  out <- left_join(human, event, by = "event_name") %>%
     filter(country == !!country,
            concurrent_sampling_site  != "Not Mapped")
   
@@ -51,7 +51,7 @@ get_behav <- function(country, download = FALSE){
   out <- out %>%
     mutate_if(is.character, ~replace_na(., "N/A")) %>%
     mutate_at(.vars = vars(rooms_in_dwelling, people_in_dwelling, children_in_dwelling, males_in_dwelling,
-                           site_latitude, site_longitude), .funs = as.numeric) %>%
+                           site_latitude, site_longitude), .funs = ~suppressWarnings(as.numeric(.))) %>%
     mutate(drinking_water_shared = dplyr::recode(drinking_water_shared, "don't know" = "unknown"),
            bathing_water_shared = dplyr::recode(bathing_water_shared, "don't know" = "unknown"),
            had_symptoms_in_last_year = dplyr::recode(had_symptoms_in_last_year, "N/A" = "no"),
@@ -219,7 +219,7 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
         rename( !!sym(no_contx_type) := n_a) %>% #use special assign := to work with !!sym(var)
         select(-!!sym(contx_type)) #remove original multiresponse from final frame
       
-      covars <- left_join(covars, exposures)
+      covars <- left_join(covars, exposures, by = "participant_id")
     }
   }
   
@@ -244,10 +244,10 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
              one_of("symptoms_in_last_year_other_people_fever_with_bleeding_or_bruising_not_related_to_injury_hemorrhagic_fever")) %>%
       rename_at(vars(-participant_id), ~paste0("other_people_", str_extract(., paste(illness_names_clean, collapse="|"))))
     
-    illness <- left_join(illness, illness_other)
+    illness <- left_join(illness, illness_other, by = "participant_id")
   }
   
-  covars <- left_join(covars, illness) 
+  covars <- left_join(covars, illness, by = "participant_id") 
   covars
 }
 
@@ -316,7 +316,7 @@ get_tab <- function(dat) { # input is output of get_behav
              !!contact_direct := ifelse(grepl("pet|handled|raised|eaten|found|scratched|hunted|slaughtered", !!sym(contx_type)), "yes", "no")) %>%
       select(-!!sym(contx_type))
     
-    tabs <- left_join(tabs, exposures)
+    tabs <- left_join(tabs, exposures, by = "participant_id")
   }
   tabs
 }

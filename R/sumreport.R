@@ -31,7 +31,7 @@ get_sum_table <- function(dat,
     mutate(n = paste0(scales::percent(n/n_respondents, accuracy = 1), " (", n, ")", ast)) %>%
     select(-n_respondents) %>%
     spread(key = concurrent_sampling_site, value= n) %>%
-    left_join(total) %>%
+    left_join(total, by = group_var) %>%
     mutate(!!group_var := factor(!!sym(group_var), levels=factor_levels, labels = factor_lab)) %>%
     arrange(!!sym(group_var)) %>%
     mutate_if(is.character, funs(replace(., is.na(.), paste0("0% (0)",ast))))

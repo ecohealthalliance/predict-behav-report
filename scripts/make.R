@@ -14,7 +14,7 @@ tdat <- dat %>%
 write_csv(tdat, h(paste0("data/tab-behav-", country, ".csv"))) # used in tabular report
 
 # Load and process site names
-site_lookup <- read_csv(h("site-name-lookup.csv")) %>% 
+site_lookup <- read_csv(h("site-name-lookup.csv"), col_types = cols()) %>% 
   get_site_names(dat, ., country)
 write_csv(site_lookup, h(paste0("data/site-name-formatted-", country, ".csv")))
 #-------------------------------------------------------------
@@ -25,7 +25,8 @@ if("summary-report" %in% reports){
   rmarkdown::render(h("scripts/01-summary-report.Rmd"),
                     output_file = paste0(country, "-behav-summary-report.html"),
                     output_dir = h("outputs", "reports"),
-                    params = list(country = country))
+                    params = list(country = country),
+                    quiet = FALSE)
 }
 
 # Tabular Report
@@ -35,7 +36,8 @@ if("tabular-report" %in% reports){
                     output_dir = h("outputs", "reports"),
                     params = list(country = country,
                                   illness_outcomes = illness_outcomes,
-                                  taxa_outcomes = tabular_lasso_taxa_outcomes))
+                                  taxa_outcomes = tabular_lasso_taxa_outcomes),
+                    quiet = FALSE)
 }
 
 # Site Maps
@@ -43,7 +45,8 @@ if("site-maps" %in% reports){
   rmarkdown::render(h("scripts/03-site-maps.Rmd"),
                     output_file = paste0(country, "-behav-site-maps.html"),
                     output_dir = h("outputs", "reports"),
-                    params = list(country = country))
+                    params = list(country = country),
+                    quiet = FALSE)
 }
 
 # Heatmap 
@@ -52,7 +55,8 @@ if("heatmaps" %in% reports){
                     output_file = paste0(country, "-behav-heatmaps.html"),
                     output_dir = h("outputs", "reports"),
                     params = list(country = country,
-                                  taxa_outcomes = heatmap_taxa_outcomes))
+                                  taxa_outcomes = heatmap_taxa_outcomes),
+                    quiet = FALSE)
 }
 
 # Lasso
@@ -70,5 +74,6 @@ if("lasso" %in% reports){
                     output_dir = h("outputs", "reports"),
                     params = list(country = country,
                                   illness_outcomes = illness_outcomes,
-                                  taxa_outcomes = tabular_lasso_taxa_outcomes))
+                                  taxa_outcomes = tabular_lasso_taxa_outcomes),
+                    quiet = FALSE)
 }
