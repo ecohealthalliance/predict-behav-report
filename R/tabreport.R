@@ -148,7 +148,7 @@ get_comp_table_num <- function(dat,
   sdat <- mdat %>%
     group_by(concurrent_sampling_site, response) %>%
     #summarize(mean := mean(!!sym(group_var)),
-    summarize(mean := median(!!sym(group_var)),
+    summarize(median := median(!!sym(group_var)),
               lower := get_bars(!!sym(group_var), end="low"),
               upper := get_bars(!!sym(group_var), end="high"),
               #"Mean (95% CI)" := ci_func(!!sym(group_var)),
@@ -160,7 +160,7 @@ get_comp_table_num <- function(dat,
   sdat_all <- mdat %>%
     group_by(response) %>%
     #summarize(mean := mean(!!sym(group_var)),
-    summarize(mean := median(!!sym(group_var)),
+    summarize(median := median(!!sym(group_var)),
               lower := get_bars(!!sym(group_var), end="low"),
               upper := get_bars(!!sym(group_var), end="high"),
               #"Mean (95% CI)" := ci_func(!!sym(group_var)),
