@@ -148,6 +148,8 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
     #mutate numeric vectors
     mutate(crowding_index = as.numeric(crowding_index)) %>%
     mutate(age = floor(as.numeric(age))) %>%
+    na.omit(age) %>%
+    na.omit(crowding_index) %>%
     mutate(children_in_dwelling = ifelse(is.na(children_in_dwelling)|children_in_dwelling==0, FALSE, TRUE)) %>%
     #map yes to TRUE and all other responses to FALSE
     mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
