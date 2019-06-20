@@ -38,8 +38,8 @@ dat %>%
   select(one_of(taxa_contact_outcomes)) %>%
   gather(key = "outcome") %>%
   group_by(outcome) %>%
-  summarize(prevalence = round(sum(value)/n, 2)) %>%
-  arrange(-prevalence) %>%
+  summarize(`prevalence (%)`= round(sum((value)/n * 100), 1)) %>%
+  arrange(-`prevalence (%)`) %>%
   kable() %>%
   kable_styling(bootstrap_options = c("striped"), full_width = F,  position = "left")
 ```
@@ -52,8 +52,8 @@ dat %>%
   select(one_of(illness_outcomes)) %>%
   gather(key = "outcome") %>%
   group_by(outcome) %>%
-  summarize(prevalence = round(sum(value)/n, 2)) %>%
-  arrange(-prevalence) %>%
+  summarize(`prevalence (%)` = round(sum((value)/n * 100), 1)) %>%
+  arrange(-`prevalence (%)`) %>%
   kable() %>%
   kable_styling(bootstrap_options = c("striped"), full_width = F,  position = "left")
 ```
