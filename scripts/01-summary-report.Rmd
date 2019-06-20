@@ -492,9 +492,9 @@ age_total <-  suppressWarnings( dat %>%
   mutate(age = floor(as.numeric(age))) %>%
   summarise(Mean = mean(age, na.rm = TRUE), 
             Minimum = min(age), 
-            `First Quartile` = quantile(age, 0.25), 
+            `First Quartile` = quantile(age, 0.25, na.rm = TRUE), 
             Median = median(age), 
-            `Third Quartile` = quantile(age, 0.75), 
+            `Third Quartile` = quantile(age, 0.75, na.rm = TRUE), 
             Maximum = max(age)) %>%
   gather() %>%
   mutate(Aggregate = round(value, 0)) %>%
@@ -507,9 +507,9 @@ age_table <- dat %>%
   group_by(concurrent_sampling_site) %>%
   summarise(Mean = mean(age, na.rm = TRUE),
             Minimum = min(age),
-            `First Quartile` = quantile(age, 0.25),
+            `First Quartile` = quantile(age, 0.25, na.rm = TRUE),
             Median = median(age),
-            `Third Quartile` = quantile(age, 0.75),
+            `Third Quartile` = quantile(age, 0.75, na.rm = TRUE),
             Maximum = max(age)) %>%
   t() %>%
   as.data.frame() %>%
