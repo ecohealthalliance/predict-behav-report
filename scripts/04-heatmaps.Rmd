@@ -18,11 +18,11 @@ country <- params$country
 taxa_outcomes <- params$taxa_outcomes
 
 # Read in data
-dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) 
-ldat <- read_csv(h(paste0("data/logic-behav-", country, ".csv")))
+dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv")), col_types = cols()) 
+ldat <- read_csv(h(paste0("data/logic-behav-", country, ".csv")), col_types = cols())
 
 # Get site names
-site_names <- read_csv(h("site-name-lookup.csv")) %>%
+site_names <- read_csv(h("site-name-lookup.csv"), col_types = cols()) %>%
   filter(country == !!country,
     old %in% (dat$concurrent_sampling_site)) %>%
   right_join(dat, by = c("country" = "country", "old" = "concurrent_sampling_site")) 

@@ -15,10 +15,10 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 country <- params$country
 
 # Read in data
-dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) 
+dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv")), col_types = cols()) 
 
 # Get Site names
-site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")))
+site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")), col_types = cols())
 ```
 
 <small>_Click on the_ ▶ _︎arrows to expand sections._</small>
@@ -488,7 +488,7 @@ liv_table_pri <- get_sum_table(dat,
 liv_table <- bind_rows(liv_table_all, liv_table_pri)
 
 # Age (run separate because calculating %tiles)
-age_total <- dat %>%
+age_total <-  suppressWarnings( dat %>%
   mutate(age = floor(as.numeric(age))) %>%
   summarise(Mean = mean(age), 
             Minimum = min(age), 
@@ -498,7 +498,9 @@ age_total <- dat %>%
             Maximum = max(age)) %>%
   gather() %>%
   mutate(Aggregate = round(value, 0)) %>%
-  select(-value)
+  select(-value) 
+)
+
 
 age_table <- dat %>%
   mutate(age = floor(as.numeric(age))) %>%

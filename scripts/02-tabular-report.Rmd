@@ -21,13 +21,13 @@ taxa_contact_outcomes <- if(!is.null(params$taxa_outcomes)){ paste0(params$taxa_
 outcomes <- c(illness_outcomes, taxa_contact_outcomes)
 
 # Read in data
-dat <- read_csv(h(paste0("data/tab-behav-", country, ".csv"))) 
+dat <- read_csv(h(paste0("data/tab-behav-", country, ".csv")), col_types = cols()) 
 
 # Get Site names
-site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")))
+site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")), col_types = cols())
 
 # Get report lookup
-table_inputs <- read_csv(h(paste0("tabular-report-tbl-inputs.csv"))) %>%
+table_inputs <- read_csv(h(paste0("tabular-report-tbl-inputs.csv")), col_types = cols()) %>%
   mutate(factor_levels = str_split(factor_levels, ";")) 
 
 # Continuous tables
