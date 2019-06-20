@@ -1,6 +1,5 @@
 #-------------------------------------------------------------
 # Load packages and functions
-
 purrr::walk(list.files(here::here("R/"), full.names = TRUE),
             source, echo = FALSE, verbose = FALSE)
 set.seed(99)
@@ -50,8 +49,8 @@ rmarkdown::render(h("scripts/00-prevalence.Rmd"),
                   output_file = paste0(country, "-outcome-prevalence.html"),
                   output_dir = h("outputs", "reports"),
                   params = list(country = country,
-                                illness_outcomes = illness_names_clean,
-                                taxa_outcomes  = taxa_names),
+                                prev_illness_outcomes = illness_names_clean,
+                                prev_taxa_outcomes  = taxa_names),
                   quiet = FALSE)
   ## If prevalence is less than 10.0%, do NOT run the lasso for that particular outcome
 #-------------------------------------------------------------
