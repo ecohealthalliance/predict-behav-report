@@ -7,7 +7,7 @@ set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 
-country <- "Indonesia" # Name country here
+country <- "Bangladesh" # Name country here
   ## Can only select ONE country
 illness_outcomes <- c("ili") # Select illness of interest here
   ## (`illness_names_clean` object (loaded in Environment tab) to see full list). 
@@ -45,6 +45,7 @@ run_lasso <- FALSE
 
 # Check prevalence of outcomes --> see html output (country-outcome-prevalence) in outputs/reports folder
   ## This only needs to be run once, unless there are changes to eidith (human) data
+source(h("scripts", "make-data.R"))
 rmarkdown::render(h("scripts/00-prevalence.Rmd"),
                   output_file = paste0(country, "-outcome-prevalence.html"),
                   output_dir = h("outputs", "reports"),
@@ -59,9 +60,7 @@ rmarkdown::render(h("scripts/00-prevalence.Rmd"),
 
 reports <- c("summary-report", "tabular-report", "site-maps", "heatmaps", "lasso")
 #-------------------------------------------------------------
-# Create data files and run reports
+# Run reports
   ## html reports can be found in outputs/reports folder
-
-source(h("scripts", "make-data.R"))
 source(h("scripts", "make-reports.R"))
 #-------------------------------------------------------------
