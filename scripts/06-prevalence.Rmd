@@ -1,0 +1,65 @@
+---
+params:
+  country: "Indonesia"
+  illness_outcomes: "ili"
+  taxa_outcomes: "bats"
+title: '<span style="color:red;">DRAFT</span> Tabular Report: `r params$country`'
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    keep_md: false
+---
+```{r setup, include=FALSE}
+purrr::walk(list.files(here::here("R/"), full.names = TRUE),
+            source, echo = FALSE, verbose = FALSE)
+
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+country <- params$country
+illness_outcomes <- params$illness
+taxa_contact_outcomes <- if(!is.null(params$taxa_outcomes)){ paste0(params$taxa_outcomes, "_contact") }
+outcomes <- c(illness_outcomes, taxa_contact_outcomes)
+
+# Read in data
+dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv"))) 
+
+```
+
+```{r prevalence function, include=FALSE}
+ 
+ get_prevalence <- function(dat) {
+ 
+   prev <- get_logical(dat, exclude_last_yr = FALSE, add_contact = TRUE, gender_logical = FALSE, edu_logical = FALSE, scratch_logical = FALSE, concurrent_site_logical = FALSE, include_symp_other_ppl = FALSE) %>%
+     mutate_if(is.logical, ~ifelse(.x == TRUE, "yes", "no"))
+ 
+   # add contact
+   for (i in seq_along(taxa_names)){
+     contx_type <- paste0(taxa_names[i], "_contact")
+     exposures <- dat %>%
+       select(participant_id, !!sym(contx_type)) %>%
+       mutate(!!contx_type := ifelse(!!sym(contx_type) == "", "no", "yes"))
+ 
+     prev <- left_join(prev, exposures) #%>%
+       #select(participant_id, contx_type, ili, encephalitis, sari, hemorrhagic_fever)
+ }
+   prev
+ } 
+     
+```
+
+```{r create subset, include = FALSE}
+
+pdat <- get_prevalence(prev) %>%
+  select(participant_id, outcomes)
+
+
+```
+
+```{r print table, include = FALSE, results = 'asis'}
+
+require(summarytools)
+prev_tables <- dfSummary(pdat, plain.ascii = FALSE, style = "grid", graph.magnif = 0.75, valid.col = FALSE)
+
+print.summarytools(prev_tables, method = "render")
+
+```
