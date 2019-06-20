@@ -30,5 +30,15 @@ run_lasso <- FALSE
 # Which reports to run? options are: "summary-report", "tabular-report", "site-maps", "heatmaps", "lasso"
 reports <- c("summary-report", "tabular-report", "site-maps", "heatmaps", "lasso")
 #-------------------------------------------------------------
-source(h("scripts", "make.R"))
-
+source(h("scripts", "make-data.R"))
+#-------------------------------------------------------------
+# Check prevalence of outcomes - see html in outputs/reports
+rmarkdown::render(h("scripts/00-prevalence.Rmd"),
+                  output_file = paste0(country, "-outcome-prevalence.html"),
+                  output_dir = h("outputs", "reports"),
+                  params = list(country = country,
+                                illness_outcomes = illness_names_clean,
+                                taxa_outcomes  = taxa_names),
+                  quiet = FALSE)
+#-------------------------------------------------------------
+source(h("scripts", "make-reports.R"))
