@@ -6,7 +6,7 @@ set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 
-country <- "Indonesia" # Name country here
+country <- "Bangladesh" # Name country here
   ## Can only select ONE country
 illness_outcomes <- c("ili") # Select illness of interest here
   ## (`illness_names_clean` object (loaded in Environment tab) to see full list). 
@@ -58,7 +58,7 @@ rmarkdown::render(h("scripts/00-prevalence.Rmd"),
 # Select reports to run
   ## Options are: "summary-report", "tabular-report", "site-maps", "heatmaps", "lasso"
 
-reports <- c("heatmaps")
+reports <- c("summary-report", "tabular-report", "site-maps", "heatmaps", "lasso")
 #-------------------------------------------------------------
 # Run reports
   ## html reports can be found in outputs/reports folder
