@@ -2,7 +2,11 @@
 local({
 
   # the requested version of renv
-  version <- "0.4.0-16"
+  version <- "0.5.0-29"
+
+  # signal that we're loading renv during R startup
+  Sys.setenv("RENV_R_INITIALIZING" = "true")
+  on.exit(Sys.unsetenv("RENV_R_INITIALIZING"), add = TRUE)
 
   # load the 'utils' package eagerly -- this ensures that renv shims, which
   # mask 'utils' packages, will come first on the search path
@@ -22,13 +26,36 @@ local({
 
   }
 
-  # source the user profile if any, respecting R_PROFILE_USER
-  profile <- Sys.getenv("R_PROFILE_USER", unset = path.expand("~/.Rprofile"))
-  if (file.exists(profile)) {
+  # helper for sourcing the user profile (if any)
+  # respect R_PROFILE_USER when sourcing user profile
+  profile <- Sys.getenv("R_PROFILE_USER", unset = "~/.Rprofile")
+  source_user_profile <- function() {
+
+    if (!file.exists(profile))
+      return(FALSE)
+
+    # avoid recursion, in case user has activated a project in home directory
+    # (may occur in some Docker deployment configurations)
     current <- normalizePath(".Rprofile", winslash = "/", mustWork = FALSE)
-    if (!identical(profile, current))
-      source(profile)
+    if (identical(normalizePath(profile, winslash = "/"), current))
+      return(FALSE)
+
+    # source with error handler
+    status <- tryCatch(source(profile), error = identity)
+    if (!inherits(status, "error"))
+      return(TRUE)
+
+    # report any errors to the user
+    prefix <- sprintf("Error sourcing %s:", profile)
+    message <- paste(prefix, conditionMessage(status))
+    warning(simpleWarning(message))
+
   }
+
+  # load user profile now -- needs to happen before renv is loaded,
+  # as otherwise the user profile could clobber the library paths
+  # that renv tries to set up for the project
+  source_user_profile()
 
   # figure out root for renv installation
   default <- switch(
