@@ -491,11 +491,11 @@ liv_table <- bind_rows(liv_table_all, liv_table_pri)
 age_total <-  suppressWarnings( dat %>%
   mutate(age = floor(as.numeric(age))) %>%
   summarise(Mean = mean(age, na.rm = TRUE), 
-            Minimum = min(age), 
+            Minimum = min(age, na.rm = TRUE), 
             `First Quartile` = quantile(age, 0.25, na.rm = TRUE), 
-            Median = median(age), 
+            Median = median(age, na.rm = TRUE), 
             `Third Quartile` = quantile(age, 0.75, na.rm = TRUE), 
-            Maximum = max(age)) %>%
+            Maximum = max(age, na.rm = TRUE)) %>%
   gather() %>%
   mutate(Aggregate = round(value, 0)) %>%
   select(-value) 
@@ -506,11 +506,11 @@ age_table <- dat %>%
   mutate(age = floor(as.numeric(age))) %>%
   group_by(concurrent_sampling_site) %>%
   summarise(Mean = mean(age, na.rm = TRUE),
-            Minimum = min(age),
+            Minimum = min(age, na.rm = TRUE),
             `First Quartile` = quantile(age, 0.25, na.rm = TRUE),
-            Median = median(age),
+            Median = median(age, na.rm = TRUE),
             `Third Quartile` = quantile(age, 0.75, na.rm = TRUE),
-            Maximum = max(age)) %>%
+            Maximum = max(age, na.rm = TRUE)) %>%
   t() %>%
   as.data.frame() %>%
   header_true() %>%
