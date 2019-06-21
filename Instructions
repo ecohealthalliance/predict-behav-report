@@ -4,7 +4,7 @@ PREDICT Behavioral Repository: Instructions
 PART 1: Install all packages required for project
 *** PART 1 ONLY NEEDS TO BE DONE ONCE
 
-# in console, type: renv::init()
+# in console, type: renv::restore()
 # in the console, you will see the following message:
       This project has already been initialized. What would you like to do? 
 
@@ -14,6 +14,11 @@ PART 1: Install all packages required for project
       
       # select: 1
 
+**** ADD BIT ABOUT USING BREWER TO INSTALL GDAL
+  - NOTE THAT IT'S ONLY FOR ADVANCED USERS: OPTIONAL
+  - NOTE THAT IF NOT INSTALLED, SITE-MAPS REPORT WON'T RUN
+  
+  in terminal type and press enter: brew install gdal
 
 PART 2: Open make.R script from the predict-behav-report folder
 
@@ -131,20 +136,184 @@ new Tabular reports and Lasso reports are generated in the outputs/reports folde
       
       ### 2. Type the following code into the console:
       
-                
-
-
-*** Thoughts:
-- Can CI plots be similar sizes; the plots with long var names are very small (ex: occupation)
-- Allow people to be able to select taxa for heatmaps
-- Change title of summary report in script
-- how to do a 10% check - command to type into console
-------> crosstable with counts and percent: 
 
 
 
+APPENDIX
 
-#comments for Emma:
-renv.lock
-- update nlme (does not correctly install)
-- add binom package
+I. Variable Names
+- this section provides the following information for some of the report variables:
+    1. variable name (the variable name used in the report outputs)
+    2. question name (the question as it appears in the human questionnaire)
+    3. response options (response options for each question as they appear in the human questionnaire)
+    4. any additional information about the variable (OPTIONAL)
+
+
+crowding_index                             
+N/A (is not explicitly asked in the questionnaire)             
+# of people in dwelling (including respondent) /# of rooms in dwelling (excluding bathroom and kitchen)        a higher crowding index indicates a more crowded dwelling                   
+
+dedicated_location_for_waste
+In your dwelling is there a dedicated location for human sold waste/excreta?
+yes; no
+
+water_used_by_animals
+Is your source for drinking water ever used by animals?
+yes; no
+
+treatment
+Where do you usually get treatment for medical problems? Select all that apply
+clinic/health center; hospital; mobile clinic; community health worker; traditional healer; dispensary or pharmacy
+
+
+
+#Heatmaps
+(types of taxa contact within previous year; all responses are yes/no)
+
+slaughtered
+Have you slaughtered an animal?
+
+hunted/trapped
+Have you hunted or trapped an animal?
+
+scratched/bitten
+Have you been scratched or bitten by an animal?
+
+found dead/collected
+Have found a dead animal and collected it to sell, eat, and/or share?
+
+eaten sick
+Have you eaten an animal that you know was not well/sick?
+
+eaten raw/undercooked
+Have you eaten raw or undercooked mear or organs or blood?
+
+cooked/handled
+Have you cooked or handled meat, orgrans or blood from a recently killed animal?
+
+in house
+Do any animals come inside the dwelling where you live?
+
+feces in or near food
+Have you seen animal feces in or near food before you have eaten it?
+
+raised
+Have you raised live animals?
+
+handled
+Have you handled live animals?
+
+pets
+Has an animal lived as a pet in or near your dwelling?
+
+
+#Tabular reports
+
+pet_in_dwelling_last_year
+Has an animal lived as a pet in or near your dwelling?
+yes; no
+
+handle_animals_last_year
+Have you handled live animals?
+yes; no
+
+raised_animals_last_year
+Have you raised live animals?
+yes; no
+
+shared_water_last_year
+Have you shared a water source with animals for washing?
+yes; no; don't know
+don't know recoded as 'no'
+
+animal_feces_food_last_year
+Have you seen animal feces in or near food before you have eaten it?
+yes; no
+
+animals_in_food_year
+Have you eaten food after an animal has touched or damaged it?
+yes; no; don't know
+don't know recoded as 'no'
+
+animals_in_dwelling_last_year
+Do any animals come inside the dwelling where you live?
+yes; no
+
+cooked_meat_last_year
+Have you cooked or handled meat, orgrans or blood from a recently killed animal?
+yes; no
+
+eaten_raw_meat_last_year
+Have you eaten raw or undercooked mear or organs or blood?
+yes; no
+
+eaten_sick_animal_last_year
+Have you eaten an animal that you know was not well/sick?
+yes; no
+
+eaten_dead_animal_last_year
+Have found a dead animal and collected it to eat or share?
+yes; no
+
+sold_dead_animal_last_year
+Have you found a dead animal and collected it to sell it?
+yes; no
+
+scratched_bitten_last_year
+Have you been scratched or bitten by an animal?
+yes; no
+
+hunted_animal_last_year
+Have you hunted or trapped an animal?
+yes; no
+
+slaughtered_animal_last_year
+Have you slaughtered an animal?
+yes; no
+
+--- Additional taxa contact variables:
+
+taxa_contact_any
+includes: pets; handled; raised; feces in or near food; in house; cooked/handled; eaten raw/undercooked; 
+eaten sick; found dead/collected; scratched/bitten; hunted/trapped; slaughtered
+
+taxa_contact_direct
+includes: pets; handled; raised; cooked/handled; eaten raw/undercooked; eaten sick; found dead/collected;
+scratched/bitten; hunted/trapped; slaughtered
+
+taxa_contact_indirect
+includes: feces in or near food; in house
+
+-------
+
+scratched_bitten_action
+The last time you were scratched or bitten, or cut yourself while butchering or slaughtering, what did you do?
+treated; untreated; N/A
+'treated' includes: wash wound with soap and water; visit doctor
+'untreated' includes: let someone else take over; rinse wound with water; bandage wound; nothing - kept working
+'N/A' includes: N/A; never butcher or slaughter
+
+
+risk_open_wound
+Are there any risks associated with slaughtering or butchering when you have an open wound
+yes; no
+'yes' includes: yes, but I don't know what they are; yes, it can make you sick; yes, it can poison you,
+yes, it can infect you with a disease'
+'no' includes: no; don't know; other
+
+
+worried_about_disease
+Are you worried about diseases or disease outbreaks in live animals at your local market?
+yes; no
+
+
+
+*** TO DO:
+- can CI plots be similar sizes; the plots with long var names are very small (ex: occupation): tabular;
+- fix age plots: sitemaps --- double check
+- fix animal contact and taxa contact plots: sitemaps --- double check
+- create prevalence function to run before lasso
+- remove "other" from gender in tabular report: Rebecca
+- concurrent site in lasso
+- Egypt (low)
+
