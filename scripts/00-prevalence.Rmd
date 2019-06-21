@@ -33,28 +33,30 @@ for(endpt in prev_taxa_outcomes){
 }
 
 n <- nrow(dat)
-
-dat %>%
-  select(one_of(prev_taxa_contact_outcomes)) %>%
-  gather(key = "outcome") %>%
-  group_by(outcome) %>%
-  summarize(`prevalence (%)`= round(sum((value)/n * 100), 1)) %>%
-  arrange(-`prevalence (%)`) %>%
-  kable() %>%
-  kable_styling(bootstrap_options = c("striped"), full_width = F,  position = "left")
+suppressWarnings(
+  dat %>%
+    select(one_of(prev_taxa_contact_outcomes)) %>%
+    gather(key = "outcome") %>%
+    group_by(outcome) %>%
+    summarize(`prevalence (%)`= round(sum((value)/n * 100), 1)) %>%
+    arrange(-`prevalence (%)`) %>%
+    kable() %>%
+    kable_styling(bootstrap_options = c("striped"), full_width = F,  position = "left")
+)
 ```
 
 #### Illness 
 ```{r prev-illness-table}
 n <- nrow(dat)
-
-dat %>%
-  select(one_of(prev_illness_outcomes)) %>%
-  gather(key = "outcome") %>%
-  group_by(outcome) %>%
-  summarize(`prevalence (%)` = round(sum((value)/n * 100), 1)) %>%
-  arrange(-`prevalence (%)`) %>%
-  kable() %>%
-  kable_styling(bootstrap_options = c("striped"), full_width = F,  position = "left")
+suppressWarnings(
+  dat %>%
+    select(one_of(prev_illness_outcomes)) %>%
+    gather(key = "outcome") %>%
+    group_by(outcome) %>%
+    summarize(`prevalence (%)` = round(sum((value)/n * 100), 1)) %>%
+    arrange(-`prevalence (%)`) %>%
+    kable() %>%
+    kable_styling(bootstrap_options = c("striped"), full_width = F,  position = "left")
+)
 ```
 
