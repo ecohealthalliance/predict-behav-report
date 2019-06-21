@@ -68,7 +68,8 @@ get_behav <- function(country, download = FALSE){
                                                                       "community health worker" = "clinic",
                                                                       "mobile clinic" = "clinic",
                                                                       "dispensary or pharmacy" = "dispensary or pharmacy only",
-                                                                      "traditional healer" = "traditional healer only")),
+                                                                      "traditional healer" = "traditional healer only",
+                                                                      "MISSING" = "missing")),
            treatment_specific = map_chr(str_split(treatment_specific, "; "), function(x){
              unique(x) %>%
                ifelse(length(.)==1, ., "multiple sources") %>%
@@ -323,3 +324,14 @@ get_tab <- function(dat) { # input is output of get_behav
   tabs
 }
 
+# Function to check for installed packages and install them if they are not installed
+install <- function(packages){
+  new.packages <- packages[!(packages %in% installed.packages()[, "Package"])]
+  if (length(new.packages))
+    install.packages(new.packages, dependencies = TRUE)
+  sapply(packages, require, character.only = TRUE)
+}
+
+# Install packages
+required.packages <- c("nlme", "gdtools")
+install(required.packages)
