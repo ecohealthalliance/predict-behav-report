@@ -429,7 +429,8 @@ time_table <- get_sum_table(dat,
                                               "1 month - 1 year", 
                                               ">1 - 5 years", 
                                               ">5 - 10 years", 
-                                              ">10 years"), 
+                                              ">10 years",
+                                              "missing"), 
                             table_lab="Length of Time Living at Location")
 
 # Job
@@ -461,7 +462,8 @@ liv_table_all <- get_sum_table(dat,
                                                  "grocery (vegetables)", "wildlife restaurant business" ,
                                                  "zoo/sanctuary animal health care", 
                                                  "other",
-                                                 "missing"),
+                                                 "missing",
+                                                 "MISSING"),
                                table_lab="Livelihood Activities (past year)\nAll",
                                asterisk = TRUE)
 
@@ -542,7 +544,8 @@ dwell_table <- get_sum_table(dat,
                              pretty_names = site_names, 
                              group_var = "dwelling_permanent_structure",
                              factor_levels = c("yes", 
-                                               "no"), 
+                                               "no",
+                                               "missing"), 
                              factor_lab  = c("permanent structure", 
                                              "temporary settlement"),  
                              table_lab="Dwelling Type")
@@ -556,7 +559,8 @@ water_table <- get_sum_table(dat,
                                                "uncovered well/pond/river", 
                                                "water truck/rainwater harvest", 
                                                "other", 
-                                               "missing"),  
+                                               "missing",
+                                               "MISSING"),  
                              table_lab="Source(s) of Water", asterisk = TRUE)
 
 # Water treated
@@ -577,7 +581,8 @@ treat_method_table <-  get_sum_table(dat,
                                                        "add chlorine or bleach", 
                                                        "solar disinfection", 
                                                        "other",
-                                                       "N/A"),  
+                                                       "N/A",
+                                                       "MISSING"),  
                                      table_lab="How is Water Treated",
                                      asterisk = TRUE)
 
@@ -606,7 +611,8 @@ food_table <-  get_sum_table(dat,
                              factor_levels = c("yes, with covers", 
                                                "yes, without covers", 
                                                "no", 
-                                               "missing"),  
+                                               "missing",
+                                               "MISSING"),  
                              table_lab="Containers for Food Storage in Household",
                              asterisk = TRUE)
 
@@ -618,7 +624,7 @@ occ_total <- dat %>%
             `Number of Rooms in Dwelling (average)` = mean(rooms_in_dwelling, na.rm = TRUE),
             `Crowding Index (people per room)` = mean(crowding_index, na.rm = TRUE)) %>%
   gather() %>%
-  mutate(Aggregate = round(value, 1)) %>%
+  mutate(Aggregate = round(value, 1), na.rm = TRUE) %>%
   select(-value)
 
 occ_table <- dat %>%
@@ -632,7 +638,7 @@ occ_table <- dat %>%
   as.data.frame() %>%
   header_true() %>%
   as_tibble() %>%
-  mutate_if(is.factor, function(x)round(as.numeric(as.character(x)), 1)) %>%
+  mutate_if(is.factor, function(x)round(as.numeric(as.character(x)), 1), na.rm = TRUE) %>%
   left_join(occ_total, by = c("rowname"="key")) %>%
   mutate_if(is.numeric, as.character) %>%
   rename_at(site_names$old, function(x) site_names$new[site_names$old == x]) %>%
@@ -661,7 +667,8 @@ m_treat_table <- get_sum_table(dat,
                                                  "mobile clinic", 
                                                  "community health worker",
                                                  "traditional healer",
-                                                 "dispensary or pharmacy"),  
+                                                 "dispensary or pharmacy",
+                                                 "MISSING"),  
                                table_lab="Location of Treatment for Medical Problems",
                                asterisk = TRUE)
 
@@ -695,7 +702,8 @@ symp_year_table2 <- get_sum_table(dat,
                                                     "persistent rash or sores on skin",
                                                     "other",
                                                     "N/A",
-                                                    "missing"),
+                                                    "missing",
+                                                    "MISSING"),
                                   table_lab = "Specific Symptoms",
                                   asterisk = TRUE)
 
@@ -711,7 +719,8 @@ cause_table <- get_sum_table(dat,
                                                "wound or injury",
                                                "I don't know",
                                                "other",
-                                               "N/A"),
+                                               "N/A",
+                                               "MISSING"),
                              table_lab = "Perception of Cause of Sickness", 
                              asterisk = TRUE)
 
@@ -736,7 +745,8 @@ sym_other_table2 <- get_sum_table(dat,
                                                      "persistent rash or sores on skin",
                                                      "other",
                                                      "N/A",
-                                                     "missing"),
+                                                     "missing",
+                                                     "MISSING"),
                                   table_lab = "Other Person(s) Specific Symptoms", 
                                   asterisk = TRUE)
 
@@ -764,6 +774,7 @@ movement_table <- get_sum_table(dat,
                                 group_var = "travelled", 
                                 factor_levels = c("yes",
                                                   "no", 
+                                                  "missing",
                                                   "MISSING"),  
                                 table_lab="Travelled (past year)")
 
@@ -778,7 +789,8 @@ movement_table_2 <- get_sum_table(dat,
                                                     "go to hospital/seek medical care",
                                                     "go to market",
                                                     "other",
-                                                    "N/A"),
+                                                    "N/A",
+                                                    "MISSING"),
                                   table_lab = "Reasons for Travel",
                                   asterisk = TRUE)
 
@@ -831,7 +843,8 @@ risk_table <- get_sum_table(dat,
                             factor_levels = c("yes", 
                                               "no",
                                               "don't  know",
-                                              "other"),  
+                                              "other",
+                                              "missing"),  
                             table_lab = "Risks Associated when Slaughtering or Butchering with Open Wound")
 
 # Risk_open_wound2
@@ -843,7 +856,8 @@ risk_table2 <- get_sum_table(dat,
                                                "it can poison you", 
                                                "it can infect you with a disease", 
                                                "other",
-                                               "N/A"),
+                                               "N/A",
+                                               "missing"),
                              table_lab = "Specific Risks Associated when Slaughtering or Butchering with Open Wound",
                              asterisk = TRUE)
 
