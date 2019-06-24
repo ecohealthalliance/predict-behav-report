@@ -1,3 +1,4 @@
+library(rlang)
 library(eidith)
 library(arules)
 library(tidyverse)
