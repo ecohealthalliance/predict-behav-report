@@ -547,7 +547,8 @@ dwell_table <- get_sum_table(dat,
                                                "no",
                                                "missing"), 
                              factor_lab  = c("permanent structure", 
-                                             "temporary settlement"),  
+                                             "temporary settlement",
+                                             "missing"),  
                              table_lab="Dwelling Type")
 
 # Water source
