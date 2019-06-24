@@ -1,12 +1,13 @@
 #-------------------------------------------------------------
 # Load packages and functions
+devtools::install_deps(upgrade = "always")
 purrr::walk(list.files(here::here("R/"), full.names = TRUE),
             source, echo = FALSE, verbose = FALSE)
 set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 
-country <- "Bangladesh" # Name country here
+country <- "Indonesia" # Name country here
   ## Can only select ONE country
 illness_outcomes <- c("ili") # Select illness of interest here
   ## (`illness_names_clean` object (loaded in Environment tab) to see full list). 
