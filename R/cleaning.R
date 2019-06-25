@@ -52,6 +52,24 @@ get_behav <- function(country, download = FALSE){
     mutate_if(is.character, ~replace_na(., "N/A")) %>%
     mutate_at(.vars = vars(rooms_in_dwelling, people_in_dwelling, children_in_dwelling, males_in_dwelling,
                            site_latitude, site_longitude), .funs = ~suppressWarnings(as.numeric(.))) %>%
+    mutate(rodents = ifelse(str_detect(rodents_contact, ""), "rodents", NA),
+           bats = ifelse(str_detect(bats_contact, ""), "bats", NA),
+           nhp = ifelse(str_detect(nhp_contact, ""), "primates", NA),
+           swine = ifelse(str_detect(swine_contact, ""), "swine", NA),
+           poultry = ifelse(str_detect(poultry_contact, ""), "poultry", NA),
+           birds = ifelse(str_detect(birds_contact, ""), "birds", NA),
+           goats_sheep = ifelse(str_detect(goats_sheep_contact, ""), "goats/sheep", NA),
+           cats = ifelse(str_detect(cats_contact, ""), "cats", NA),
+           dogs = ifelse(str_detect(dogs_contact, ""), "dogs", NA),
+           camels = ifelse(str_detect(camels_contact, ""), "camels", NA),
+           carnivores = ifelse(str_detect(carnivores_contact, ""), "carnivores", NA),
+           pangolins = ifelse(str_detect(pangolins_contact, ""), "pangolins", NA),
+           ungulates = ifelse(str_detect(ungulates_contact, ""), "ungulates", NA),
+           cattle = ifelse(str_detect(cattle_contact, ""), "cattle", NA)) %>%
+    unite(contact_all, bats, birds, camels, carnivores, cats, cattle, dogs, goats_sheep,
+                                   nhp, pangolins, poultry, rodents, swine, ungulates, 
+          remove=TRUE, sep = "; ") %>%
+    mutate(contact_all = gsub('; NA|NA; ', '', contact_all))%>%
     mutate(drinking_water_shared = dplyr::recode(drinking_water_shared, "don't know" = "unknown"),
            bathing_water_shared = dplyr::recode(bathing_water_shared, "don't know" = "unknown"),
            had_symptoms_in_last_year = dplyr::recode(had_symptoms_in_last_year, "N/A" = "no"),
