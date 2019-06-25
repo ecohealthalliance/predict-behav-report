@@ -1,13 +1,13 @@
 #-------------------------------------------------------------
 # Load packages and functions
-devtools::install_deps(upgrade = "always")
+devtools::install_deps(upgrade = "always", quiet = TRUE)
 purrr::walk(list.files(here::here("R/"), full.names = TRUE),
             source, echo = FALSE, verbose = FALSE)
 set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 
-country <- "Indonesia" # Name country here
+country <- "Thailand" # Name country here
   ## Can only select ONE country
 illness_outcomes <- c("ili") # Select illness of interest here
   ## (`illness_names_clean` object (loaded in Environment tab) to see full list). 
@@ -16,7 +16,7 @@ heatmap_taxa_outcomes <- taxa_names # Select taxa contact of interest for heatma
   ## (`taxa_names` object (loaded in Environment tab) to see full list). 
   ## Does NOT accept NULL.
   ## Current condition (taxa_names) will include all taxa; <- c("bats", "rodents", "swine", "etc") will select specific taxa
-tabular_lasso_taxa_outcomes <- c("bats") # Select taxa contact of interest for lasso and tabular reports
+tabular_lasso_taxa_outcomes <- c("rodents") # Select taxa contact of interest for lasso and tabular reports
   ## (`taxa_names` object (loaded in environment) to see full list). 
   ## Accepts NULL.
 #------------------------------------------------------------
@@ -43,10 +43,14 @@ download_fresh <- FALSE
   ## Lasso should only be run once per outcome, or whenever there are changes to eidith (human) data
 
 run_lasso <- FALSE
+#-------------------------------------------------------------
+# Write csv files to use for reports
 
-# Check prevalence of outcomes --> see html output (country-outcome-prevalence) in outputs/reports folder
-  ## This only needs to be run once, unless there are changes to eidith (human) data
 source(h("scripts", "make-data.R"))
+#-------------------------------------------------------------
+# Check prevalence of outcomes --> see html output (country-outcome-prevalence) in outputs/reports folder
+## This only needs to be run once, unless there are changes to eidith (human) data
+
 rmarkdown::render(h("scripts/00-prevalence.Rmd"),
                   output_file = paste0(country, "-outcome-prevalence.html"),
                   output_dir = h("outputs", "reports"),
@@ -63,5 +67,6 @@ reports <- c("summary-report", "tabular-report", "site-maps", "heatmaps", "lasso
 #-------------------------------------------------------------
 # Run reports
   ## html reports can be found in outputs/reports folder
+
 source(h("scripts", "make-reports.R"))
 #-------------------------------------------------------------
