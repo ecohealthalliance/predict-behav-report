@@ -116,7 +116,8 @@ cat_plots <- map(outcomes, function(endpt){
            x="", y=paste("Binomial Probability of", unique(pdat$outcome))) +
       theme_classic() +
       theme(axis.text.x = element_text(angle = 60, hjust = 1),
-            legend.position = c("top"))
+            legend.position = c("top")) +
+      guides(col = guide_legend(nrow=2))
     
   })
 })
