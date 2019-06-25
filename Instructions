@@ -5,13 +5,13 @@ create a new report
 
 Step 1: Open user-inputs.R script from the predict-behav-report folder
 
-Step 2: Load packages needed to run reports: 
+Step 2: Load packages needed to run reports
     ## Highlight and run lines 3 through 6
 
 OPTIONAL step for Mac users (Window users can ignore):
 * This only needs to be done ONCE and is required in order to run the site-maps script
   1. Install brew:
-      In the Terminal, copy and paste the followoing line of code and press 'enter': 
+      In the Terminal, copy and paste the following line of code and press 'enter': 
       /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   2. Install gdal:
       In the Terminal, copy and paste the following line of code and press 'enter': 
@@ -60,22 +60,24 @@ Step 7: Run Lasso command: (NOT ALWAYS REQUIRED): line 45
 
     ## if run TRUE, the lasso will run for all selected illness_outcomes and tabular_lasso_taxa_outcomes 
     
-            ### Note 1: The lasso takes a long time to run (up to several hours in some cases); time to run is                increased  with more selected outcomes
+            ### Note 1: The lasso takes a long time to run (up to several hours in some cases); time to run is
+            increased  with more selected outcomes
             ### Note 2: Once the lasso has been run for a specific taxa or illness, it is saved in the outputs  
             folder and does not need to be run again
           
     ## if run FALSE, the lasso will not run (recommended)
     
-            ### Note 1: You can still view the lasso report if you select FALSE - you just need to make sure that
+            ### Note: You can still view the lasso report if you select FALSE - you just need to make sure that
             you have already run the lasso with your selected taxa and illness outcomes. This can be checked in
             the outputs/lasso-figs folder.
     
     
-*** WARNING: If the outcomes of interest (taxa or illness) have low or no positive responses (low prevalence), then the lasso will ultimately fail (i.e. you will receive an error message when you try to create the lasso report). Prior to running the lasso, check that the prevalence of each outcome you selected is at least 10%. You can check prevalence for all of the taxa and illness outcomes by highlighting and running lines 49-56.
+*** WARNING: If the outcomes of interest (taxa or illness) have low or no positive responses (low prevalence), then the lasso will ultimately fail (i.e. you will receive an error message when you try to create the lasso report). Prior to running the lasso, check that the prevalence of each outcome you selected is at least 10%. You can check prevalence for all of the taxa and illness outcomes by highlighting and running lines 49-60.
 
-Step 8: Create csv files to be used in the reports: Highlight and run line 49
+Step 8: Create csv files to be used in the reports
+    ## Highlight and run line 49
    
-   ## Note: ff you selected download_fresh <- TRUE (line 39), a new version of eidith will download
+        ## Note: if you selected download_fresh <- TRUE (line 39), a new version of eidith will download
    
             ### If this is your first time downloading EIDITH in R, you will be asked for your EIDITH_NAME
             and EIDTH_PASSWORD. These will only need to be entered once
@@ -93,14 +95,16 @@ Step 8: Create csv files to be used in the reports: Highlight and run line 49
     
             ### csv files can be found in the data folder
     
-Step 9: Select which reports you want to run: Highlight and run line 62
-
+Step 9: Select which reports you want to run
+    ## Highlight and run line 66
     ## Options include: "summary-report", "tabular-report". "site-maps", "heatmaps", "lasso"
   
-Step 10: Create selected reports: Highlight and run line 66
-        
+Step 10: Create selected reports: 
+    ## Highlight and run line 71
     ## All reports can be found in the outputs/reports folder
     ## All figures can be found in their associated folder within the outputs folder
+    
+    ## Note: if you selected run_lasso <- TRUE (line 45), the lasso will run at this time (and may take a long time)
   
   
 Additional Information  
@@ -108,176 +112,222 @@ Additional Information
 *** Every time the illness_outcomes, heatmap_taxa_outcomes, and/or tabular_lasso_taxa_outcomes are changed in the user-inputs.R script, new Tabular reports, Heatmap reports, and Lasso reports are generated in the outputs/reports folder. Unless you change the country of analysis, the Summary report and Sitemaps report will remain the same.
 
 
-APPENDIX
+
+APPENDIX: 
 
 I. Variable Names
-- this section provides the following information for some of the report variables:
-    1. variable name (the variable name used in the report outputs)
-    2. question name (the question as it appears in the human questionnaire)
-    3. response options (response options for each question as they appear in the human questionnaire)
-    4. any additional information about the variable (OPTIONAL)
+
+1. New variables (do not explicitly appear in the human questionnaire)
+
+Variable name: crowding index                             
+Definition: # of people in dwelling (including respondent) /# of rooms in dwelling (excluding bathroom and kitchen)
+Note: higher crowding index indicates a more crowded dwelling                   
+
+Variable name: 'taxa' contact-direct
+Includes the following contact tpyes: pets; handled; raised; cooked/handled; eaten raw/undercooked; eaten sick; 
+found dead/collected; scratched/bitten; hunted/trapped; slaughtered
+
+Variable name: 'taxa' contact-indirect
+Includes the following contact types: feces in or near food; in house
 
 
-crowding_index                             
-N/A (is not explicitly asked in the questionnaire)             
-# of people in dwelling (including respondent) /# of rooms in dwelling (excluding bathroom and kitchen)        a higher crowding index indicates a more crowded dwelling                   
+2. Questionnaire variables
 
-dedicated_location_for_waste
-In your dwelling is there a dedicated location for human sold waste/excreta?
-yes; no
+DEMOGRAPHICS
 
-water_used_by_animals
-Is your source for drinking water ever used by animals?
-yes; no
+Question: How many other people live in the dwelling where you live? (Q11)
+Summary report name: Number of People Living in Dwelling
+Definition: total number of individuals living in the dwelling, excluding the respondent
 
-treatment
-Where do you usually get treatment for medical problems? Select all that apply
-clinic/health center; hospital; mobile clinic; community health worker; traditional healer; dispensary or pharmacy
+Question: How many in the dwelling are children less than 5 years old? (Q12)
+Summary report name: Number of Children in Household
+Definition: total number of children under 5 in dwelling, including the respondent (if applicable)
 
+Question: How many in the dwelling are male? (Q13)
+Summary report name: Number of Males in Household
+Definition: total number of males in dwelling, including the respomdent (if applicable)
 
+Question: How many rooms are there in the dwelling where you live? (Q14)
+Summary report name: Numver of Rooms in Dwelling
+Definition: total number of rooms in dwelling, excluding kitchen and bathroom
 
-#Heatmaps
-(types of taxa contact within previous year; all responses are yes/no)
+Question: Is the dwelling a permanent structure (that cannot be moved)? (Q15)
+Summary/Tabular report name: Dwelling Type
+Lasso name: dwelling
+Response options: permanent structure; temporary settlement
 
-slaughtered
-Have you slaughtered an animal?
+Question: Do you treat your drinking water? (Q17)
+Summary/Tabular report name: Is Water Treated
+Lasso name: water treated
+Response options: yes; no
 
-hunted/trapped
-Have you hunted or trapped an animal?
+Question: Is your source fo drinking water ever used by animals? (Q19)
+Summary/Tabular report name: Drinking Water Source Used by Animals
+Lasso name: water used by animals
+Response options: yes; no
 
-scratched/bitten
-Have you been scratched or bitten by an animal?
-
-found dead/collected
-Have found a dead animal and collected it to sell, eat, and/or share?
-
-eaten sick
-Have you eaten an animal that you know was not well/sick?
-
-eaten raw/undercooked
-Have you eaten raw or undercooked mear or organs or blood?
-
-cooked/handled
-Have you cooked or handled meat, orgrans or blood from a recently killed animal?
-
-in house
-Do any animals come inside the dwelling where you live?
-
-feces in or near food
-Have you seen animal feces in or near food before you have eaten it?
-
-raised
-Have you raised live animals?
-
-handled
-Have you handled live animals?
-
-pets
-Has an animal lived as a pet in or near your dwelling?
+Question: In your dwelling is there a dedicated location for human waste? (Q20)
+Summary/Tabular report name: Dedicated Location for Human Waste in Dwelling
+Lasso name: dedicated location for waste
+Response options: yes; no
 
 
-#Tabular reports
+MEDICAL HISTORY
 
-pet_in_dwelling_last_year
-Has an animal lived as a pet in or near your dwelling?
-yes; no
-
-handle_animals_last_year
-Have you handled live animals?
-yes; no
-
-raised_animals_last_year
-Have you raised live animals?
-yes; no
-
-shared_water_last_year
-Have you shared a water source with animals for washing?
-yes; no; don't know
-don't know recoded as 'no'
-
-animal_feces_food_last_year
-Have you seen animal feces in or near food before you have eaten it?
-yes; no
-
-animals_in_food_year
-Have you eaten food after an animal has touched or damaged it?
-yes; no; don't know
-don't know recoded as 'no'
-
-animals_in_dwelling_last_year
-Do any animals come inside the dwelling where you live?
-yes; no
-
-cooked_meat_last_year
-Have you cooked or handled meat, orgrans or blood from a recently killed animal?
-yes; no
-
-eaten_raw_meat_last_year
-Have you eaten raw or undercooked mear or organs or blood?
-yes; no
-
-eaten_sick_animal_last_year
-Have you eaten an animal that you know was not well/sick?
-yes; no
-
-eaten_dead_animal_last_year
-Have found a dead animal and collected it to eat or share?
-yes; no
-
-sold_dead_animal_last_year
-Have you found a dead animal and collected it to sell it?
-yes; no
-
-scratched_bitten_last_year
-Have you been scratched or bitten by an animal?
-yes; no
-
-hunted_animal_last_year
-Have you hunted or trapped an animal?
-yes; no
-
-slaughtered_animal_last_year
-Have you slaughtered an animal?
-yes; no
-
---- Additional taxa contact variables:
-
-taxa_contact_any
-includes: pets; handled; raised; feces in or near food; in house; cooked/handled; eaten raw/undercooked; 
-eaten sick; found dead/collected; scratched/bitten; hunted/trapped; slaughtered
-
-taxa_contact_direct
-includes: pets; handled; raised; cooked/handled; eaten raw/undercooked; eaten sick; found dead/collected;
-scratched/bitten; hunted/trapped; slaughtered
-
-taxa_contact_indirect
-includes: feces in or near food; in house
-
--------
-
-scratched_bitten_action
-The last time you were scratched or bitten, or cut yourself while butchering or slaughtering, what did you do?
-treated; untreated; N/A
-'treated' includes: wash wound with soap and water; visit doctor
-'untreated' includes: let someone else take over; rinse wound with water; bandage wound; nothing - kept working
-'N/A' includes: N/A; never butcher or slaughter
+Question: Where do you usually get treatment for medical problems? Select all that apply (Q28)
+Summary report name: Location of Treatment for Medical Problems
+*Tabular report name: expanded out to analyze individual response options
+Lasso report name: treatment
+*Response options: clinic/health center; hospital; mobile clinic; community health worker; traditional healer;
+ dispenary or pharmacy
 
 
-risk_open_wound
-Are there any risks associated with slaughtering or butchering when you have an open wound
-yes; no
-'yes' includes: yes, but I don't know what they are; yes, it can make you sick; yes, it can poison you,
-yes, it can infect you with a disease'
-'no' includes: no; don't know; other
+MOVEMENT
+
+Question: Whey have you traveled? Select all that apply (Q38)
+*Tabular report name: expanded out to analyze individual response options
+Lasso report name: travelled
+*Response options: work; visit family; moved; religious reasons; holiday/vacation; go to hospital/seek medical care;
+ go to market; other
+Note: only refers to travel within previous year
 
 
-worried_about_disease
-Are you worried about diseases or disease outbreaks in live animals at your local market?
-yes; no
+TYPE OF ANIMAL CONTACT
+
+*The following contaxa contact questions only refer to contact within the previous year
+
+Question: Has an animal lived as a pet in or near your dwelling? (Q39)
+Tabular report name: Pet in Dwelling
+Heatmap/Lasso name: pets
+Response options: yes; no
+Type of contact: direct
+
+Question: Have you handled live animals? (Q40)
+Tabular report name: Handled Animals
+Heatmap/Lasso name: handled
+Response options: yes; no
+Type of contact: direct
+
+Question: Have you raised live animals? (Q41)
+Tabular report name: Raised Animals
+Heatmap/Lasso name: raised
+Response options: yes; no
+Type of contact: direct
+
+Question: Have you shared a water source with animals for washing? (Q43)
+Tabular report name: Shared Water for Washing
+Heatmap/Lasso name: N/A (is not an option)
+Response options: yes; no; don't know
+Type of contact: N/A
+
+Question: Have you seen animal feces in or near food before you have eaten it?? (Q43)
+Tabular report name: Animal Feces in/near Food
+Heatmap/Lasso name: feces in or near food
+Response options: yes; no
+Type of contact: indirect
+
+Question: Have you eaten food after an animal has touched or damaged it? (Q44)
+Tabular report name: Eaten Food Touched/Damaged by Animals
+Heatmap/Lasso name: N/A (is not an option)
+Response options: yes; no; don't know
+Type of contact: N/A
+
+Question: Do any animals come inside the dwelling where you live? (Q45)
+Tabular report name: Animals inside Dwelling
+Heatmap/Lasso name: in house
+Response options: yes; no
+Type of contact: indirect
+
+Question: Have you cooked or handled meat, organs or blood from a recently killed animal? (Q46)
+Tabular report name: Cooked/Handled Meat
+Heatmap/Lasso name: cooked/handled
+Response options: yes; no
+Type of contact: direct
+
+Question: Have you eaten raw or undercooked meat or organs or blood? (Q47)
+Tabular report name: Eaten Raw/Undercooked Meat
+Heatmap/Lasso name: eaten raw/undercooked
+Response options: yes; no
+Type of contact: direct
+
+Question: Have you eaten an animal that you know was not well/sick? (Q48)
+Tabular report name: Eaten Sick Animal
+Heatmap/Lasso name: eaten sick
+Response options: yes; no
+Type of contact: direct
+
+Question: Have yyou found a dead animal and collected it to eat or share? (Q49)
+Tabular report name: Found Dead Animal to Eat
+*Heatmap/Lasso name: found dead/collected (combined with Q50)
+Response options: yes; no
+Type of contact: direct
+
+Question: Have you found a dead animal and collected it to sell it? (Q50)
+Tabular report name: Found Dead Animal to Sell
+*Heatmap/Lasso name: found dead/collected (combined with Q49)
+Response options: yes; no
+Type of contact: direct
+
+Question: Have you been scratched or bitten by an animal? (Q51)
+Tabular report name: Scratched/Bitten
+Heatmap/Lasso name: scratched/bitten
+Response options: yes; no
+Type of contact: direct
+
+Question: Have you hunted or trapped an animal? (Q52)
+Tabular report name: Hunted/Trapped Animal
+Heatmap/Lasso name: hunted/trapped
+Response options: yes; no
+Type of contact: direct
+
+Question: Have you slaughtered an animal? (Q53)
+Tabular report name: Slaughtered Animal
+Heatmap/Lasso name: slaughtered
+Response options: yes; no
+Type of contact: direct
+
+
+KNOWLEDGE, ATTITUDE, & SKILLS
+
+Question: The last time you were scratched or bitten, or cut yourself while butchering or slaughtering, what did you do? (Q54)
+Summary/Tabular report name: Action Taken Last Time Scratched, Bitten or Cut While Butchering or Slaughtering
+Lasso name: scratched bitten
+Response options: treated; untreated; N/A (N/A only included in the summary report)
+    - 'treated' includes: wash wound with soap and water; visit doctor
+    - 'untreated' includes: let someone else take over; rinse wound with water; bandage wound; nothing - kept working
+    - 'N/A' includes: N/A; never butcher or slaughter
+
+Question: Are there risks associated with slaughtering or butchering with an open wound? (Q55)
+Summary/Tabular report name: Risks Associated when Slaughtering or Butchering with Open Wound
+Lasso name: risk open wound
+Response options: yes; no; don't know; other (don't know and other only included in summary report)
+    - 'yes' includes: yes, but I don't know what they are; yes, it can make you sick; yes, it can poison you; 
+    yes, it can infect you with a disease
+    - 'no' includes: no; don't know; other (Tabular report and Lasso only)
+
+Question: Are you worried about disease or disease outbreaks in live animals in your local market? (Q57)
+Summary/Tabular report name: Worried about Diseases in Live Animals in Market
+Lasso name: worried about disease
+Response options: yes; no
 
 
 
-*** TO DO:
-- can CI plots be similar sizes; the plots with long var names are very small (ex: occupation) (low)
-- Egypt (low)
+II. Report Interpretation
+
+1. Tabular Report:
+The tabular report 
+
+The confidence interval plots are a visual representation of the tabular report. When comparing the confidence interval plots, bars that do NOT overlap generally indicate significant differences between the levels of the predictor variable with regards to the outcome variable. Plots with overlapping bars do not necessarily imply that there is no significant variation between the levels of the predictor variable (especially if the bars overlap just slightly), but will require additional analyses (for example: a chi-square, fisher-exact test, or logistic regression). Bars with a very large range should be interpreted with caution, is they generally refer to variables with very low counts.
+
+Note: the specific occupations/livelihoods listed in the tabular report and confidence interval plots refers to any livelihood indicated within the previous year (see: Q24 in the human behavior questionnaire and/or 'Livelihood Activities (past year) All' in the Summary Report)
+
+
+2. Lasso Report:
+The lasso report shows which variables are positively (indicated by an orange dot) and inversely (indicated by a purple dot) associated with the outcome of interest. The lasso itself removes predictor variables that are highly correlated and ranks variables.
+
+In the plot, the 's' 
+
+The lasso is useful in identifying certain predictor variables that are associated with the outcome variable of interest. Additional analyses with these predictor variables is recommended.
+
+Note: the lasso report indicates 'occupation' as a predictor variable; occupation refers to any livelihood indicated within the previous year (see: Q24 in the human behavior questionnaire and/or 'Livelihood Activities (past year) All' in the Summary Report)
 
