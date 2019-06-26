@@ -106,7 +106,11 @@ get_behav <- function(country, download = FALSE){
            risk_open_wound = ifelse(str_detect(risk_open_wound, "yes"), "yes",
                                     ifelse(str_detect(risk_open_wound, "other"), "other",
                                            risk_open_wound)),
-           occupation = ifelse(str_detect(primary_livelihood, "[Oo]ther"), livelihood_groups_other, primary_livelihood),
+           livelihoods = map_chr(str_split(livelihoods, "; "), function(x) paste(unique(x), collapse = "; ")),
+           
+           primary_livelihood = ifelse(str_detect(primary_livelihood,"house|home"), "homemaker",
+                                       ifelse(str_detect(primary_livelihood, "[Oo]ther"), "other",
+                                              primary_livelihood)),
            people_in_dwelling = people_in_dwelling + 1,
            males_in_dwelling = ifelse(gender=="male", males_in_dwelling + 1, males_in_dwelling),
            rooms_in_dwelling_crowd = ifelse(rooms_in_dwelling == 0, 1, rooms_in_dwelling),
@@ -141,7 +145,7 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
            dwelling_permanent_structure,
            water_treated,
            water_used_by_animals,
-           occupation,
+           livelihoods,
            dedicated_location_for_waste,
            matches("education"),
            matches("last_year"),
@@ -156,7 +160,7 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
            -symptoms_in_last_year_other_people) %>%
     #mutate character vectors to factors where appropriate
     mutate_at(.vars = vars(gender,
-                           occupation,
+                           livelihoods,
                            length_lived,
                            highest_education,
                            highest_education_mother,
@@ -174,12 +178,12 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
               .funs = funs(
                 ifelse(str_detect(., '[Yy]es'), TRUE, FALSE))) %>%
     #expansion of factors to binary categorical outcomes
-    ed2_expand_wide(occupation) %>%
+    ed2_expand_wide(livelihoods) %>%
     ed2_expand_wide(length_lived) %>%
     ed2_expand_wide(travel_reason) %>%
     ed2_expand_wide(treatment) %>%
     #ed2_expand_wide(scratched_bitten_action) %>%
-    select(-occupation,
+    select(-livelihoods,
            -length_lived,
            -travel_reason,
            -treatment,
