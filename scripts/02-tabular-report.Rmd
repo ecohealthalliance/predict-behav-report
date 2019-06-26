@@ -16,13 +16,13 @@ purrr::walk(list.files(here::here("R/"), full.names = TRUE),
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 country <- params$country
-illness_outcomes <- params$illness
+illness_outcomes <- params$illness_outcomes
 taxa_contact_outcomes <- if(!is.null(params$taxa_outcomes)){ paste0(params$taxa_outcomes, "_contact") }
 outcomes <- c(illness_outcomes, taxa_contact_outcomes)
 
 # Read in data
-dat <- read_csv(h(paste0("data/tab-behav-", country, ".csv")), col_types = cols()) %>%
-  drop_na(age, crowding_index)
+dat <- read_csv(h(paste0("data/tab-behav-", country, ".csv")), col_types = cols())# %>%
+  #drop_na(age, crowding_index)
 
 # Get Site names
 site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")), col_types = cols())

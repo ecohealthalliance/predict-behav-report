@@ -5,7 +5,7 @@ if("summary-report" %in% reports){
                     output_file = paste0(country, "-behav-summary-report.html"),
                     output_dir = h("outputs", "reports"),
                     params = list(country = country),
-                    quiet = FALSE)
+                    quiet = FALSE, envir = new.env())
 }
 
 # Tabular Report
@@ -16,7 +16,7 @@ if("tabular-report" %in% reports){
                     params = list(country = country,
                                   illness_outcomes = illness_outcomes,
                                   taxa_outcomes = tabular_lasso_taxa_outcomes),
-                    quiet = FALSE)
+                    quiet = FALSE, envir = new.env())
 }
 
 # Site Maps
@@ -25,7 +25,7 @@ if("site-maps" %in% reports){
                     output_file = paste0(country, "-behav-site-maps.html"),
                     output_dir = h("outputs", "reports"),
                     params = list(country = country),
-                    quiet = FALSE)
+                    quiet = FALSE, envir = new.env())
 }
 
 # Heatmap 
@@ -35,7 +35,7 @@ if("heatmaps" %in% reports){
                     output_dir = h("outputs", "reports"),
                     params = list(country = country,
                                   taxa_outcomes = heatmap_taxa_outcomes),
-                    quiet = FALSE)
+                    quiet = FALSE, envir = new.env())
 }
 
 # Lasso
@@ -54,5 +54,5 @@ if("lasso" %in% reports){
                     params = list(country = country,
                                   illness_outcomes = illness_outcomes,
                                   taxa_outcomes = tabular_lasso_taxa_outcomes),
-                    quiet = FALSE)
+                    quiet = FALSE, envir = new.env())
 }

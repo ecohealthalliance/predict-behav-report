@@ -7,7 +7,7 @@ set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 
-country <- "Thailand" # Name country here
+country <- "Indonesia" # Name country here
   ## Can only select ONE country
 illness_outcomes <- c("ili") # Select illness of interest here
   ## (`illness_names_clean` object (loaded in Environment tab) to see full list). 
@@ -55,9 +55,9 @@ rmarkdown::render(h("scripts/00-prevalence.Rmd"),
                   output_file = paste0(country, "-outcome-prevalence.html"),
                   output_dir = h("outputs", "reports"),
                   params = list(country = country,
-                                prev_illness_outcomes = illness_names_clean,
-                                prev_taxa_outcomes  = taxa_names),
-                  quiet = FALSE)
+                                illness_outcomes = illness_names_clean,
+                                taxa_outcomes  = taxa_names),
+                  quiet = FALSE, envir = new.env())
   ## If prevalence is less than 10.0%, do NOT run the lasso for that particular outcome
 #-------------------------------------------------------------
 # Select reports to run

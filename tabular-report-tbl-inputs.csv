@@ -4,12 +4,12 @@ highest_education,none;primary school;secondary school;college/university/profes
 Respondent",both
 highest_education_mother,none;primary school;secondary school or higher,"Education (highest level completed)
 Mother",both
-occupation_crop_production,yes;no,Crop Production,both
-occupation_wild_exotic_animal_trade_market_business,yes;no,Wild/Exotic Animal Trade Business,both
-occupation_rancher_farmer_animal_production_business,yes;no,Rancher/Farmer Animal Production Business,both
-occupation_meat_processing_slaughterhouse_abattoir,yes;no,"Meat Processing, Slaughterhouse, Abattoir",both
-occupation_hunter_trapper_fisher,yes;no,Hunter/Trapper/Fisher,both
-occupation_homemaker,yes;no,Homemaker,both
+livelihoods_crop_production,yes;no,Crop Production,both
+livelihoods_wild_exotic_animal_trade_market_business,yes;no,Wild/Exotic Animal Trade Business,both
+livelihoods_rancher_farmer_animal_production_business,yes;no,Rancher/Farmer Animal Production Business,both
+livelihoods_meat_processing_slaughterhouse_abattoir,yes;no,"Meat Processing, Slaughterhouse, Abattoir",both
+livelihoods_hunter_trapper_fisher,yes;no,Hunter/Trapper/Fisher,both
+livelihoods_homemaker,yes;no,Homemaker,both
 dwelling_permanent_structure,yes;no,Dwelling Type,both
 water_treated,yes;no,Is Water Treated,both
 water_used_by_animals,yes;no,Drinking Water Source Used by Animals,both

@@ -1,8 +1,8 @@
 ---
 params:
   country: ""
-  prev_illness_outcomes: ""
-  prev_taxa_outcomes: ""
+  illness_outcomes: ""
+  taxa_outcomes: ""
 title: '<span style="color:red;">DRAFT</span> Outcome Prevalence: `r params$country`'
 date: "`r Sys.Date()`"
 output:
@@ -16,10 +16,10 @@ purrr::walk(list.files(here::here("R/"), full.names = TRUE),
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 country <- params$country
-prev_illness_outcomes <- params$prev_illness_outcomes
-prev_taxa_outcomes <- params$prev_taxa_outcomes
-prev_taxa_contact_outcomes <- if(!is.null(prev_taxa_outcomes)){ paste0(prev_taxa_outcomes, "_contact") }
-outcomes <- c(prev_illness_outcomes, prev_taxa_contact_outcomes)
+illness_outcomes <- params$illness_outcomes
+taxa_outcomes <- params$taxa_outcomes
+taxa_contact_outcomes <- if(!is.null(taxa_outcomes)){ paste0(taxa_outcomes, "_contact") }
+outcomes <- c(illness_outcomes, taxa_contact_outcomes)
 
 # Read in data
 dat <- read_csv( h(paste0("data/logic-behav-", country, ".csv")))
@@ -27,7 +27,7 @@ dat <- read_csv( h(paste0("data/logic-behav-", country, ".csv")))
 
 #### Taxa 
 ```{r prev-taxa-table}
-for(endpt in prev_taxa_outcomes){
+for(endpt in taxa_outcomes){
   dat <- dat %>%
     mutate(!!paste0(endpt, "_contact") := ifelse(!!sym(paste0("no_", endpt, "_contact")), FALSE, TRUE)) 
 }
@@ -35,7 +35,7 @@ for(endpt in prev_taxa_outcomes){
 n <- nrow(dat)
 suppressWarnings(
   dat %>%
-    select(one_of(prev_taxa_contact_outcomes)) %>%
+    select(one_of(taxa_contact_outcomes)) %>%
     gather(key = "outcome") %>%
     group_by(outcome) %>%
     summarize(`prevalence (%)`= round(sum((value)/n * 100), 1)) %>%
@@ -50,7 +50,7 @@ suppressWarnings(
 n <- nrow(dat)
 suppressWarnings(
   dat %>%
-    select(one_of(prev_illness_outcomes)) %>%
+    select(one_of(illness_outcomes)) %>%
     gather(key = "outcome") %>%
     group_by(outcome) %>%
     summarize(`prevalence (%)` = round(sum((value)/n * 100), 1)) %>%
