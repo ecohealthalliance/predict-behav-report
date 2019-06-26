@@ -50,9 +50,11 @@ get_behav <- function(country, download = FALSE){
   # recode 
   out <- out %>%
     mutate_if(is.character, ~replace_na(., "N/A")) %>%
+    mutate_if(suppressWarnings(str_detect(., ";")), ~map_chr(str_split(., "; "), function(x) paste(unique(x), collapse = "; "))) %>% #warning is empty quotes
     mutate_at(.vars = vars(rooms_in_dwelling, people_in_dwelling, children_in_dwelling, males_in_dwelling,
-                           site_latitude, site_longitude), .funs = ~suppressWarnings(as.numeric(.))) %>%
-    mutate(rodents = ifelse(str_detect(rodents_contact, ""), "rodents", NA),
+                           site_latitude, site_longitude, age), .funs = ~suppressWarnings(as.numeric(.))) %>%
+    mutate(age = floor(age),
+           rodents = ifelse(str_detect(rodents_contact, ""), "rodents", NA),
            bats = ifelse(str_detect(bats_contact, ""), "bats", NA),
            nhp = ifelse(str_detect(nhp_contact, ""), "primates", NA),
            swine = ifelse(str_detect(swine_contact, ""), "swine", NA),
@@ -67,7 +69,7 @@ get_behav <- function(country, download = FALSE){
            ungulates = ifelse(str_detect(ungulates_contact, ""), "ungulates", NA),
            cattle = ifelse(str_detect(cattle_contact, ""), "cattle", NA)) %>%
     unite(contact_all, bats, birds, camels, carnivores, cats, cattle, dogs, goats_sheep,
-                                   nhp, pangolins, poultry, rodents, swine, ungulates, 
+          nhp, pangolins, poultry, rodents, swine, ungulates, 
           remove=TRUE, sep = "; ") %>%
     mutate(contact_all = gsub('; NA|NA; ', '', contact_all))%>%
     mutate(drinking_water_shared = dplyr::recode(drinking_water_shared, "don't know" = "unknown"),
@@ -106,8 +108,6 @@ get_behav <- function(country, download = FALSE){
            risk_open_wound = ifelse(str_detect(risk_open_wound, "yes"), "yes",
                                     ifelse(str_detect(risk_open_wound, "other"), "other",
                                            risk_open_wound)),
-           livelihoods = map_chr(str_split(livelihoods, "; "), function(x) paste(unique(x), collapse = "; ")),
-           
            primary_livelihood = ifelse(str_detect(primary_livelihood,"house|home"), "homemaker",
                                        ifelse(str_detect(primary_livelihood, "[Oo]ther"), "other",
                                               primary_livelihood)),
@@ -169,10 +169,10 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
                            scratched_bitten_action),
               .funs = funs(factor)) %>%
     #mutate numeric vectors
-    mutate(crowding_index = as.numeric(crowding_index)) %>%
-    mutate(age = floor(as.numeric(age))) %>%
-    drop_na(age, crowding_index) %>%
-    mutate(children_in_dwelling = ifelse(is.na(children_in_dwelling)|children_in_dwelling==0, FALSE, TRUE)) %>%
+    mutate(children_in_dwelling = ifelse(all(is.na(children_in_dwelling)),
+                                         NA, 
+                                         ifelse(is.na(children_in_dwelling)|children_in_dwelling==0, 
+                                                FALSE, TRUE))) %>%
     #map yes to TRUE and all other responses to FALSE
     mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
               .funs = funs(
@@ -182,12 +182,10 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
     ed2_expand_wide(length_lived) %>%
     ed2_expand_wide(travel_reason) %>%
     ed2_expand_wide(treatment) %>%
-    #ed2_expand_wide(scratched_bitten_action) %>%
     select(-livelihoods,
            -length_lived,
            -travel_reason,
            -treatment,
-           #-scratched_bitten_action,
            -ends_with("n_a"))
   
   if(gender_logical){
