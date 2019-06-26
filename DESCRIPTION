@@ -29,6 +29,7 @@ Depends:
     scales,
     stringr,
     htmltools,
-    DT
+    DT,
+    rlang
 Remotes:
     ecohealthalliance/eidith
