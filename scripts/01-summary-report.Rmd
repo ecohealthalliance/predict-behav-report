@@ -834,19 +834,11 @@ act_table2 <- get_sum_table(dat,
                                               "visit doctor",  
                                               "nothing - kept working", 
                                               "never butcher or slaughter", 
-                                              "n/a"),
-                            factor_lab = c("let someone else take over", 
-                                           "wash wound with soap and water", 
-                                           "rinse wound with water", 
-                                           "bandage wound", 
-                                           "visit doctor",  
-                                           "nothing - kept working", 
-                                           "never butcher or slaughter", 
-                                           "N/A"),
+                                              "N/A"),
                             table_lab = "Specific Actions Taken Last Time Scratched, Bitten or Cut While Butchering or Slaughtering",
                             asterisk = TRUE)
 
-# isk_open_wound
+# risk_open_wound
 risk_table <- get_sum_table(dat, 
                             pretty_names = site_names, 
                             group_var = "risk_open_wound",
