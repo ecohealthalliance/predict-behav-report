@@ -262,8 +262,8 @@ They are as follows:
 49. Have you found a dead animal and collected it to eat or share?
 50. Have you found a dead animal and collected it to sell it?
 51. Have you been scratched or bitten by an animal?
-54. Have you slaughtered an animal?
-55. Have you hunted or trapped an animal?
+52. Have you hunted or trapped an animal?
+53. Have you slaughtered an animal?
 
 
 ```{r get-contact-dat}
