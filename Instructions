@@ -180,6 +180,7 @@ Summary report name: Livelihood Activities (past year) All
 Tabular report name: 'livelihood name' (see response options)
 Lasso report name: livelihood (with livelihood name - see response options)
 Response options: 
+      [primary grouping]
       - extraction of minerals, gas, oil timber
       - crop production
       - wildlife restaurant business
@@ -192,7 +193,8 @@ Response options:
       - migrant labor
       - nurse, doctor, traditional healer, community health worker
       - construction
-
+      
+      [secondary grouping]
       - animal health provider/veterinarian
       - student
       - non-animal business
@@ -203,7 +205,6 @@ Response options:
       - non-wildlife restaurant business
       - livestock/domestic animal/product trade
       
-
 Question: If more than one activity was selected, what is the activity on which you spend the most time since last year? Select one option (Q25)
 Summary report name: Livelihood Activities (past year) Primary
 Response options: 
@@ -219,7 +220,7 @@ Response options:
       - migrant labor
       - nurse, doctor, traditional healer, community health worker
       - construction
-      - other
+      - other (includes all livelihoods from secondary grouping in Q24)
 
 
 MEDICAL HISTORY
@@ -303,7 +304,7 @@ Type of contact: direct
 Question: Have you eaten an animal that you know was not well/sick? (Q48)
 Tabular report name: Eaten Sick Animal
 Heatmap/Lasso name: eaten sick
-Response options: yes; no
+Response options: yes; no; don't know
 Type of contact: direct
 
 Question: Have you found a dead animal and collected it to eat or share? (Q49)
