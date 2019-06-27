@@ -43,8 +43,10 @@ get_sum_table <- function(dat,
   table <- table %>%
     rename_at(pretty_names$old, function(x) paste(pretty_names$new[pretty_names$old == x])) %>%
     rename(` ` = !!sym(group_var)) %>%
-    select(" ", pretty_names$new)
+    #mutate(` ` = ifelse(is.na(` `), "--", ` `)) %>%
+    select(" ", pretty_names$new) 
   
+  suppressWarnings(table[apply(is.na(table), 1, any), ] <- "--")
   
   table_h <- table[1,] %>%
     mutate_all(function(x)"") %>%

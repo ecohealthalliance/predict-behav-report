@@ -471,7 +471,7 @@ liv_table_all <- get_sum_table(dat,
                                                  "child",
                                                  "other",
                                                  "missing",
-                                                 "MISSING"),
+                                                 "missing"),
                                table_lab="Livelihood Activities (past year)\nAll",
                                asterisk = TRUE)
 
@@ -570,7 +570,7 @@ water_table <- get_sum_table(dat,
                                                "water truck/rainwater harvest", 
                                                "other", 
                                                "missing",
-                                               "MISSING"),  
+                                               "missing"),  
                              table_lab="Source(s) of Water", asterisk = TRUE)
 
 # Water treated
@@ -592,7 +592,7 @@ treat_method_table <-  get_sum_table(dat,
                                                        "solar disinfection", 
                                                        "other",
                                                        "N/A",
-                                                       "MISSING"),  
+                                                       "missing"),  
                                      table_lab="How is Water Treated",
                                      asterisk = TRUE)
 
@@ -622,7 +622,7 @@ food_table <-  get_sum_table(dat,
                                                "yes, without covers", 
                                                "no", 
                                                "missing",
-                                               "MISSING"),  
+                                               "missing"),  
                              table_lab="Containers for Food Storage in Household",
                              asterisk = TRUE)
 
@@ -679,7 +679,7 @@ m_treat_table <- get_sum_table(dat,
                                                  "community health worker",
                                                  "traditional healer",
                                                  "dispensary or pharmacy",
-                                                 "MISSING"),  
+                                                 "missing"),  
                                table_lab="Location of Treatment for Medical Problems",
                                asterisk = TRUE)
 
@@ -715,7 +715,7 @@ symp_year_table2 <- get_sum_table(dat,
                                                     "other",
                                                     "N/A",
                                                     "missing",
-                                                    "MISSING"),
+                                                    "missing"),
                                   table_lab = "Specific Symptoms",
                                   asterisk = TRUE)
 
@@ -732,7 +732,7 @@ cause_table <- get_sum_table(dat,
                                                "I don't know",
                                                "other",
                                                "N/A",
-                                               "MISSING"),
+                                               "missing"),
                              table_lab = "Perception of Cause of Sickness", 
                              asterisk = TRUE)
 
@@ -758,7 +758,7 @@ sym_other_table2 <- get_sum_table(dat,
                                                      "other",
                                                      "N/A",
                                                      "missing",
-                                                     "MISSING"),
+                                                     "missing"),
                                   table_lab = "Other Person(s) Specific Symptoms", 
                                   asterisk = TRUE)
 
@@ -787,7 +787,7 @@ movement_table <- get_sum_table(dat,
                                 factor_levels = c("yes",
                                                   "no", 
                                                   "missing",
-                                                  "MISSING"),  
+                                                  "missing"),  
                                 table_lab="Travelled (past year)")
 
 movement_table_2 <- get_sum_table(dat,
@@ -802,7 +802,7 @@ movement_table_2 <- get_sum_table(dat,
                                                     "go to market",
                                                     "other",
                                                     "N/A",
-                                                    "MISSING"),
+                                                    "missing"),
                                   table_lab = "Reasons for Travel",
                                   asterisk = TRUE)
 
@@ -823,7 +823,7 @@ act_table <- get_sum_table(dat,
                            group_var = "scratched_bitten_action",
                            factor_levels = c("treated",
                                              "untreated",
-                                             "N/A"),
+                                             "N/A", "missing"),
                            table_lab = "Action Taken Last Time Scratched, Bitten or Cut While Butchering or Slaughtering")
 
 act_table2 <- get_sum_table(dat,
@@ -837,7 +837,7 @@ act_table2 <- get_sum_table(dat,
                                               "nothing - kept working", 
                                               "never butcher or slaughter", 
                                               "N/A", 
-                                              "MISSING"),
+                                              "missing"),
                             table_lab = "Specific Actions Taken Last Time Scratched, Bitten or Cut While Butchering or Slaughtering",
                             asterisk = TRUE)
 

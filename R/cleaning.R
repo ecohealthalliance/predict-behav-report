@@ -49,8 +49,9 @@ get_behav <- function(country, download = FALSE){
   
   # recode 
   out <- out %>%
-    mutate_if(is.character, ~replace_na(., "N/A")) %>%
+    #mutate_if(is.character, ~replace_na(., "N/A")) %>%
     mutate_if(suppressWarnings(str_detect(., ";")), ~map_chr(str_split(., "; "), function(x) paste(unique(x), collapse = "; "))) %>% #warning is empty quotes
+    mutate_all(~(str_replace(., "MISSING", "missing"))) %>%
     mutate_at(.vars = vars(rooms_in_dwelling, people_in_dwelling, children_in_dwelling, males_in_dwelling,
                            site_latitude, site_longitude, age), .funs = ~suppressWarnings(as.numeric(.))) %>%
     mutate(age = floor(age),
@@ -75,21 +76,20 @@ get_behav <- function(country, download = FALSE){
     mutate(drinking_water_shared = dplyr::recode(drinking_water_shared, "don't know" = "unknown"),
            bathing_water_shared = dplyr::recode(bathing_water_shared, "don't know" = "unknown"),
            had_symptoms_in_last_year = dplyr::recode(had_symptoms_in_last_year, "N/A" = "no"),
-           insect_vectors = str_replace_all(tolower(insect_vectors), c("sand fly" = "sand", 
-                                                                       "tsetse fly" = "tsetse", 
-                                                                       "housefly" = "other",
-                                                                       "house fly" = "other",
-                                                                       "fly" = "other",
-                                                                       "flies" = "other",
-                                                                       "cockroach" = "other",
-                                                                       "other, other" = "other")),
-           treatment_specific = str_replace_all(tolower(treatment), c("clinic/health center" = "clinic", 
-                                                                      "hospital" = "clinic", 
-                                                                      "community health worker" = "clinic",
-                                                                      "mobile clinic" = "clinic",
-                                                                      "dispensary or pharmacy" = "dispensary or pharmacy only",
-                                                                      "traditional healer" = "traditional healer only",
-                                                                      "MISSING" = "missing")),
+           insect_vectors = str_replace_all(insect_vectors, c("sand fly" = "sand", 
+                                                              "tsetse fly" = "tsetse", 
+                                                              "housefly" = "other",
+                                                              "house fly" = "other",
+                                                              "fly" = "other",
+                                                              "flies" = "other",
+                                                              "cockroach" = "other",
+                                                              "other, other" = "other")),
+           treatment_specific = str_replace_all(treatment, c("clinic/health center" = "clinic", 
+                                                             "hospital" = "clinic", 
+                                                             "community health worker" = "clinic",
+                                                             "mobile clinic" = "clinic",
+                                                             "dispensary or pharmacy" = "dispensary or pharmacy only",
+                                                             "traditional healer" = "traditional healer only")),
            treatment_specific = map_chr(str_split(treatment_specific, "; "), function(x){
              unique(x) %>%
                ifelse(length(.)==1, ., "multiple sources") %>%
@@ -98,8 +98,7 @@ get_behav <- function(country, download = FALSE){
            scratched_bitten_action = ifelse(str_detect(scratched_bitten_action, "visit|soap"),
                                             "treated", 
                                             ifelse(str_detect(scratched_bitten_action, "someone|bandage|rinse|nothing"),
-                                                   "untreated",
-                                                   "N/A")),
+                                                   "untreated", scratched_bitten_action)),
            risk_open_wound_specific = str_replace_all(risk_open_wound, c("yes, " = "",
                                                                          "but" = "there are risks, but",
                                                                          "^no$" = "N/A",
@@ -176,8 +175,9 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
     #map yes to TRUE and all other responses to FALSE
     mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
               .funs = funs(
-                recode(., "yes" = TRUE, "no" = FALSE, "missing" = NA, "MISSING" = NA, "N/A" = NA)
-               )) %>%
+                str_detect(., "yes")
+                #recode(., "yes" = TRUE, "no" = FALSE, "N/A" = FALSE, "missing" = NA, "MISSING" = NA)
+              )) %>%
     #expansion of factors to binary categorical outcomes
     ed2_expand_wide(livelihoods) %>%
     ed2_expand_wide(length_lived) %>%
@@ -186,8 +186,7 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
     select(-livelihoods,
            -length_lived,
            -travel_reason,
-           -treatment,
-           -ends_with("n_a"))
+           -treatment)
   
   if(gender_logical){
     covars <- covars %>%
@@ -206,8 +205,7 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
   if(scratch_logical){
     covars <- covars %>%
       ed2_expand_wide(scratched_bitten_action) %>%
-      select(-scratched_bitten_action,
-             -scratched_bitten_action_n_a)
+      select(-scratched_bitten_action)
   }
   
   if(concurrent_site_logical){
@@ -271,7 +269,9 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
     illness <- left_join(illness, illness_other, by = "participant_id")
   }
   
-  covars <- left_join(covars, illness, by = "participant_id") 
+  covars <- left_join(covars, illness, by = "participant_id") %>%
+    select(-ends_with("n_a"),
+           -ends_with("missing"))
   covars
 }
 
