@@ -299,22 +299,23 @@ get_outcomes <- function(dat, taxa_outcomes, illness_outcomes){
 # Discretize continuous variables
 discretize_continuous <- function(dat, age_breaks, age_labels, crowding_index_breaks, crowding_index_labels){
   
-  dat %>%
-    mutate(age_discrete = arules::discretize(age, method = "fixed",
-                                             breaks = age_breaks,
-                                             labels = age_labels),
-           crowding_index_discrete = arules::discretize(crowding_index, method = "fixed",
-                                                        breaks = crowding_index_breaks,
-                                                        labels = crowding_index_labels)) %>%
-    select(-age, -crowding_index) %>%
-    mutate(age_discrete = paste0("age_discrete_", age_discrete),
-           value_age_discrete = TRUE, 
-           crowding_index_discrete = paste0("crowding_index_discrete_", crowding_index_discrete),
-           value_crowding_index_discrete = TRUE) %>%
-    spread(age_discrete, value_age_discrete, fill = FALSE) %>%
-    spread(crowding_index_discrete, value_crowding_index_discrete, fill = FALSE) %>%
-    select(suppressWarnings(-one_of("age_discrete_NA", "crowding_index_discrete_NA")))
-  
+  suppressWarnings(
+    dat %>%
+      mutate(age_discrete = arules::discretize(age, method = "fixed",
+                                               breaks = age_breaks,
+                                               labels = age_labels),
+             crowding_index_discrete = arules::discretize(crowding_index, method = "fixed",
+                                                          breaks = crowding_index_breaks,
+                                                          labels = crowding_index_labels)) %>%
+      select(-age, -crowding_index) %>%
+      mutate(age_discrete = paste0("age_discrete_", age_discrete),
+             value_age_discrete = TRUE, 
+             crowding_index_discrete = paste0("crowding_index_discrete_", crowding_index_discrete),
+             value_crowding_index_discrete = TRUE) %>%
+      spread(age_discrete, value_age_discrete, fill = FALSE) %>%
+      spread(crowding_index_discrete, value_crowding_index_discrete, fill = FALSE) %>%
+      select(-one_of("age_discrete_NA", "crowding_index_discrete_NA"))
+  )
 }
 
 # Create analysis dataframe - reshape taxa and illness outcomes
