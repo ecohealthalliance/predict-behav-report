@@ -45,16 +45,16 @@ download_fresh <- FALSE
 run_lasso <- FALSE
 #-------------------------------------------------------------
 # Write csv files to use for reports
-
+country_mod <- str_replace(country, ", ", "-") 
 source(h("scripts", "make-data.R"))
 #-------------------------------------------------------------
 # Check prevalence of outcomes --> see html output (country-outcome-prevalence) in outputs/reports folder
 ## This only needs to be run once, unless there are changes to eidith (human) data
 
 rmarkdown::render(h("scripts/00-prevalence.Rmd"),
-                  output_file = paste0(country, "-outcome-prevalence.html"),
+                  output_file = paste0(country_mod, "-outcome-prevalence.html"),
                   output_dir = h("outputs", "reports"),
-                  params = list(country = country,
+                  params = list(country = country_mod,
                                 illness_outcomes = illness_names_clean,
                                 taxa_outcomes  = taxa_names),
                   quiet = FALSE, envir = new.env())
