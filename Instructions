@@ -369,7 +369,7 @@ II. Report Information and Interpretation
 
 The summary report provides counts, frequency percentages (for categorical variables) and averages/means (for numerical variables) of multiple site and respondent characteristics. 
 
-Note: Any categorical response labeled as "N/A", "missing", or "unknown" is included in the count and frequency percentages. A categorical variable without any response (i.e. NULL) is indicated by --. Numerical variables without any response (i.e. NULL) is excluded from the average/mean calculation.
+Note: Any categorical response labeled as "N/A", "missing", or "unknown" is included in the count and frequency percentages. A categorical variable without any responses (i.e. NULL) is indicated by --. Numerical variables without any responses (i.e. NULL) are also indicated by --. If there are only a few cells with blank numeric values, they will be excluded from the average/mean calculation.
 
 
 2. Tabular Report:
