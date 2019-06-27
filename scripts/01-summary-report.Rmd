@@ -632,28 +632,29 @@ occ_total <- dat %>%
             `Number of Males in Household (average)` = mean(males_in_dwelling, na.rm = TRUE),
             `Number of People Living in Dwelling (average)` = mean(people_in_dwelling, na.rm = TRUE),
             `Number of Rooms in Dwelling (average)` = mean(rooms_in_dwelling, na.rm = TRUE),
-            `Crowding Index (people per room)` = mean(crowding_index, na.rm = TRUE)) %>%
+            `Crowding Index (people per room; average)` = mean(crowding_index, na.rm = TRUE)) %>%
   gather() %>%
-  mutate(Aggregate = round(value, 1), na.rm = TRUE) %>%
+  mutate(Aggregate = ifelse(is.nan(value), "--", round(value, 1))) %>%
   select(-value)
 
 occ_table <- dat %>%
   group_by(concurrent_sampling_site) %>%
   summarize(`Number of People Living in Dwelling (average)` = mean(people_in_dwelling, na.rm = TRUE),
             `Number of Rooms in Dwelling (average)` = mean(rooms_in_dwelling, na.rm = TRUE),
-            `Crowding Index (people per room)` = mean(crowding_index, na.rm = TRUE),
+            `Crowding Index (people per room; average)` = mean(crowding_index, na.rm = TRUE),
             `Number of Children in Household (average)` = mean(children_in_dwelling, na.rm = TRUE),
             `Number of Males in Household (average)` = mean(males_in_dwelling, na.rm = TRUE)) %>%
   t() %>%
   as.data.frame() %>%
   header_true() %>%
   as_tibble() %>%
-  mutate_if(is.factor, function(x)round(as.numeric(as.character(x)), 1)) %>%
+  mutate_if(is.factor, function(x) round(as.numeric(as.character(x)), 1) %>% replace_na("--")) %>%
   left_join(occ_total, by = c("rowname"="key")) %>%
   mutate_if(is.numeric, as.character) %>%
   rename_at(site_names$old, function(x) site_names$new[site_names$old == x]) %>%
   rename(` ` = rowname) %>%
-  select(` `, site_names$new)
+  select(` `, site_names$new) 
+
 
 occ_table_h <- occ_table[1,] %>%
   mutate_all(function(x)"") %>%
@@ -688,7 +689,8 @@ m_treat_table_2 <- get_sum_table(dat,
                                  factor_levels = c("clinic, hospital, or community health worker only", 
                                                    "traditional healer only", 
                                                    "dispensary or pharmacy only",
-                                                   "multiple sources"),
+                                                   "multiple sources", 
+                                                   "missing"),
                                  table_lab="Specific Location of Treatment for Medical Problems")
 
 #had_symptoms_in_year
@@ -834,7 +836,8 @@ act_table2 <- get_sum_table(dat,
                                               "visit doctor",  
                                               "nothing - kept working", 
                                               "never butcher or slaughter", 
-                                              "N/A"),
+                                              "N/A", 
+                                              "MISSING"),
                             table_lab = "Specific Actions Taken Last Time Scratched, Bitten or Cut While Butchering or Slaughtering",
                             asterisk = TRUE)
 
@@ -846,7 +849,8 @@ risk_table <- get_sum_table(dat,
                                               "no",
                                               "don't  know",
                                               "other",
-                                              "missing"),  
+                                              "missing", 
+                                              "N/A" ),  
                             table_lab = "Risks Associated when Slaughtering or Butchering with Open Wound")
 
 # Risk_open_wound2
