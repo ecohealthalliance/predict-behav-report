@@ -363,9 +363,16 @@ Response options: yes; no
 
 
 
-II. Report Interpretation
+II. Report Information and Interpretation
 
-1. Tabular Report:
+1. Summary Report
+
+The summary report provides counts, frequency percentages (for categorical variables) and averages/means (for numerical variables) of multiple site and respondent characteristics. 
+
+Note: any "missing" response (from a categorical variable) si included in the total and frequency %. Any NA (i.e. missing) numerical variable (age; number of people living in dwelling; number of rooms in dwelling; crowding index; number of children in dwelling; number of men in dwelling) is not included in average (mean).
+
+
+2. Tabular Report:
 The tabular report consists of 4 sections:
     a. Categorical Tables
     b. Confidence Interval Plots
@@ -399,7 +406,7 @@ livelihood indicated within the previous year (see: Q24 in the human behavior qu
 Note 2: any categorical variables with "missing" responses are excluded, as are any numerical variables with NA (i.e. NULL) responses. 
 
 
-Sample report interpretations:
+Sample tabular report interpretations:
 outcome variable: bat contact
 categorical predictor: gender (male/female)
 numerical predictor: age
