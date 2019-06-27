@@ -393,10 +393,13 @@ c. The Numeric Tables provide 2 figures, parsed out by site and aggregated:
 
 d. The Median Plots are visual representations of the Numeric Tables. The interpretation of these plots is similar to the Confidence Interval Plots. 
 
-Note: the specific livelihoods listed in the Categorical Tables and Confidence Interval Plots refers to ANY 
+Note 1: the specific livelihoods listed in the Categorical Tables and Confidence Interval Plots refers to ANY 
 livelihood indicated within the previous year (see: Q24 in the human behavior questionnaire and/or 'Livelihood Activities (past year) All' in the Summary Report).
 
-Sample interpretations:
+Note 2: any categorical variables with "missing" responses are excluded, as are any numerical variables with NA (i.e. NULL) responses. 
+
+
+Sample report interpretations:
 outcome variable: bat contact
 categorical predictor: gender (male/female)
 numerical predictor: age
