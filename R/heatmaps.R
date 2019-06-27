@@ -71,7 +71,7 @@ get_heatmap <- function(dat,
   
   p <- ggplot(data = hdat, aes(x = taxa, y = contx, fill = perc, label = lab)) +
     geom_tile(color = 'gray') +
-    geom_label(fontface='bold', fill="white", size = 2) +
+    geom_label(fontface='bold', fill="white", size = 3) +
     scale_x_discrete(position = 'bottom') +
     scale_fill_viridis_c(guide = FALSE) +
     theme_fivethirtyeight() +
@@ -82,7 +82,7 @@ get_heatmap <- function(dat,
   labs(title = title, x="", y="")
 
   if(group_var != ""){
-    p <- p + facet_wrap(as.formula(paste("~", group_var)))
+    p <- p + facet_wrap(as.formula(paste("~", group_var)), ncol = 2)
   }
   p
 }
