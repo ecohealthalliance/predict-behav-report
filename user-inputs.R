@@ -7,7 +7,7 @@ set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 
-country <- "Indonesia" # Name country here
+country <- "Malaysia, Peninsular" # Name country here
   ## Can only select ONE country
 illness_outcomes <- c("ili") # Select illness of interest here
   ## (`illness_names_clean` object (loaded in Environment tab) to see full list). 
