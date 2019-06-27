@@ -130,6 +130,7 @@ get_comp_table_num <- function(dat,
                                dist = "percentile bootstrap", 
                                bars_only = FALSE){
   
+  if(all(is.na(dat %>% pull(!!group_var)))){return()}
   if(outcome_class == "contact"){outcome_var <- paste0(outcome_var, "_any")}
   outcome <- ifelse(outcome_var == "ili", "ILI", trimws(simple_cap(str_replace_all(outcome_var, "_|any", " "))))
   
@@ -137,8 +138,8 @@ get_comp_table_num <- function(dat,
   
   # Select data
   mdat <- dat %>%
-    select(participant_id, concurrent_sampling_site, !!group_var, !!outcome_var) %>%
-    select(-participant_id) %>% 
+    select(concurrent_sampling_site, !!group_var, !!outcome_var) %>%
+    drop_na(!!group_var) %>%
     gather(key = "outcome", value = "response", -concurrent_sampling_site, -!!group_var) %>%
     mutate(response = ifelse(response=="yes", !!outcome, paste("No", !!outcome))) 
   

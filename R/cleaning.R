@@ -27,7 +27,7 @@ get_behav <- function(country, download = FALSE){
     ed_db_download(verbose = TRUE, p1_tables = NULL, p2_tables = c("Event", "Human"), p1_data = FALSE)
   }
   
-  human <- eidith::ed2_human()
+  human <-  eidith::ed2_human()
   event <- eidith::ed2_events() %>% 
     filter(project == "P2") %>%
     select(event_name, concurrent_sampling_site, country, season,
@@ -176,7 +176,8 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
     #map yes to TRUE and all other responses to FALSE
     mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
               .funs = funs(
-                ifelse(str_detect(., '[Yy]es'), TRUE, FALSE))) %>%
+                recode(., "yes" = TRUE, "no" = FALSE, "missing" = NA, "MISSING" = NA, "N/A" = NA)
+               )) %>%
     #expansion of factors to binary categorical outcomes
     ed2_expand_wide(livelihoods) %>%
     ed2_expand_wide(length_lived) %>%
