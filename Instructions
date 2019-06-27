@@ -369,7 +369,7 @@ II. Report Information and Interpretation
 
 The summary report provides counts, frequency percentages (for categorical variables) and averages/means (for numerical variables) of multiple site and respondent characteristics. 
 
-Note: Any categorical response labeled as "N/A", "missing", or "unknown" is included in the count and frequency percentages. A categorical variable without any responses (i.e. NULL) is indicated by --. Numerical variables without any responses (i.e. NULL) are also indicated by --. If there are only a few cells with blank numeric values, they will be excluded from the average/mean calculation.
+*Note: Any categorical response entered as "N/A", "missing", or "unknown" is included in the count and frequency percentages. A categorical variable with all responses "missing" is indicated by --. Numerical variables without any responses (i.e. all responses are left blank/labeled NA) are also indicated by --. If there are only a few cells with blank/NA numeric values, the mean will still be calculated, but those blank values are dropped from the calculation.
 
 
 2. Tabular Report:
@@ -379,7 +379,13 @@ The tabular report consists of 4 sections:
     c. Numeric Tables
     d. Median Plots
 
-*It should be noted that variables in the Numeric Tables and Median Plots remain the same, regardless of the outcome variable. However, depending on the type of outcome variable (whether illness or taxa contact), the variables in the Categorical Tables and Confidence Interval Plots do change slightly.
+*Note 1: variables in the Numeric Tables and Median Plots remain the same, regardless of the outcome variable. However, depending on the type of outcome variable (whether illness or taxa contact), the variables in the 
+Categorical Tables and Confidence Interval Plots do change slightly.
+
+*Note 1: the specific livelihoods listed in the Categorical Tables and Confidence Interval Plots refers to ANY 
+livelihood indicated within the previous year (see: Q24 in the human behavior questionnaire and/or 'Livelihood Activities (past year) All' in the Summary Report).
+
+*Note 3: any categorical response entered as "N/A" will be counted as a "no" response (with the exception of Q54 - Action Taken Last Time Scratched, Bitten, or Cut while Butchering or Slaughtering; "N/A" responses are excluded from the anaylsis). Any categorical response entered as "missing" or is left blank will be excluded from the analysis. Any numeric response that is left blank will also be excluded from the analysis. 
 
 a. The Categorical Tables provide 3 figures, parsed out by site and aggregated: 
   - outcome variable count (x): "number of successes" (i.e. number of positive outcomes)
@@ -399,11 +405,6 @@ c. The Numeric Tables provide 2 figures, parsed out by site and aggregated:
           - 95% confidence interval: range with which we are 95% certain that the true population median occurs
 
 d. The Median Plots are visual representations of the Numeric Tables. The interpretation of these plots is similar to the Confidence Interval Plots. 
-
-Note 1: the specific livelihoods listed in the Categorical Tables and Confidence Interval Plots refers to ANY 
-livelihood indicated within the previous year (see: Q24 in the human behavior questionnaire and/or 'Livelihood Activities (past year) All' in the Summary Report).
-
-Note 2: any categorical variables with "missing" responses are excluded, as are any numerical variables with NA (i.e. NULL) responses. 
 
 
 Sample tabular report interpretations:
@@ -438,6 +439,10 @@ Note: the Median Plots would also show two bars that do overlap.
 
 2. Lasso Report:
 The lasso report shows which variables are positively (indicated by an orange dot; odds ratio greater than 1) and inversely (indicated by a purple dot; odds ratio less than 1) associated with the outcome variable of interest. The lasso itself removes predictor variables that are highly correlated and ranks variables based on the coefficients.
+
+*Note 1: only categorical predictor and outcome variables are included int the lasso. Age is divided into 4 groups (under 18; 18 to 40; 41 to 60; over 60) and crowding index is divided into 3 groups (less than 1; 1 to 3; over 3).
+
+*Note 2: unlike the tabular report, the lasso report considers any response that is "missing", "N/A" or "unknown" as a "no" response. 
 
 There are 2 coefficients presented in the lasso:
     - s: shrinkage term
