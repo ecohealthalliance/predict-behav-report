@@ -369,7 +369,7 @@ II. Report Information and Interpretation
 
 The summary report provides counts, frequency percentages (for categorical variables) and averages/means (for numerical variables) of multiple site and respondent characteristics. 
 
-Note: any "missing" response (from a categorical variable) si included in the total and frequency %. Any NA (i.e. missing) numerical variable (age; number of people living in dwelling; number of rooms in dwelling; crowding index; number of children in dwelling; number of men in dwelling) is not included in average (mean).
+Note: Any categorical response labeled as "N/A", "missing", or "unknown" is included in the count and frequency percentages. A categorical variable without any response (i.e. NULL) is indicated by --. Numerical variables without any response (i.e. NULL) is excluded from the average/mean calculation.
 
 
 2. Tabular Report:
