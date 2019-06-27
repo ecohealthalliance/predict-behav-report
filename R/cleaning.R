@@ -312,7 +312,8 @@ discretize_continuous <- function(dat, age_breaks, age_labels, crowding_index_br
            crowding_index_discrete = paste0("crowding_index_discrete_", crowding_index_discrete),
            value_crowding_index_discrete = TRUE) %>%
     spread(age_discrete, value_age_discrete, fill = FALSE) %>%
-    spread(crowding_index_discrete, value_crowding_index_discrete, fill = FALSE) 
+    spread(crowding_index_discrete, value_crowding_index_discrete, fill = FALSE) %>%
+    select(suppressWarnings(-one_of("age_discrete_NA", "crowding_index_discrete_NA")))
   
 }
 
