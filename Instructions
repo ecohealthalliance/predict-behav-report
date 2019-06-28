@@ -188,6 +188,7 @@ Response options:
       - rancher/farmer animal production business
       - meat processing, slaughterhouse, abattoir
       - zoo/sanctuary animal health care; protected area worker
+      - protected area worker
       - hunter/trapper/fisher
       - forager/gatherer/non-timber forest product collector
       - migrant labor
@@ -201,9 +202,11 @@ Response options:
       - homemaker
       - unemployed
       - military
-      - other
       - non-wildlife restaurant business
       - livestock/domestic animal/product trade
+      - child
+      - grocery (vegetables)
+      - other
       
 Question: If more than one activity was selected, what is the activity on which you spend the most time since last year? Select one option (Q25)
 Summary report name: Livelihood Activities (past year) Primary
