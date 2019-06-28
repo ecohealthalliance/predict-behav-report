@@ -180,6 +180,7 @@ Summary report name: Livelihood Activities (past year) All
 Tabular report name: 'livelihood name' (see response options)
 Lasso report name: livelihood (with livelihood name - see response options)
 Response options: 
+      [primary grouping]
       - extraction of minerals, gas, oil timber
       - crop production
       - wildlife restaurant business
@@ -187,23 +188,26 @@ Response options:
       - rancher/farmer animal production business
       - meat processing, slaughterhouse, abattoir
       - zoo/sanctuary animal health care; protected area worker
+      - protected area worker
       - hunter/trapper/fisher
       - forager/gatherer/non-timber forest product collector
       - migrant labor
       - nurse, doctor, traditional healer, community health worker
       - construction
-
+      
+      [secondary grouping]
       - animal health provider/veterinarian
       - student
       - non-animal business
       - homemaker
       - unemployed
       - military
-      - other
       - non-wildlife restaurant business
       - livestock/domestic animal/product trade
+      - child
+      - grocery (vegetables)
+      - other
       
-
 Question: If more than one activity was selected, what is the activity on which you spend the most time since last year? Select one option (Q25)
 Summary report name: Livelihood Activities (past year) Primary
 Response options: 
@@ -219,7 +223,7 @@ Response options:
       - migrant labor
       - nurse, doctor, traditional healer, community health worker
       - construction
-      - other
+      - other (includes all livelihoods from secondary grouping in Q24)
 
 
 MEDICAL HISTORY
@@ -303,7 +307,7 @@ Type of contact: direct
 Question: Have you eaten an animal that you know was not well/sick? (Q48)
 Tabular report name: Eaten Sick Animal
 Heatmap/Lasso name: eaten sick
-Response options: yes; no
+Response options: yes; no; don't know
 Type of contact: direct
 
 Question: Have you found a dead animal and collected it to eat or share? (Q49)
@@ -362,16 +366,29 @@ Response options: yes; no
 
 
 
-II. Report Interpretation
+II. Report Information and Interpretation
 
-1. Tabular Report:
+1. Summary Report
+
+The summary report provides counts, frequency percentages (for categorical variables) and averages/means (for numerical variables) of multiple site and respondent characteristics. 
+
+*Note: Any categorical response entered as "N/A", "missing", or "unknown" is included in the count and frequency percentages. A categorical variable with all responses "missing" is indicated by --. Numerical variables without any responses (i.e. all responses are left blank/labeled NA) are also indicated by --. If there are only a few cells with blank/NA numeric values, the mean will still be calculated, but those blank values are dropped from the calculation.
+
+
+2. Tabular Report:
 The tabular report consists of 4 sections:
     a. Categorical Tables
     b. Confidence Interval Plots
     c. Numeric Tables
     d. Median Plots
 
-*It should be noted that variables in the Numeric Tables and Median Plots remain the same, regardless of the outcome variable. However, depending on the type of outcome variable (whether illness or taxa contact), the variables in the Categorical Tables and Confidence Interval Plots do change slightly.
+*Note 1: variables in the Numeric Tables and Median Plots remain the same, regardless of the outcome variable. However, depending on the type of outcome variable (whether illness or taxa contact), the variables in the 
+Categorical Tables and Confidence Interval Plots do change slightly.
+
+*Note 1: the specific livelihoods listed in the Categorical Tables and Confidence Interval Plots refers to ANY 
+livelihood indicated within the previous year (see: Q24 in the human behavior questionnaire and/or 'Livelihood Activities (past year) All' in the Summary Report).
+
+*Note 3: any categorical response entered as "N/A" will be counted as a "no" response (with the exception of Q54 - Action Taken Last Time Scratched, Bitten, or Cut while Butchering or Slaughtering; "N/A" responses are excluded from the anaylsis). Any categorical response entered as "missing" or is left blank will be excluded from the analysis. Any numeric response that is left blank will also be excluded from the analysis. 
 
 a. The Categorical Tables provide 3 figures, parsed out by site and aggregated: 
   - outcome variable count (x): "number of successes" (i.e. number of positive outcomes)
@@ -392,10 +409,8 @@ c. The Numeric Tables provide 2 figures, parsed out by site and aggregated:
 
 d. The Median Plots are visual representations of the Numeric Tables. The interpretation of these plots is similar to the Confidence Interval Plots. 
 
-Note: the specific livelihoods listed in the Categorical Tables and Confidence Interval Plots refers to ANY 
-livelihood indicated within the previous year (see: Q24 in the human behavior questionnaire and/or 'Livelihood Activities (past year) All' in the Summary Report).
 
-Sample interpretations:
+Sample tabular report interpretations:
 outcome variable: bat contact
 categorical predictor: gender (male/female)
 numerical predictor: age
@@ -427,6 +442,10 @@ Note: the Median Plots would also show two bars that do overlap.
 
 2. Lasso Report:
 The lasso report shows which variables are positively (indicated by an orange dot; odds ratio greater than 1) and inversely (indicated by a purple dot; odds ratio less than 1) associated with the outcome variable of interest. The lasso itself removes predictor variables that are highly correlated and ranks variables based on the coefficients.
+
+*Note 1: only categorical predictor and outcome variables are included int the lasso. Age is divided into 4 groups (under 18; 18 to 40; 41 to 60; over 60) and crowding index is divided into 3 groups (less than 1; 1 to 3; over 3).
+
+*Note 2: unlike the tabular report, the lasso report considers any response that is "missing", "N/A" or "unknown" as a "no" response. 
 
 There are 2 coefficients presented in the lasso:
     - s: shrinkage term
