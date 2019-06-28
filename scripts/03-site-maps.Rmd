@@ -41,7 +41,7 @@ fdat <- dat %>%
 ```{r get-adm, include=FALSE}
 # Get administrative borders of countries of interest
 data(wrld_simpl)
-admin <- wrld_simpl[wrld_simpl@data$NAME %in% country, ]
+admin <- wrld_simpl[wrld_simpl@data$NAME %in% str_replace(country, "\\-.*", ""), ]
 ```
 
 ## Data Description 
@@ -104,6 +104,8 @@ quest %>%
 Click on study sites for the age and gender breakdown of questionnaire respondants. 
 ```{r get-age-dat}
 age <-  fdat %>%
+  mutate(gender = na_if(gender, "other")) %>%
+  drop_na(age, gender) %>%
   mutate( agebrack = cut(as.integer(age), breaks=c(0, 10, 20, 30, 40, 50, 60, 70, Inf),
                          labels = c("under 10", "10 - 19", "20 - 29", "30 - 39",
                                     "40 - 49", "50 - 59", "60 - 69", "70 +"), right = FALSE),
@@ -171,13 +173,13 @@ Hover over sites for proportions and total numbers of respondents who responded 
 
 # Proportions of people who have hunted in the last year and ever by site
 hunt <- fdat %>%
+  mutate_at(.vars = c("hunted_animal_life", "hunted_animal_last_year"),
+            ~recode(., "yes" = 1, "no" = 0, "missing" = NA_real_, "N/A" = 0)) %>%
   group_by(country, full_site_name, site_longitude, site_latitude, n) %>%
-  mutate(hunted_animal_life = ifelse(hunted_animal_life == "yes", 1, 0)) %>%
-  mutate(hunted_animal_last_year = ifelse(hunted_animal_last_year == "yes", 1, 0)) %>%
-  summarize(life = sum(hunted_animal_life),
-            year = sum(hunted_animal_last_year),
-            life_prop = sum(hunted_animal_life)/n(),
-            year_prop = sum(hunted_animal_last_year)/n()) %>%
+  summarize(life = sum(hunted_animal_life, na.rm = T),
+            year = sum(hunted_animal_last_year, na.rm = T),
+            life_prop = sum(hunted_animal_life, na.rm = T)/n(),
+            year_prop = sum(hunted_animal_last_year, na.rm = T)/n()) %>%
   mutate(life_perc = scales::percent(life_prop),
          year_perc = scales::percent(year_prop)) %>%
   mutate(lifelab = paste0(full_site_name, ": ", life_perc, " (", life, "/", n, " respondents)"),
@@ -309,6 +311,7 @@ contact <- fdat %>%
   mutate(last_year = ifelse(life == "don't know", "don't know", last_year),  #if life is unknown, so is last_year
          last_year = ifelse(last_year == "N/A", "no", last_year),
          last_year = na_if(last_year, "don't know"),
+         last_year = na_if(last_year, "missing"),
          last_year = recode(last_year, "yes" = 1, "no" = 0)) %>%
   group_by(country, full_site_name, site_name, variable, site_latitude, site_longitude, n) %>%
   summarise(last_year = sum(last_year, na.rm = TRUE),
@@ -343,10 +346,10 @@ iwalk(contact_split, function(x, y){
     theme(text = element_text(size = 40), 
           axis.text.y = element_text(size = 55),
           axis.text.x = element_blank(),
-     plot.title = element_text(hjust=1),
-     plot.subtitle = element_text(hjust=-3)) +
+          plot.title = element_text(hjust=1),
+          plot.subtitle = element_text(hjust=-3)) +
     guides(fill = F) 
-
+  
   
   ggsave(filename = path, plot = p, width = 45, height = 20 )
 })
@@ -402,15 +405,15 @@ taxa$split <- paste(taxa$full_site_name, taxa$taxa, sep = " - ")
 taxa_split <- split(taxa, taxa$split)
 
 iwalk(taxa_split, function(x, y){
-
+  
   tx <- unique(x$taxa)
   fs <- unique(x$full_site_name)
-
+  
   title <- paste0("Contact with ", tx , " in \n", fs)
   cap <- paste0("Based on questionnaire responses from ", unique(x$n), " individuals")
   path <- unique(x$taxa_pngpath)
-
-
+  
+  
   ggplot(x, aes(x = reorder(contact_type, prop), y = prop,
                 fill = reorder(contact_type, prop))) +
     geom_col() +
@@ -423,7 +426,7 @@ iwalk(taxa_split, function(x, y){
     geom_text(aes(label = scales::percent(prop)), size = 3, hjust = -0.25) +
     guides(fill = F)
   ggsave(filename = path, width = 7, height = 5)
-
+  
 })
 ```
 
