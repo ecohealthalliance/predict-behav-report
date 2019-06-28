@@ -98,7 +98,9 @@ get_behav <- function(country, download = FALSE){
            scratched_bitten_action = ifelse(str_detect(scratched_bitten_action, "visit|soap"),
                                             "treated", 
                                             ifelse(str_detect(scratched_bitten_action, "someone|bandage|rinse|nothing"),
-                                                   "untreated", scratched_bitten_action)),
+                                                   "untreated", 
+                                                   ifelse(str_detect(scratched_bitten_action, "missing"),
+                                                          "missing", "N/A"))),
            risk_open_wound_specific = str_replace_all(risk_open_wound, c("yes, " = "",
                                                                          "but" = "there are risks, but",
                                                                          "^no$" = "N/A",
@@ -130,7 +132,8 @@ illness_names_clean <-  make_clean_names(illness_names)
 
 # Create analysis dataframe with logical values for all categorical data
 get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_logical = TRUE, edu_logical = TRUE, 
-                        scratch_logical = TRUE, concurrent_site_logical = TRUE, include_symp_other_ppl = FALSE) { # input is output of get_behav
+                        scratch_logical = TRUE, concurrent_site_logical = TRUE, include_symp_other_ppl = FALSE,
+                        missing_as_true = TRUE) { # input is output of get_behav
   
   # select and widen covariate data
   covars <- dat %>%
@@ -172,12 +175,6 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
                                          NA, 
                                          ifelse(is.na(children_in_dwelling)|children_in_dwelling==0, 
                                                 FALSE, TRUE))) %>%
-    #map yes to TRUE and all other responses to FALSE
-    mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
-              .funs = funs(
-                str_detect(., "yes")
-                #recode(., "yes" = TRUE, "no" = FALSE, "N/A" = FALSE, "missing" = NA, "MISSING" = NA)
-              )) %>%
     #expansion of factors to binary categorical outcomes
     ed2_expand_wide(livelihoods) %>%
     ed2_expand_wide(length_lived) %>%
@@ -187,6 +184,21 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
            -length_lived,
            -travel_reason,
            -treatment)
+  
+  if(missing_as_true){
+    #map yes to TRUE and all other responses to FALSE
+    covars <- covars %>%
+      mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
+                .funs = funs(
+                  str_detect(., "yes")
+                )) 
+  }else{
+    covars <- covars %>%
+      mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
+                .funs = funs(
+                  recode(., "N/A" = "no", "missing" = NA_character_)
+                )) 
+  }
   
   if(gender_logical){
     covars <- covars %>%
@@ -322,7 +334,7 @@ discretize_continuous <- function(dat, age_breaks, age_labels, crowding_index_br
 # Create analysis dataframe - reshape taxa and illness outcomes
 get_tab <- function(dat) { # input is output of get_behav
   
-  tabs <- get_logical(dat, exclude_last_yr = FALSE, add_contact = FALSE, gender_logical = FALSE, edu_logical = FALSE, scratch_logical = FALSE, concurrent_site_logical = FALSE, include_symp_other_ppl = TRUE) %>%
+  tabs <- get_logical(dat, exclude_last_yr = FALSE, add_contact = FALSE, gender_logical = FALSE, edu_logical = FALSE, scratch_logical = FALSE, concurrent_site_logical = FALSE, include_symp_other_ppl = TRUE, missing_as_true = FALSE) %>%
     mutate_if(is.logical, ~ifelse(.x == TRUE, "yes", "no")) %>%
     mutate(gender = na_if(gender, "other")) %>%
     mutate_at(.vars = c("highest_education_mother"), 
