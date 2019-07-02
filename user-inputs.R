@@ -1,15 +1,19 @@
 #-------------------------------------------------------------
 # Load packages and functions
 devtools::install_deps(upgrade = "always", quiet = TRUE)
+
+# Update packages?
+"yes"
+
 purrr::walk(list.files(here::here("R/"), full.names = TRUE),
             source, echo = FALSE, verbose = FALSE)
 set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 
-country <- "Malaysia, Peninsular" # Name country here
+country <- "Cameroon" # Name country here
   ## Can only select ONE country
-illness_outcomes <- c("ili") # Select illness of interest here
+illness_outcomes <- c("encephalitis") # Select illness of interest here
   ## (`illness_names_clean` object (loaded in Environment tab) to see full list). 
   ## Accepts NULL.
 heatmap_taxa_outcomes <- taxa_names # Select taxa contact of interest for heatmaps 
@@ -63,7 +67,7 @@ rmarkdown::render(h("scripts/00-prevalence.Rmd"),
 # Select reports to run
   ## Options are: "summary-report", "tabular-report", "site-maps", "heatmaps", "lasso"
 
-reports <- c("summary-report", "tabular-report", "site-maps", "heatmaps", "lasso")
+reports <- c("summary-report", "tabular-report", "site-maps", "heatmaps")
 #-------------------------------------------------------------
 # Run reports
   ## html reports can be found in outputs/reports folder
