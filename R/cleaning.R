@@ -194,13 +194,13 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
            -travel_reason,
            -treatment)
   
-    #map yes to TRUE and all other responses to FALSE (including missing)
-    covars <- covars %>%
-      mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
-                .funs = funs(
-                  str_detect(., "yes")
-                )) 
-
+  #map yes to TRUE and all other responses to FALSE (including missing)
+  covars <- covars %>%
+    mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
+              .funs = funs(
+                str_detect(., "yes")
+              )) 
+  
   if(gender_logical){
     covars <- covars %>%
       ed2_expand_wide(gender) %>%
@@ -376,22 +376,26 @@ get_tab <- function(dat) { # input is output of get_behav
         mutate_if(is.logical, ~ifelse(.x == TRUE, "yes", "no"))
       
       if(var == "symptoms_in_last_year"){
-        ew <- ew %>%
-          select(participant_id,
-                 one_of( "symptoms_in_last_year_fever_with_muscle_aches_cough_or_sore_throat_ili",
-                         "symptoms_in_last_year_fever_with_cough_and_shortness_of_breath_or_difficulty_breathing_sari",
-                         "symptoms_in_last_year_fever_with_headache_and_severe_fatigue_or_weakness_encephalitis",
-                         "symptoms_in_last_year_fever_with_bleeding_or_bruising_not_related_to_injury_hemorrhagic_fever")) %>%
-          rename_at(vars(-participant_id), ~str_extract(., paste(illness_names_clean, collapse="|")))
+        suppressWarnings(
+          ew <- ew %>%
+            select(participant_id,
+                   one_of( "symptoms_in_last_year_fever_with_muscle_aches_cough_or_sore_throat_ili",
+                           "symptoms_in_last_year_fever_with_cough_and_shortness_of_breath_or_difficulty_breathing_sari",
+                           "symptoms_in_last_year_fever_with_headache_and_severe_fatigue_or_weakness_encephalitis",
+                           "symptoms_in_last_year_fever_with_bleeding_or_bruising_not_related_to_injury_hemorrhagic_fever")) %>%
+            rename_at(vars(-participant_id), ~str_extract(., paste(illness_names_clean, collapse="|")))
+        )
       }
       if(var == "symptoms_in_last_year_other_people"){
-        ew <- ew %>%
-          select(participant_id,
-                 one_of("symptoms_in_last_year_other_people_fever_with_muscle_aches_cough_or_sore_throat_ili"),
-                 one_of("symptoms_in_last_year_other_people_fever_with_cough_and_shortness_of_breath_or_difficulty_breathing_sari"),
-                 one_of("symptoms_in_last_year_other_people_fever_with_headache_and_severe_fatigue_or_weakness_encephalitis"),
-                 one_of("symptoms_in_last_year_other_people_fever_with_bleeding_or_bruising_not_related_to_injury_hemorrhagic_fever")) %>%
-          rename_at(vars(-participant_id), ~paste0("other_people_", str_extract(., paste(illness_names_clean, collapse="|"))))
+        suppressWarnings(
+          ew <- ew %>%
+            select(participant_id,
+                   one_of("symptoms_in_last_year_other_people_fever_with_muscle_aches_cough_or_sore_throat_ili"),
+                   one_of("symptoms_in_last_year_other_people_fever_with_cough_and_shortness_of_breath_or_difficulty_breathing_sari"),
+                   one_of("symptoms_in_last_year_other_people_fever_with_headache_and_severe_fatigue_or_weakness_encephalitis"),
+                   one_of("symptoms_in_last_year_other_people_fever_with_bleeding_or_bruising_not_related_to_injury_hemorrhagic_fever")) %>%
+            rename_at(vars(-participant_id), ~paste0("other_people_", str_extract(., paste(illness_names_clean, collapse="|"))))
+        )
       }
       tabs <- left_join(tabs, ew,  by = "participant_id")
     }
