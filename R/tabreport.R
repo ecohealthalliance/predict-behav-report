@@ -53,13 +53,13 @@ get_comp_table <- function(dat,
   outcome <- ifelse(outcome_var == "ili", "ILI", trimws(simple_cap(str_replace_all(outcome_var, "_|any", " "))))
   
   # Select data
-  mdat <- eidith::ed2_expand_long(dat, !!sym(group_var), other_details = TRUE) %>%
-    select(participant_id, concurrent_sampling_site, !!paste0(group_var, "_val"), !!outcome_var) %>%
-    rename(!!group_var := !!paste0(group_var, "_val")) %>%
-    select(-participant_id) %>% 
-    gather(key = "outcome", value = "response", -concurrent_sampling_site, -!!group_var) %>%
-    mutate(response = ifelse(response=="yes", 1, 0),
-           outcome = gsub("_any", "", outcome)) 
+  mdat <- dat %>%
+    select(concurrent_sampling_site, !!group_var, !!outcome_var) %>%
+    drop_na(!!group_var, !!outcome_var) %>%
+    mutate(response = ifelse(!!sym(outcome_var)=="yes", 1, 0))  %>%
+    select(-outcome_var)
+  
+  if(nrow(mdat)==0){return()}
   
   # Summarize data by site
   sdat <- mdat %>%
@@ -139,7 +139,7 @@ get_comp_table_num <- function(dat,
   # Select data
   mdat <- dat %>%
     select(concurrent_sampling_site, !!group_var, !!outcome_var) %>%
-    drop_na(!!group_var) %>%
+    drop_na(!!group_var, !!outcome_var) %>%
     gather(key = "outcome", value = "response", -concurrent_sampling_site, -!!group_var) %>%
     mutate(response = ifelse(response=="yes", !!outcome, paste("No", !!outcome))) 
   
