@@ -40,8 +40,12 @@ fdat <- dat %>%
 
 ```{r get-adm, include=FALSE}
 # Get administrative borders of countries of interest
+country_wrld <- str_replace(country, "\\-.*", "")
+country_wrld <- str_replace(country, "DR", "Democratic Republic of the")
+
 data(wrld_simpl)
-admin <- wrld_simpl[wrld_simpl@data$NAME %in% str_replace(country, "\\-.*", ""), ]
+admin <- wrld_simpl[wrld_simpl@data$NAME %in% country_wrld, ]
+
 ```
 
 ## Data Description 
@@ -63,7 +67,7 @@ quest <- fdat %>%
   unique()
 
 # Set color palette 
-bins <- seq(min(quest$n), max(quest$n), length.out = 7) %>% round()
+bins <- seq(min(quest$n), max(quest$n), length.out = 7) %>% round() %>% unique()
 pal <- leaflet::colorBin(palette = RColorBrewer::brewer.pal(9, "Reds")[3:9], domain = quest$n, 
                          na.color = "transparent", bins = bins)
 # Map 
@@ -213,7 +217,7 @@ leaflet(hunt) %>%
     group = "Ever Hunted",
     label = ~lifelab) %>%
   addCircleMarkers(
-    lng = ~site_latitude, lat = ~site_latitude, color = "#000000", weight = 1, opacity = 100,
+    lng = ~site_longitude, lat = ~site_latitude, color = "#000000", weight = 1, opacity = 100,
     radius = ~log(year)*3,
     fillColor = ~pal_year(year_prop), fillOpacity = 0.8,
     #clusterOptions = markerClusterOptions(),
