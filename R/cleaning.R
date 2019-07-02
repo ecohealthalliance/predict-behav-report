@@ -49,13 +49,14 @@ get_behav <- function(country, download = FALSE){
   
   # recode 
   out <- out %>%
-    #mutate_if(is.character, ~replace_na(., "N/A")) %>%
-    mutate_if(suppressWarnings(str_detect(., ";")), ~map_chr(str_split(., "; "), function(x) paste(unique(x), collapse = "; "))) %>% #warning is empty quotes
-    mutate_all(~(str_replace(., "MISSING", "missing"))) %>%
+    mutate_if(suppressWarnings(str_detect(., ";")), ~map_chr(str_split(., "; "), function(x) paste(unique(x), collapse = "; "))) %>% # removes dup responses (warning is empty quotes)
+    mutate_all(~(str_replace(., "MISSING", "missing"))) %>% # keep all "missing" lowercase
+    mutate_all(~(str_replace(., "NA", "N/A"))) %>% # replace all entered NAs (ie not missing or empty)
     mutate_at(.vars = vars(rooms_in_dwelling, people_in_dwelling, children_in_dwelling, males_in_dwelling,
-                           site_latitude, site_longitude, age), .funs = ~suppressWarnings(as.numeric(.))) %>%
-    mutate(age = floor(age),
-           rodents = ifelse(str_detect(rodents_contact, ""), "rodents", NA),
+                           site_latitude, site_longitude, age), .funs = ~suppressWarnings(as.numeric(.))) %>% # make numeric values (warning is NAs introduced -- ok)
+    mutate(age = floor(age), # round down age
+           # get whether or not exposed to taxa
+           rodents = ifelse(str_detect(rodents_contact, ""), "rodents", NA), 
            bats = ifelse(str_detect(bats_contact, ""), "bats", NA),
            nhp = ifelse(str_detect(nhp_contact, ""), "primates", NA),
            swine = ifelse(str_detect(swine_contact, ""), "swine", NA),
@@ -72,10 +73,12 @@ get_behav <- function(country, download = FALSE){
     unite(contact_all, bats, birds, camels, carnivores, cats, cattle, dogs, goats_sheep,
           nhp, pangolins, poultry, rodents, swine, ungulates, 
           remove=TRUE, sep = "; ") %>%
-    mutate(contact_all = gsub('; NA|NA; ', '', contact_all))%>%
+    mutate(contact_all = gsub('; NA|NA; ', '', contact_all)) %>%
+    # misc recode
     mutate(drinking_water_shared = dplyr::recode(drinking_water_shared, "don't know" = "unknown"),
            bathing_water_shared = dplyr::recode(bathing_water_shared, "don't know" = "unknown"),
            had_symptoms_in_last_year = dplyr::recode(had_symptoms_in_last_year, "N/A" = "no"),
+           # classify insect vectors
            insect_vectors = str_replace_all(insect_vectors, c("sand fly" = "sand", 
                                                               "tsetse fly" = "tsetse", 
                                                               "housefly" = "other",
@@ -84,6 +87,7 @@ get_behav <- function(country, download = FALSE){
                                                               "flies" = "other",
                                                               "cockroach" = "other",
                                                               "other, other" = "other")),
+           # classify treatment types (clinic, hospital, or community health worker only, dispensary or pharmacy only, traditional healer only, multiple)
            treatment_specific = str_replace_all(treatment, c("clinic/health center" = "clinic", 
                                                              "hospital" = "clinic", 
                                                              "community health worker" = "clinic",
@@ -94,6 +98,7 @@ get_behav <- function(country, download = FALSE){
              unique(x) %>%
                ifelse(length(.)==1, ., "multiple sources") %>%
                dplyr::recode(., "clinic" = "clinic, hospital, or community health worker only")}),
+           # classify scratched/bitten action (treated/untreated/N/A)
            scratched_bitten_action_specific = scratched_bitten_action, 
            scratched_bitten_action = ifelse(str_detect(scratched_bitten_action, "visit|soap"),
                                             "treated", 
@@ -101,17 +106,22 @@ get_behav <- function(country, download = FALSE){
                                                    "untreated", 
                                                    ifelse(str_detect(scratched_bitten_action, "missing"),
                                                           "missing", "N/A"))),
+           # classify risk from open wound
+           risk_open_wound = recode(risk_open_wound, 
+                                    "don't  know" = "don't know"),
            risk_open_wound_specific = str_replace_all(risk_open_wound, c("yes, " = "",
                                                                          "but" = "there are risks, but",
                                                                          "^no$" = "N/A",
-                                                                         "don't  know" = "N/A")),
+                                                                         "don't know" = "N/A")),
            risk_open_wound_specific = ifelse(str_detect(risk_open_wound_specific, "other"), "other", risk_open_wound_specific),
            risk_open_wound = ifelse(str_detect(risk_open_wound, "yes"), "yes",
                                     ifelse(str_detect(risk_open_wound, "other"), "other",
                                            risk_open_wound)),
+           # make homemaker a primary livelihood
            primary_livelihood = ifelse(str_detect(primary_livelihood,"house|home"), "homemaker",
                                        ifelse(str_detect(primary_livelihood, "[Oo]ther"), "other",
                                               primary_livelihood)),
+           # get occupant counts
            people_in_dwelling = people_in_dwelling + 1,
            males_in_dwelling = ifelse(gender=="male", males_in_dwelling + 1, males_in_dwelling),
            rooms_in_dwelling_crowd = ifelse(rooms_in_dwelling == 0, 1, rooms_in_dwelling),
@@ -132,8 +142,7 @@ illness_names_clean <-  make_clean_names(illness_names)
 
 # Create analysis dataframe with logical values for all categorical data
 get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_logical = TRUE, edu_logical = TRUE, 
-                        scratch_logical = TRUE, concurrent_site_logical = TRUE, include_symp_other_ppl = FALSE,
-                        missing_as_true = TRUE) { # input is output of get_behav
+                        scratch_logical = TRUE, concurrent_site_logical = TRUE, include_symp_other_ppl = FALSE) { # input is output of get_behav
   
   # select and widen covariate data
   covars <- dat %>%
@@ -185,21 +194,13 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
            -travel_reason,
            -treatment)
   
-  if(missing_as_true){
-    #map yes to TRUE and all other responses to FALSE
+    #map yes to TRUE and all other responses to FALSE (including missing)
     covars <- covars %>%
       mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
                 .funs = funs(
                   str_detect(., "yes")
                 )) 
-  }else{
-    covars <- covars %>%
-      mutate_at(.vars = which(map_lgl(., is.character)==TRUE)[-c(1, 2)], #hack to not apply criteria to participant id
-                .funs = funs(
-                  recode(., "N/A" = "no", "missing" = NA_character_)
-                )) 
-  }
-  
+
   if(gender_logical){
     covars <- covars %>%
       ed2_expand_wide(gender) %>%
@@ -231,11 +232,11 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
     # remove most "last_year" covariates since more detailed info on these exposures will
     # come from exposures below, but keep "shared_water_last_year" and
     # "animals_in_food_last_year" as is
-    last.year.vars <- grep("_last_year", colnames(covars), value = T)
-    last.year.vars.to.keep <- c("shared_water_last_year", "animals_in_food_last_year")
-    last.year.vars.to.exclude <- last.year.vars[!(last.year.vars %in% last.year.vars.to.keep)]
+    last_year_vars <- grep("_last_year", colnames(covars), value = T)
+    last_year_vars_to_keep <- c("shared_water_last_year", "animals_in_food_last_year")
+    last_year_vars_to_exclude <- last_year_vars[!(last_year_vars %in% last_year_vars_to_keep)]
     
-    covars <- select(covars, -last.year.vars.to.exclude)
+    covars <- select(covars, -last_year_vars_to_exclude)
   }
   
   if(add_contact){
@@ -249,8 +250,8 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
         select(participant_id, !!sym(contx_type)) %>% 
         ed2_expand_wide(!!sym(contx_type)) %>% #expand into wide frame of binary vars
         #rename( !!sym(no_contx_type) := !!paste0(contx_type, "_n_a")) %>% #use special assign := to work with !!sym(var)
-        rename( !!sym(no_contx_type) := n_a) %>% #use special assign := to work with !!sym(var)
-        select(-!!sym(contx_type)) #remove original multiresponse from final frame
+        rename( !!sym(no_contx_type) := n_a) %>%  # n_a is no contact
+        select(-!!sym(contx_type)) 
       
       covars <- left_join(covars, exposures, by = "participant_id")
     }
@@ -334,13 +335,68 @@ discretize_continuous <- function(dat, age_breaks, age_labels, crowding_index_br
 # Create analysis dataframe - reshape taxa and illness outcomes
 get_tab <- function(dat) { # input is output of get_behav
   
-  tabs <- get_logical(dat, exclude_last_yr = FALSE, add_contact = FALSE, gender_logical = FALSE, edu_logical = FALSE, scratch_logical = FALSE, concurrent_site_logical = FALSE, include_symp_other_ppl = TRUE, missing_as_true = FALSE) %>%
-    mutate_if(is.logical, ~ifelse(.x == TRUE, "yes", "no")) %>%
+  tabs <- dat %>%
+    select(participant_id,
+           concurrent_sampling_site,
+           gender,
+           age,
+           crowding_index,
+           dwelling_permanent_structure,
+           water_treated,
+           water_used_by_animals,
+           dedicated_location_for_waste,
+           matches("education"),
+           matches("last_year"),
+           scratched_bitten_action,
+           worried_about_disease,
+           risk_open_wound,
+           travelled,
+           illness_death,
+           -symptoms_in_last_year,
+           -symptoms_in_last_year_other_people) %>%
+    mutate(scratched_bitten_action = ifelse(scratched_bitten_action == "N/A", NA, scratched_bitten_action)) %>%
+    mutate_all(~na_if(., "missing")) %>%
+    mutate_all(~ifelse(. == "N/A", "no", .)) %>%
     mutate(gender = na_if(gender, "other")) %>%
-    mutate_at(.vars = c("highest_education_mother"), 
-              ~recode(.x, 
-                      "secondary school" = "secondary school or higher",
-                      "college/university/professional" = "secondary school or higher"))
+    mutate(highest_education_mother = ifelse(highest_education_mother %in% c("secondary school", "college/university/professional"),
+                                             "secondary school or higher",
+                                             highest_education_mother))
+  
+  # expand wide
+  for(var in c("treatment", "livelihoods", "travel_reason", "symptoms_in_last_year", "symptoms_in_last_year_other_people")){
+    
+    ew <- dat %>% 
+      filter(!!sym(var) != "missing") 
+    
+    if(nrow(ew) > 0){
+      ew <- ew %>%
+        select(participant_id, !!var) %>%
+        ed2_expand_wide(!!sym(var)) %>%
+        select(-!!var) %>%
+        mutate_if(is.logical, ~ifelse(.x == TRUE, "yes", "no"))
+      
+      if(var == "symptoms_in_last_year"){
+        ew <- ew %>%
+          select(participant_id,
+                 one_of( "symptoms_in_last_year_fever_with_muscle_aches_cough_or_sore_throat_ili",
+                         "symptoms_in_last_year_fever_with_cough_and_shortness_of_breath_or_difficulty_breathing_sari",
+                         "symptoms_in_last_year_fever_with_headache_and_severe_fatigue_or_weakness_encephalitis",
+                         "symptoms_in_last_year_fever_with_bleeding_or_bruising_not_related_to_injury_hemorrhagic_fever")) %>%
+          rename_at(vars(-participant_id), ~str_extract(., paste(illness_names_clean, collapse="|")))
+      }
+      if(var == "symptoms_in_last_year_other_people"){
+        ew <- ew %>%
+          select(participant_id,
+                 one_of("symptoms_in_last_year_other_people_fever_with_muscle_aches_cough_or_sore_throat_ili"),
+                 one_of("symptoms_in_last_year_other_people_fever_with_cough_and_shortness_of_breath_or_difficulty_breathing_sari"),
+                 one_of("symptoms_in_last_year_other_people_fever_with_headache_and_severe_fatigue_or_weakness_encephalitis"),
+                 one_of("symptoms_in_last_year_other_people_fever_with_bleeding_or_bruising_not_related_to_injury_hemorrhagic_fever")) %>%
+          rename_at(vars(-participant_id), ~paste0("other_people_", str_extract(., paste(illness_names_clean, collapse="|"))))
+      }
+      tabs <- left_join(tabs, ew,  by = "participant_id")
+    }
+  }
+  
   # add contact
   for (i in seq_along(taxa_names)){
     contx_type <- paste0(taxa_names[i], "_contact")
@@ -353,9 +409,9 @@ get_tab <- function(dat) { # input is output of get_behav
              !!contact_indirect := ifelse(grepl("feces|house", !!sym(contx_type)), "yes", "no"),
              !!contact_direct := ifelse(grepl("pet|handled|raised|eaten|found|scratched|hunted|slaughtered", !!sym(contx_type)), "yes", "no")) %>%
       select(-!!sym(contx_type))
-    
     tabs <- left_join(tabs, exposures, by = "participant_id")
   }
+  
   tabs
 }
 
