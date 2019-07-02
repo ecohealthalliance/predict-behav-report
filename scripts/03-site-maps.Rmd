@@ -67,16 +67,22 @@ quest <- fdat %>%
   unique()
 
 # Set color palette 
-bins <- seq(min(quest$n), max(quest$n), length.out = 7) %>% round() %>% unique()
-pal <- leaflet::colorBin(palette = RColorBrewer::brewer.pal(9, "Reds")[3:9], domain = quest$n, 
-                         na.color = "transparent", bins = bins)
-# Map 
+# bins <- seq(min(quest$n), max(quest$n), length.out = 7) %>% round() %>% unique()
+# pal <- leaflet::colorBin(palette = RColorBrewer::brewer.pal(9, "Reds")[3:9], domain = quest$n, 
+#                          na.color = "transparent", bins = bins)
+pal <- colorNumeric(palette = "Reds", domain = quest$n)
+if(nrow(quest)==1){
+  pal <- colorFactor(palette = "Spectral", domain = quest$n)
+}
+
+# Map  
 leaflet(quest) %>%
   setView(lng = mean(quest$site_longitude), lat = mean(quest$site_latitude)-10, zoom = 3) %>%
   addProviderTiles("OpenStreetMap.Mapnik") %>% 
   addCircleMarkers( lng = ~site_longitude, lat = ~site_latitude, color = "#000000", weight = 0.5,  
                     opacity = 100, radius = ~log(n) * 5, 
-                    fillColor = ~pal(n), fillOpacity = 0.5,
+                    fillColor = ~pal(n), 
+                    fillOpacity = 0.5,
                     label = ~hovertext,
                     labelOptions = lapply(1:nrow(quest), function(x) {
                       labelOptions(direction='auto') })) %>%    
@@ -87,9 +93,9 @@ leaflet(quest) %>%
     options = list(clickable = FALSE),
     fill = F, 
     highlightOptions = highlightOptions(weight = 3, bringToFront = TRUE)) %>%
-  addLegend("bottomleft", pal = pal, values = ~n,
-            title = "Questionnaires conducted",
-            opacity = 1) 
+  addLegend_decreasing("bottomleft", pal = pal, values = ~n, decreasing = TRUE,
+                       title = "Questionnaires conducted",
+                       opacity = 1) 
 
 ```
 
@@ -468,18 +474,9 @@ rodent <- makeIcon(
   iconAnchorX = 25, iconAnchorY = 24
 )
 
-leaflet(taxa_map) %>%
+taxa_leaflet <- leaflet(taxa_map) %>%
   setView(lng = mean(taxa_map$site_longitude), lat = mean(taxa_map$site_latitude), zoom = 4) %>%
   addProviderTiles("OpenStreetMap.Mapnik") %>%
-  addMarkers(lng = ~(site_longitude+.05), lat = ~site_latitude, icon = primate, popup = ~`non-human primates`,
-             clusterOptions = markerClusterOptions(),
-             group = "Non-Human Primates") %>%
-  addMarkers(lng = ~(site_longitude-.05), lat = ~site_latitude, icon = bat,  popup = ~bats,
-             clusterOptions = markerClusterOptions(),
-             group = "Bats") %>%
-  addMarkers(lng = ~site_longitude, lat = ~(site_latitude-.04), icon = rodent,  popup = ~rodents,
-             clusterOptions = markerClusterOptions(),
-             group = "Rodents") %>%
   addLayersControl(position = "bottomleft",
                    overlayGroups = c("Non-Human Primates", "Bats", "Rodents"),
                    options = layersControlOptions(collapsed = FALSE)) %>%
@@ -489,4 +486,28 @@ leaflet(taxa_map) %>%
     weight = 1, popup = NULL,
     options = list(clickable = FALSE),
     fill = F)
+
+if("non-human primates" %in% colnames(taxa_map)){
+  taxa_leaflet <- taxa_leaflet %>%
+    addMarkers(lng = ~(site_longitude+.05), lat = ~site_latitude, icon = primate, popup = ~`non-human primates`,
+               clusterOptions = markerClusterOptions(),
+               group = "Non-Human Primates") 
+}
+
+if("bats" %in% colnames(taxa_map)){
+  taxa_leaflet <- taxa_leaflet %>%
+    addMarkers(lng = ~(site_longitude-.05), lat = ~site_latitude, icon = bat,  popup = ~bats,
+               clusterOptions = markerClusterOptions(),
+               group = "Bats") 
+}
+
+if("rodents" %in% colnames(taxa_map)){
+  taxa_leaflet <- taxa_leaflet %>%
+    addMarkers(lng = ~site_longitude, lat = ~(site_latitude-.04), icon = rodent,  popup = ~rodents,
+               clusterOptions = markerClusterOptions(),
+               group = "Rodents") 
+}
+
+taxa_leaflet
+
 ```
