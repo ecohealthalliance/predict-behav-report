@@ -1,10 +1,12 @@
 #-------------------------------------------------------------
-# Load packages and functions
+# Load packages
 devtools::install_deps(upgrade = "always", quiet = TRUE)
 
 # Update packages?
+  ## "Do you want to install from sources the package which needs compilation? (yes/no/cancel)?"
 "yes"
-
+#-------------------------------------------------------------
+# Load functions
 purrr::walk(list.files(here::here("R/"), full.names = TRUE),
             source, echo = FALSE, verbose = FALSE)
 set.seed(99)
@@ -49,6 +51,7 @@ download_fresh <- FALSE
 run_lasso <- FALSE
 #-------------------------------------------------------------
 # Write csv files to use for reports
+
 country_mod <- str_replace(country, ", ", "-") 
 source(h("scripts", "make-data.R"))
 #-------------------------------------------------------------

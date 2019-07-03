@@ -6,7 +6,9 @@ create a new report
 Step 1: Open user-inputs.R script from the predict-behav-report folder
 
 Step 2: Load packages needed to run reports
-    ## Highlight and run lines 3 through 6
+    ## Highlight and run line 3
+    
+    ## Note: If you see the following message in the console: Do you want to install from sources the package         which needs compilation? (Yes/no/cancel) ---> highlight and run line 7 ("yes")
 
 OPTIONAL step for Mac users (Window users can ignore):
 * This only needs to be done ONCE and is required in order to run the site-maps script
@@ -17,46 +19,49 @@ OPTIONAL step for Mac users (Window users can ignore):
       In the Terminal, copy and paste the following line of code and press 'enter': 
       brew install gdal
 
-Step 3: Enter country, illness, and taxa contact variables of interest (must be in quotations)
+Step 3: Load functions
+    ## Highlight and run lines 10-12
 
-    ## line 10: country: select ONE country
+Step 4: Enter country, illness, and taxa contact variables of interest (must be in quotations)
+
+    ## line 16: country: select ONE country
     
-    ## line 12: illness_outcomes: select up to 4 illness outcomes (separated by commas; note spelling)
+    ## line 18: illness_outcomes: select up to 4 illness outcomes (separated by commas; note spelling)
             ### "sari", "ili", "encephalitis", "hemorrhagic_fever"
             ### these outcomes will be included in the tabular report and lasso report
             ### there is also the option to not enter any illness
             
-    ## line 15: heatmap_taxa_outcomes: select up to 14 taxa outcomes (separated by commas; note spelling)
+    ## line 21: heatmap_taxa_outcomes: select up to 14 taxa outcomes (separated by commas; note spelling)
             ### "rodents", "bats", "nhp", "birds", "poultry", "carnivores", "ungulates", "pangolins",
              "goats_sheep", "camels", "swine", "cattle", "dogs", "cats"
             ### these outcomes will be included in the heatmap report
             ### at least one taxa MUST be included
             ### heatmap_taxa_outcomes <- taxa_names command will include all taxa
           
-    ## line 19: tabular_lasso_taxa_outcomes: select up to 14 taxa types (separated by commas; note spelling)
+    ## line 25: tabular_lasso_taxa_outcomes: select up to 14 taxa types (separated by commas; note spelling)
             ### these outcomes will be included in the tabular report and lasso report
             ### "rodents", "bats", "nhp", "birds", "poultry", "carnivores", "ungulates", "pangolins",
              "goats_sheep", "camels", "swine", "cattle", "dogs", "cats"
             ### these outcomes will be included in the tabular report and lasso report
             ### there is also the option to not enter any taxa
              
-  After selecting all of the user-entered parameters, highlight and run lines 10-19
+  After selecting all of the user-entered parameters, highlight and run lines 16-25
       
              
-Step 4: Confirm that illness_outcomes, heatmap_taxa_outcomes, tabular_lasso_taxa_outcomes: 
-    ## Highlight and run lines 25-27
+Step 5: Confirm that illness_outcomes, heatmap_taxa_outcomes, tabular_lasso_taxa_outcomes: 
+    ## Highlight and run lines 31-33
     
-Step 5: Create discrete categories for continuous variables to run in the lasso
-    ## Highlight and run lines 31-34
+Step 6: Create discrete categories for continuous variables to run in the lasso
+    ## Highlight and run lines 37-40
 
-Step 6: Download EIDITH command: (NOT ALWAYS REQUIRED): line 39
+Step 7: Download EIDITH command: (NOT ALWAYS REQUIRED): line 45
 
     ## if run TRUE, eidith data will download (this is not always required and only necessary if there have
     been recent updates made to eidith)
     
     ## if run FALSE, the most recently downloaded version eidith will be used (recommended)
 
-Step 7: Run Lasso command: (NOT ALWAYS REQUIRED): line 45
+Step 8: Run Lasso command: (NOT ALWAYS REQUIRED): line 51
 
     ## if run TRUE, the lasso will run for all selected illness_outcomes and tabular_lasso_taxa_outcomes 
     
@@ -71,13 +76,12 @@ Step 7: Run Lasso command: (NOT ALWAYS REQUIRED): line 45
             you have already run the lasso with your selected taxa and illness outcomes. This can be checked in
             the outputs/lasso-figs folder.
     
-    
-*** WARNING: If the outcomes of interest (taxa or illness) have low or no positive responses (low prevalence), then the lasso will ultimately fail (i.e. you will receive an error message when you try to create the lasso report). Prior to running the lasso, check that the prevalence of each outcome you selected is at least 10%. You can check prevalence for all of the taxa and illness outcomes by highlighting and running lines 49-60.
+*** WARNING: If the outcomes of interest (taxa or illness) have low or no positive responses (low prevalence), then the lasso will ultimately fail (i.e. you will receive an error message when you try to create the lasso report). Prior to running the lasso, check that the prevalence of each outcome you selected is at least 10%. You can check prevalence for all of the taxa and illness outcomes by highlighting and running lines 55-67.
 
-Step 8: Create csv files to be used in the reports
-    ## Highlight and run line 49
+Step 9: Create csv files to be used in the reports
+    ## Highlight and run line 55-56
    
-        ## Note: if you selected download_fresh <- TRUE (line 39), a new version of eidith will download
+        ## Note: if you selected download_fresh <- TRUE (line 45), a new version of eidith will download
    
             ### If this is your first time downloading EIDITH in R, you will be asked for your EIDITH_NAME
             and EIDTH_PASSWORD. These will only need to be entered once
@@ -95,16 +99,17 @@ Step 8: Create csv files to be used in the reports
     
             ### csv files can be found in the data folder
     
-Step 9: Select which reports you want to run
+Step 10: Select which reports you want to run
     ## Highlight and run line 66
     ## Options include: "summary-report", "tabular-report". "site-maps", "heatmaps", "lasso"
   
-Step 10: Create selected reports: 
-    ## Highlight and run line 71
+Step 11: Create selected reports: 
+    ## Highlight and run line 78
     ## All reports can be found in the outputs/reports folder
     ## All figures can be found in their associated folder within the outputs folder
     
-    ## Note: if you selected run_lasso <- TRUE (line 45), the lasso will run at this time (and may take a long time)
+    ## Note: if you selected run_lasso <- TRUE (line 51), the lasso will run at this time (and may take a long
+    time)
   
   
 Additional Information  
