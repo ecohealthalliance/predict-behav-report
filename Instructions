@@ -1,14 +1,13 @@
 PREDICT Behavioral Repository: Instructions
 
-***Unless otherwise noted, you will need to follow these instructions (in sequential order) every time you want to 
-create a new report
+***Unless otherwise noted, you will need to follow these instructions (in sequential order) every time you want to create a new report
 
 Step 1: Open user-inputs.R script from the predict-behav-report folder
 
 Step 2: Load packages needed to run reports
     ## Highlight and run line 3
     
-    ## Note: If you see the following message in the console: Do you want to install from sources the package         which needs compilation? (Yes/no/cancel) ---> highlight and run line 7 ("yes")
+    ## Note: If you see the following message in the console: Do you want to install from sources the package which needs           compilation? (Yes/no/cancel) ---> highlight and run line 7 ("yes")
 
 OPTIONAL step for Mac users (Window users can ignore):
 * This only needs to be done ONCE and is required in order to run the site-maps script
@@ -65,16 +64,12 @@ Step 8: Run Lasso command: (NOT ALWAYS REQUIRED): line 51
 
     ## if run TRUE, the lasso will run for all selected illness_outcomes and tabular_lasso_taxa_outcomes 
     
-            ### Note 1: The lasso takes a long time to run (up to several hours in some cases); time to run is
-            increased  with more selected outcomes
-            ### Note 2: Once the lasso has been run for a specific taxa or illness, it is saved in the outputs  
-            folder and does not need to be run again
+            ### Note 1: The lasso takes a long time to run (up to several hours in some cases); time to run is increased  with              more selected outcomes
+            ### Note 2: Once the lasso has been run for a specific taxa or illness, it is saved in the outputs folder and does              not need to be run again
           
     ## if run FALSE, the lasso will not run (recommended)
     
-            ### Note: You can still view the lasso report if you select FALSE - you just need to make sure that
-            you have already run the lasso with your selected taxa and illness outcomes. This can be checked in
-            the outputs/lasso-figs folder.
+            ### Note: You can still view the lasso report if you select FALSE - you just need to make sure that you have already             run the lasso with your selected taxa and illness outcomes. This can be checked in the outputs/lasso-figs folder.
     
 *** WARNING: If the outcomes of interest (taxa or illness) have low or no positive responses (low prevalence), then the lasso will ultimately fail (i.e. you will receive an error message when you try to create the lasso report). Prior to running the lasso, check that the prevalence of each outcome you selected is at least 10%. You can check prevalence for all of the taxa and illness outcomes by highlighting and running lines 55-67.
 
@@ -247,7 +242,8 @@ Question: Whey have you traveled? Select all that apply (Q38)
 *Tabular report name: expanded out to analyze individual response options
 Lasso report name: travelled
 *Response options: work; visit family; moved; religious reasons; holiday/vacation; go to hospital/seek medical care;
- go to market; other
+go to market; other
+
 Note: only refers to travel within previous year
 
 
@@ -361,7 +357,7 @@ Summary/Tabular report name: Risks Associated when Slaughtering or Butchering wi
 Lasso name: risk open wound (indicates "yes" response)
 Response options: yes; no; don't know; other (don't know and other only included in the Summary report)
     - 'yes' includes: yes, but I don't know what they are; yes, it can make you sick; yes, it can poison you; 
-    yes, it can infect you with a disease
+      yes, it can infect you with a disease
     - 'no' includes: no; don't know; other (Tabular report and Lasso only)
 
 Question: Are you worried about disease or disease outbreaks in live animals in your local market? (Q57)
