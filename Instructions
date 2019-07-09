@@ -389,7 +389,7 @@ Categorical Tables and Confidence Interval Plots do change slightly.
 *Note 1: the specific livelihoods listed in the Categorical Tables and Confidence Interval Plots refers to ANY 
 livelihood indicated within the previous year (see: Q24 in the human behavior questionnaire and/or 'Livelihood Activities (past year) All' in the Summary Report).
 
-*Note 3: any categorical response entered as "N/A" will be counted as a "no" response (with the exception of Q54 - Action Taken Last Time Scratched, Bitten, or Cut while Butchering or Slaughtering; "N/A" responses are excluded from the anaylsis). Any categorical response entered as "missing" or is left blank will be excluded from the analysis. Any numeric response that is left blank will also be excluded from the analysis. 
+*Note 3: any categorical response entered as "N/A" will be counted as a "no" response (with the exception of Q54 - Action Taken Last Time Scratched, Bitten, or Cut while Butchering or Slaughtering; "N/A" responses are excluded from the analysis). Any categorical response entered as "missing" or is left blank will be excluded from the analysis. Any numeric response that is left blank will also be excluded from the analysis. 
 
 a. The Categorical Tables provide 3 figures, parsed out by site and aggregated: 
   - outcome variable count (x): "number of successes" (i.e. number of positive outcomes)
