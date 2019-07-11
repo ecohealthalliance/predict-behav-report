@@ -4,6 +4,7 @@
 remotes::install_deps(upgrade = "always", quiet = TRUE)
 #-------------------------------------------------------------
 # Load functions
+
 purrr::walk(list.files(here::here("R/"), full.names = TRUE),
             source, echo = FALSE, verbose = FALSE)
 set.seed(99)
