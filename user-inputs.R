@@ -1,10 +1,7 @@
 #-------------------------------------------------------------
 # Load packages
-devtools::install_deps(upgrade = "always", quiet = TRUE)
-
-# Update packages?
-  ## "Do you want to install from sources the package which needs compilation? (yes/no/cancel)?"
-"yes"
+## Respond "no" to Do you want to install from sources the package which needs compilation? (yes/no/cancel)?"
+remotes::install_deps(upgrade = "always", quiet = TRUE)
 #-------------------------------------------------------------
 # Load functions
 purrr::walk(list.files(here::here("R/"), full.names = TRUE),

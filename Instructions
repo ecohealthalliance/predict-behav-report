@@ -5,11 +5,11 @@ PREDICT Behavioral Repository: Instructions
 Step 1: Open user-inputs.R script from the predict-behav-report folder
 
 Step 2: Load packages needed to run reports
-    ## Highlight and run line 3
+    ## Run line 4
     
-    ## Note: If you see the following message in the console: Do you want to install from sources the package which needs           compilation? (Yes/no/cancel) ---> highlight and run line 7 ("yes")
+    ## Note: If you see the following message in the console: Do you want to install from sources the package which needs compilation? (Yes/no/cancel) ---> respond "no"
 
-OPTIONAL step for Mac users (Window users can ignore):
+OPTIONAL step for Mac users to install GDAL (Window users can ignore):
 * This only needs to be done ONCE and is required in order to run the site-maps script
   1. Install brew:
       In the Terminal, copy and paste the following line of code and press 'enter': 
