@@ -94,7 +94,7 @@ First, Mac users may want to install GDAL, which is required to run the site-map
    -   Note: if you selected TRUE for run_lasso <- TRUE (step 8), the lasso will run at this time (and may take a long time)
   
   
-*Additional Information *
+*Additional Information*
   
 Every time the illness_outcomes, heatmap_taxa_outcomes, and/or tabular_lasso_taxa_outcomes are changed in the user-inputs.R script, new Tabular reports, Heatmap reports, and Lasso reports are generated in the outputs/reports folder. Unless you change the country of analysis, the Summary report and Sitemaps report will remain the same.
 
