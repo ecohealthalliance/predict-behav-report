@@ -41,7 +41,8 @@ fdat <- dat %>%
 ```{r get-adm, include=FALSE}
 # Get administrative borders of countries of interest
 country_wrld <- str_replace(country, "\\-.*", "")
-country_wrld <- str_replace(country, "DR", "Democratic Republic of the")
+country_wrld <- str_replace(country, "^DR", "Democratic Republic of the")
+country_wrld <- str_replace(country, "PDR", "People's Democratic Republic")
 
 data(wrld_simpl)
 admin <- wrld_simpl[wrld_simpl@data$NAME %in% country_wrld, ]
