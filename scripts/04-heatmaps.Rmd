@@ -18,7 +18,7 @@ country <- params$country
 taxa_outcomes <- params$taxa_outcomes
 
 # Read in data
-dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv")), col_types = cols()) 
+dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv")), col_types = raw_specs) 
 ldat <- read_csv(h(paste0("data/logic-behav-", country, ".csv")), col_types = cols())
 
 # Get site names

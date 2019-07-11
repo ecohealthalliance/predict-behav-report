@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, error = FA
 country <- params$country
 
 # Read in data
-dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv")), col_types = cols()) 
+dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv")), col_types = raw_specs) 
 
 # Get Site names
 site_names <- read_csv(h(paste0("data/site-name-formatted-", country, ".csv")), col_types = cols())
@@ -40,12 +40,19 @@ fdat <- dat %>%
 
 ```{r get-adm, include=FALSE}
 # Get administrative borders of countries of interest
-country_wrld <- str_replace(country, "\\-.*", "")
-country_wrld <- str_replace(country, "^DR", "Democratic Republic of the")
-country_wrld <- str_replace(country, "PDR", "People's Democratic Republic")
+match <- c("\\-.*", "^DR", "PDR", "Myanmar")
+replace <- c("", "Democratic Republic of the", "People's Democratic Republic", "Burma")
 
+country_wrld <-  str_replace_all(country,
+  c("\\-.*" = "", 
+    "^DR" = "Democratic Republic of the",
+    "PDR" = "People's Democratic Republic",
+    "Myanmar" = "Burma",
+    "Vietnam" = "Viet Nam",
+    "Tanzania" = "United Republic of Tanzania"
+    ))
 data(wrld_simpl)
-admin <- wrld_simpl[wrld_simpl@data$NAME %in% country_wrld, ]
+admin <- wrld_simpl[wrld_simpl@data$NAME %in% "United Republic of Tanzania", ]
 
 ```
 
