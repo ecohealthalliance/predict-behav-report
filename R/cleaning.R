@@ -49,9 +49,13 @@ get_behav <- function(country, download = FALSE){
   
   # recode 
   out <- out %>%
-    mutate_if(suppressWarnings(str_detect(., ";")), ~map_chr(str_split(., "; "), function(x) paste(unique(x), collapse = "; "))) %>% # removes dup responses (warning is empty quotes)
+    mutate_if(suppressWarnings(str_detect(., ";")), ~map_chr(str_split(., "; "), function(x){
+      if(all(is.na(x))){return(NA)}
+      paste(unique(x), collapse = "; ")
+    }))  %>% # removes dup responses (warning is empty quotes)
     mutate_all(~(str_replace(., "MISSING", "missing"))) %>% # keep all "missing" lowercase
     mutate_all(~(str_replace(., "NA", "N/A"))) %>% # replace all entered NAs (ie not missing or empty)
+    mutate_all(~(str_replace_all(., "\\s+", " "))) %>% # replace double spaces with single spaces
     mutate_at(.vars = vars(rooms_in_dwelling, people_in_dwelling, children_in_dwelling, males_in_dwelling,
                            site_latitude, site_longitude, age), .funs = ~suppressWarnings(as.numeric(.))) %>% # make numeric values (warning is NAs introduced -- ok)
     mutate(age = floor(age), # round down age
@@ -107,12 +111,10 @@ get_behav <- function(country, download = FALSE){
                                                    ifelse(str_detect(scratched_bitten_action, "missing"),
                                                           "missing", "N/A"))),
            # classify risk from open wound
-           risk_open_wound = recode(risk_open_wound, 
-                                    "don't  know" = "don't know"),
            risk_open_wound_specific = str_replace_all(risk_open_wound, c("yes, " = "",
                                                                          "but" = "there are risks, but",
                                                                          "^no$" = "N/A",
-                                                                         "don't know" = "N/A")),
+                                                                         "^don't know$" = "N/A")),
            risk_open_wound_specific = ifelse(str_detect(risk_open_wound_specific, "other"), "other", risk_open_wound_specific),
            risk_open_wound = ifelse(str_detect(risk_open_wound, "yes"), "yes",
                                     ifelse(str_detect(risk_open_wound, "other"), "other",
