@@ -94,32 +94,32 @@ First, Mac users may want to install GDAL, which is required to run the site-map
    -   Note: if you selected TRUE for run_lasso <- TRUE (step 8), the lasso will run at this time (and may take a long time)
   
   
-Additional Information  
+*Additional Information *
   
-*** Every time the illness_outcomes, heatmap_taxa_outcomes, and/or tabular_lasso_taxa_outcomes are changed in the user-inputs.R script, new Tabular reports, Heatmap reports, and Lasso reports are generated in the outputs/reports folder. Unless you change the country of analysis, the Summary report and Sitemaps report will remain the same.
+Every time the illness_outcomes, heatmap_taxa_outcomes, and/or tabular_lasso_taxa_outcomes are changed in the user-inputs.R script, new Tabular reports, Heatmap reports, and Lasso reports are generated in the outputs/reports folder. Unless you change the country of analysis, the Summary report and Sitemaps report will remain the same.
 
 
 
-APPENDIX: 
+## APPENDIX: 
 
 I. Variable Names
 
-1. New variables (do not explicitly appear in the human questionnaire)
+1. New variables (these are variables that we create in the report and that do not explicitly appear in the human questionnaire)
 
-Variable name: crowding index                             
-Definition: # of people in dwelling (including respondent) /# of rooms in dwelling (excluding bathroom and kitchen)
-Note: higher crowding index indicates a more crowded dwelling                   
+      *crowding index*                             
+      Definition: # of people in dwelling (including respondent) /# of rooms in dwelling (excluding bathroom and kitchen)
+      Note: higher crowding index indicates a more crowded dwelling                   
 
-Variable name: 'taxa' contact-direct
-Includes the following contact types: pets; handled; raised; cooked/handled; eaten raw/undercooked; eaten sick; 
-found dead/collected; scratched/bitten; hunted/trapped; slaughtered
+      *taxa contact-direct*
+      Includes the following contact types: pets; handled; raised; cooked/handled; eaten raw/undercooked; eaten sick; 
+      found dead/collected; scratched/bitten; hunted/trapped; slaughtered
 
-Variable name: 'taxa' contact-indirect
-Includes the following contact types: feces in or near food; in house
+      *taxa contact-indirect*
+      Includes the following contact types: feces in or near food; in house
 
-Variable name: age group
-Definition: created 4 age groupings, utilized in the Heatmaps report and Lasso report
-Response options: under 18; 18 to 40; 41 to 60; over 60
+      *age group*
+      Definition: created 4 age groupings, utilized in the Heatmaps report and Lasso report
+      Response options: under 18; 18 to 40; 41 to 60; over 60
 
 
 2. Questionnaire variables
