@@ -472,8 +472,8 @@ liv_table_all <- get_sum_table(dat,
                                                  "child",
                                                  "military",
                                                  "animal health provider/veterinarian",
+                                                 "bat guano harvester",
                                                  "other",
-                                                 "missing",
                                                  "missing"),
                                table_lab="Livelihood Activities (past year)\nAll",
                                asterisk = TRUE)
@@ -496,6 +496,16 @@ liv_table_pri <- get_sum_table(dat,
                                                  "nurse, doctor, traditional healer, community health worker",
                                                  "construction",
                                                  "homemaker",
+                                                 "livestock/domestic animal/product trade",
+                                                 "grocery (vegetables)", 
+                                                 "non-wildlife restaurant business",
+                                                 "non-animal business",
+                                                 "student",
+                                                 "unemployed",
+                                                 "child",
+                                                 "military",
+                                                 "animal health provider/veterinarian",
+                                                 "bat guano harvester",
                                                  "other",
                                                  "missing"),
                                table_lab="Livelihood Activities (past year)\nPrimary")
@@ -504,16 +514,16 @@ liv_table <- bind_rows(liv_table_all, liv_table_pri)
 
 # Age (run separate because calculating %tiles)
 age_total <-  suppressWarnings( dat %>%
-  mutate(age = floor(as.numeric(age))) %>%
-  summarise(Mean = mean(age, na.rm = TRUE), 
-            Minimum = min(age, na.rm = TRUE), 
-            `First Quartile` = quantile(age, 0.25, na.rm = TRUE), 
-            Median = median(age, na.rm = TRUE), 
-            `Third Quartile` = quantile(age, 0.75, na.rm = TRUE), 
-            Maximum = max(age, na.rm = TRUE)) %>%
-  gather() %>%
-  mutate(Aggregate = round(value, 0)) %>%
-  select(-value) 
+                                  mutate(age = floor(as.numeric(age))) %>%
+                                  summarise(Mean = mean(age, na.rm = TRUE), 
+                                            Minimum = min(age, na.rm = TRUE), 
+                                            `First Quartile` = quantile(age, 0.25, na.rm = TRUE), 
+                                            Median = median(age, na.rm = TRUE), 
+                                            `Third Quartile` = quantile(age, 0.75, na.rm = TRUE), 
+                                            Maximum = max(age, na.rm = TRUE)) %>%
+                                  gather() %>%
+                                  mutate(Aggregate = round(value, 0)) %>%
+                                  select(-value) 
 )
 
 
@@ -880,40 +890,40 @@ worried_table <- get_sum_table(dat, pretty_names = site_names, group_var = "worr
 
 dat$contact_all[is.na(dat$contact_all)] = "N/A"
 contact_table <- get_sum_table(dat, 
-                                 pretty_names = site_names, 
-                                 group_var = "contact_all", 
-                                 factor_levels = c("bats", 
-                                                   "birds",
-                                                   "camels",
-                                                   "carnivores",
-                                                   "cats",
-                                                   "cattle",
-                                                   "dogs",
-                                                   "goats/sheep",
-                                                   "pangolins",
-                                                   "poultry",
-                                                   "primates",
-                                                   "rodents",
-                                                   "swine",
-                                                   "ungulates",
-                                                   "N/A"),
-                                factor_lab = c("bats",
-                                               "birds",
-                                               "camels",
-                                               "carnivores",
-                                               "cats",
-                                               "cattle",
-                                               "dogs",
-                                               "goats/sheep",
-                                               "pangolins",
-                                               "poultry",
-                                               "primates",
-                                               "rodents",
-                                               "swine",
-                                               "ungulates",
-                                               "no taxa contact"),
-                                 table_lab = "Taxa Contact (past year)", 
-                                 asterisk = TRUE)
+                               pretty_names = site_names, 
+                               group_var = "contact_all", 
+                               factor_levels = c("bats", 
+                                                 "birds",
+                                                 "camels",
+                                                 "carnivores",
+                                                 "cats",
+                                                 "cattle",
+                                                 "dogs",
+                                                 "goats/sheep",
+                                                 "pangolins",
+                                                 "poultry",
+                                                 "primates",
+                                                 "rodents",
+                                                 "swine",
+                                                 "ungulates",
+                                                 "N/A"),
+                               factor_lab = c("bats",
+                                              "birds",
+                                              "camels",
+                                              "carnivores",
+                                              "cats",
+                                              "cattle",
+                                              "dogs",
+                                              "goats/sheep",
+                                              "pangolins",
+                                              "poultry",
+                                              "primates",
+                                              "rodents",
+                                              "swine",
+                                              "ungulates",
+                                              "no taxa contact"),
+                               table_lab = "Taxa Contact (past year)", 
+                               asterisk = TRUE)
 
 # Together 
 out <- bind_rows(act_table, act_table2, risk_table, risk_table2, worried_table, contact_table)
