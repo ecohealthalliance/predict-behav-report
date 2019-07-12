@@ -1,7 +1,7 @@
 #-------------------------------------------------------------
 # Load packages
 ## Respond "no" to Do you want to install from sources the package which needs compilation? (yes/no/cancel)?"
-remotes::install_deps(upgrade = "always", quiet = TRUE)
+# remotes::install_deps(upgrade = "always", quiet = TRUE)
 #-------------------------------------------------------------
 # Load functions
 
@@ -11,7 +11,7 @@ set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 
-country <- "Cameroon" # Name country here
+country <-  "Tanzania"       # Name country here
   ## Can only select ONE country
 illness_outcomes <- c("encephalitis") # Select illness of interest here
   ## (`illness_names_clean` object (loaded in Environment tab) to see full list). 
