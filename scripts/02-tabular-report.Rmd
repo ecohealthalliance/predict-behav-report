@@ -21,7 +21,7 @@ taxa_contact_outcomes <- if(!is.null(params$taxa_outcomes)){ paste0(params$taxa_
 outcomes <- c(illness_outcomes, taxa_contact_outcomes)
 
 # Read in data
-dat <- read_csv(h(paste0("data/tab-behav-", country, ".csv")), col_types = tab_specs)# %>%
+dat <- read_csv(h(paste0("data/tab-behav-", country, ".csv")), col_types = cols())# %>%
 #drop_na(age, crowding_index)
 
 # Get Site names
