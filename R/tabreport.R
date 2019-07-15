@@ -5,14 +5,18 @@ binom_out <- function(x, n){
     pull(tog)
 }
 
-norm_out <- function(x){
+nonpara_out <- function(x){
   x <- x[!is.na(x)]
   a <-  median(x)
-  s <-  sd(x)
   n <- length(x)
-  error <- qt(0.975, df = n-1)*s/sqrt(n)
-  low <- a-error
-  high <- a+error
+  nboot <- 1000
+  ii <- ceiling(n*runif(n*nboot))
+  B <- x[ii]
+  B <- array(B, c(nboot, n))
+  m <- apply(B, 1, median)
+  m <- sort(m)
+  low <- c(m[25])
+  high <- c(m[975])
   if(n < 3){
     low <- min(x)
     high <- max(x)
@@ -23,11 +27,15 @@ norm_out <- function(x){
 get_bars <- function(x, end){
   x <- x[!is.na(x)]
   a <-  median(x)
-  s <-  sd(x)
   n <- length(x)
-  error <- qt(0.975, df = n-1)*s/sqrt(n)
-  low <- a-error
-  high <- a+error
+  nboot <- 1000
+  ii <- ceiling(n*runif(n*nboot))
+  B <- x[ii]
+  B <- array(B, c(nboot, n))
+  m <- apply(B, 1, median)
+  m <- sort(m)
+  low <- c(m[25])
+  high <- c(m[975])
   if(n < 3){
     low <- min(x)
     high <- max(x)
@@ -134,7 +142,7 @@ get_comp_table_num <- function(dat,
   if(outcome_class == "contact"){outcome_var <- paste0(outcome_var, "_any")}
   outcome <- ifelse(outcome_var == "ili", "ILI", trimws(simple_cap(str_replace_all(outcome_var, "_|any", " "))))
   
-   ci_func <- if(dist == "percentile bootstrap"){norm_out}
+   ci_func <- if(dist == "percentile bootstrap"){nonpara_out}
   
   # Select data
   mdat <- dat %>%
