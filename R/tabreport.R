@@ -143,6 +143,7 @@ get_comp_table_num <- function(dat,
   outcome <- ifelse(outcome_var == "ili", "ILI", trimws(simple_cap(str_replace_all(outcome_var, "_|any", " "))))
   
   ci_func <- if(dist == "percentile bootstrap"){nonpara_out}
+
   
   # Select data
   mdat <- dat %>%
