@@ -88,11 +88,15 @@ First, Mac users may want to install GDAL, which is required to run the site-map
    -   All figures can be found in their associated folder within the outputs folder
     
    -   Note: if you selected TRUE for run_lasso <- TRUE (step 8), the lasso will run at this time (and may take a long time)
-  
-  
+   
+**NOTE**
+If you highlight and run the entire user-inputs.R script (AND have entered download_fresh <- TRUE), you may receive the following repeated message in the console: 
+Enter an item from the menu, or 0 to exit
+Selection:
+-   Respond that you do not want to download the missing EIDITH tables, by entering '2' in the console next to "Selection:".
+
 *Additional Information*
 Every time the illness_outcomes, heatmap_taxa_outcomes, and/or tabular_lasso_taxa_outcomes are changed in the user-inputs.R script, new Tabular reports, Heatmap reports, and Lasso reports are generated in the outputs/reports folder. Unless you change the country of analysis, the Summary report and Sitemaps report will remain the same.
-
 
 
 **APPENDIX**
