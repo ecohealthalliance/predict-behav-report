@@ -419,7 +419,7 @@ Interpretation: Within the sample, males have between a 40% probability of havin
         no bat contact        120         45 (40 - 51)
 
 
-Interpretation: Within the sample, individuals with bat contact have a median age of 40 (95% CI, 36 - 44), compared to those without bat contact who have a median age of 45 (95% CI, 40 - 51). Given that the 95% confidence intervals do not overlap, there is no statistically significant difference in age among those with and without bat contact.
+Interpretation: Within the sample, individuals with bat contact have a median age of 40 (95% CI, 36 - 44), compared to those without bat contact who have a median age of 45 (95% CI, 40 - 51). Given that the 95% confidence intervals do overlap, there is no statistically significant difference in age among those with and without bat contact.
 
 -   Note: the Median Plots would also show two bars that do overlap.
 
