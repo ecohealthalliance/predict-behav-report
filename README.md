@@ -90,7 +90,7 @@ First, Mac users may want to install GDAL, which is required to run the site-map
    -   Note: if you selected TRUE for run_lasso <- TRUE (step 8), the lasso will run at this time (and may take a long time)
    
 **NOTE**
-If you highlight and run the entire user-inputs.R script (AND have entered download_fresh <- TRUE), you may receive the following repeated message in the console: 
+If you run the entire user-inputs.R script (AND have entered download_fresh <- TRUE), you may receive the following repeated message in the console: 
 Enter an item from the menu, or 0 to exit
 Selection:
 -   Respond that you do not want to download the missing EIDITH tables, by entering '2' in the console next to "Selection:".
