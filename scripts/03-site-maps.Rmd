@@ -52,7 +52,7 @@ country_wrld <-  str_replace_all(country,
     "Tanzania" = "United Republic of Tanzania"
     ))
 data(wrld_simpl)
-admin <- wrld_simpl[wrld_simpl@data$NAME %in% "United Republic of Tanzania", ]
+admin <- wrld_simpl[wrld_simpl@data$NAME %in% country_wrld, ]
 
 ```
 
