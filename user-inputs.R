@@ -11,16 +11,16 @@ set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 
-country <-  "Tanzania"       # Name country here
+country <-  "Bangladesh"           # Name country here
   ## Can only select ONE country
-illness_outcomes <- c("encephalitis") # Select illness of interest here
+illness_outcomes <- NULL # Select illness of interest here
   ## (`illness_names_clean` object (loaded in Environment tab) to see full list). 
   ## Accepts NULL.
-heatmap_taxa_outcomes <- taxa_names # Select taxa contact of interest for heatmaps 
+heatmap_taxa_outcomes <- c("bats", "rodents", "poultry", "nhp") # Select taxa contact of interest for heatmaps 
   ## (`taxa_names` object (loaded in Environment tab) to see full list). 
   ## Does NOT accept NULL.
   ## Current condition (taxa_names) will include all taxa; <- c("bats", "rodents", "swine", "etc") will select specific taxa
-tabular_lasso_taxa_outcomes <- c("rodents") # Select taxa contact of interest for lasso and tabular reports
+tabular_lasso_taxa_outcomes <- c("bats","rodents", "poultry", "nhp") # Select taxa contact of interest for lasso and tabular reports
   ## (`taxa_names` object (loaded in environment) to see full list). 
   ## Accepts NULL.
 #------------------------------------------------------------
@@ -68,7 +68,7 @@ rmarkdown::render(h("scripts/00-prevalence.Rmd"),
 # Select reports to run
   ## Options are: "summary-report", "tabular-report", "site-maps", "heatmaps", "lasso"
 
-reports <- c("summary-report", "tabular-report", "site-maps", "heatmaps")
+reports <- c(   "heatmaps")
 #-------------------------------------------------------------
 # Run reports
   ## html reports can be found in outputs/reports folder

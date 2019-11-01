@@ -18,7 +18,7 @@ purrr::walk(list.files(here::here("R/"), full.names = TRUE),
             source, echo = FALSE, verbose = FALSE)
 
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, error = FALSE, out.extra = '')
-country <- params$country
+country <- "Bangladesh"#params$country
 
 # Read in data
 dat <- read_csv(h(paste0("data/raw-behav-", country, ".csv")), col_types = raw_specs) 
@@ -34,7 +34,8 @@ fdat <- dat %>%
          site_longitude = mean(site_longitude),
          site_name = gsub(" ", "-", tolower(concurrent_sampling_site))) %>%  # take average to handle some inconsistencies
   ungroup() %>%
-  rename(hovertext = new)
+  rename(hovertext = new) %>% 
+  drop_na(n) # this is removing Independent Site which does not have a lookup in site_names...
 
 ```
 
@@ -322,8 +323,8 @@ contact_names <- tibble(variable = c("animals_in_dwelling", "animal_feces_food",
 contact <- fdat %>%
   #as.data.frame() %>%
   mutate(ID = row_number()) %>%
-  dplyr::select(cnames) %>%
-  gather(-c(ID:n), key = "variable", value = "value") %>%
+  dplyr::select(cnames, gender) %>%
+  gather(-c(ID:n, gender), key = "variable", value = "value") %>%
   mutate(time_period = str_extract(variable, "life|last_year"),
          variable = str_remove(variable, "_life|_last_year")) %>%
   spread(time_period, value) %>%
@@ -332,46 +333,53 @@ contact <- fdat %>%
          last_year = na_if(last_year, "don't know"),
          last_year = na_if(last_year, "missing"),
          last_year = recode(last_year, "yes" = 1, "no" = 0)) %>%
-  group_by(country, full_site_name, site_name, variable, site_latitude, site_longitude, n) %>%
-  summarise(last_year = sum(last_year, na.rm = TRUE),
+  group_by(country, gender, variable) %>%
+  summarise(n = n(), 
+            last_year = sum(last_year, na.rm = TRUE),
             last_year_prop = sum(last_year, na.rm = TRUE)/n()) %>%
   ungroup() %>%
   left_join(., contact_names, by = "variable") %>%
-  mutate(contact_pngpath = paste0(h("outputs/animal-contact-figs/"), country, "-", site_name, "-animal-contact.png"))
+  mutate(contact_pngpath = paste0(h("outputs/animal-contact-figs/"), country,  "-animal-contact.png")) %>%
+  mutate(last_year_prop = ifelse(gender == "female", last_year_prop, last_year_prop * -1))
 
 ```
 
 ```{r gen-contact-plots, message = FALSE}
-contact_split <- split(contact, contact$full_site_name)
+#contact_split <- split(contact, contact$full_site_name)
+pal <- c(male = viridis::viridis_pal()(3)[1], 
+         female = viridis::viridis_pal()(3)[2], 
+         other = viridis::viridis_pal()(3)[3])
 
-iwalk(contact_split, function(x, y){
-  
-  title <- paste0("Prevalance of animal-related behaviors in the last year in ", y)
-  cap <- paste0("Based on questionnaire responses from ", unique(x$n), " individuals")
+#iwalk(contact_split, function(x, y){
+x <- contact  
+y <- "Bangladesh"
+
+  title <- paste0("Prevalence of animal-related behaviors in the last year in ", y)
+  cap <- paste0("\nBased on questionnaire responses from ", unique(x$n[x$gender == "male"]), " male and ", unique(x$n[x$gender == "female"]), " female individuals")
   path <- unique(x$contact_pngpath)
   
-  p <- ggplot(x, aes(x = reorder(question, last_year_prop), y = last_year_prop,
-                     fill = reorder(question, last_year_prop))) +
+  p <- ggplot(x, aes(x = reorder(question, abs(last_year_prop)), y = last_year_prop,
+                     fill = gender)) +
     geom_col() +
-    geom_text(aes(label = scales::percent(last_year_prop)), size = 15, hjust = -0.25) +
+    #geom_text(aes(label = scales::percent(last_year_prop)), size = 15, hjust = -0.25) +
     theme_fivethirtyeight() +
+    scale_y_continuous(breaks = c(-1, -0.5, 0, 0.5, 1.0), labels = c(1, 0.5, 0, 0.5, 1.0)) +
     coord_flip() +
-    ylim(0, 1) +
     labs(x = NULL, 
          y = "proportion of respondents answering `yes`", 
          title = title,
          caption = cap) +
-    scale_fill_manual(values = rev(viridis::viridis_pal()(15))) +
-    theme(text = element_text(size = 40), 
+    scale_fill_manual(values = pal) +
+    theme(text = element_text(size = 50), 
           axis.text.y = element_text(size = 55),
-          axis.text.x = element_blank(),
+          axis.text.x = element_text(size = 55),
           plot.title = element_text(hjust=1),
-          plot.subtitle = element_text(hjust=-3)) +
-    guides(fill = F) 
-  
+          plot.subtitle = element_text(hjust=-3, size = 50),
+          legend.position = "right", 
+          legend.direction = "vertical")
   
   ggsave(filename = path, plot = p, width = 45, height = 20 )
-})
+#})
 ```
 
 Prevalence of these behaviors varies greatly by site. The map below shows similar frequencies of behaviors over the past year in each study site. This data was collected between `r min(dat$date_of_interview)` and `r max(dat$date_of_interview)`.
