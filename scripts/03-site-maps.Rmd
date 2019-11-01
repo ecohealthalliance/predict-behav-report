@@ -346,7 +346,7 @@ contact_split <- split(contact, contact$full_site_name)
 
 iwalk(contact_split, function(x, y){
   
-  title <- paste0("Prevalance of animal-related behaviors in the last year in ", y)
+  title <- paste0("Prevalence of animal-related behaviors in the last year in ", y)
   cap <- paste0("Based on questionnaire responses from ", unique(x$n), " individuals")
   path <- unique(x$contact_pngpath)
   
