@@ -88,7 +88,8 @@ print(hm)
 ```{r heatmap-site, fig.width = 17, fig.height = site_height}
 site_dat <- ldat %>%
   left_join(dat %>% select(concurrent_sampling_site, participant_id), by = c("participant_id")) %>%
-  mutate(concurrent_sampling_site = factor(concurrent_sampling_site, levels = site_names$old, labels = site_names$full_site_name))
+  mutate(concurrent_sampling_site = factor(concurrent_sampling_site, levels = site_names$old, labels = site_names$full_site_name)) %>%
+  drop_na(concurrent_sampling_site)
 hm <- get_heatmap(site_dat, taxa_types = taxa_outcomes, group_var = "concurrent_sampling_site", title = "Taxa Contact by Site")
 ggsave(plot = hm, file = h("outputs/heatmap-figs", paste0(country, "-site-heat-map.png")), width = 20, height = 15, units = "in")
 print(hm)
