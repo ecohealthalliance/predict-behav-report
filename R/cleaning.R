@@ -182,10 +182,8 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
                            scratched_bitten_action),
               .funs = funs(factor)) %>%
     #mutate numeric vectors
-    mutate(children_in_dwelling = ifelse(all(is.na(children_in_dwelling)),
-                                         NA, 
-                                         ifelse(is.na(children_in_dwelling)|children_in_dwelling==0, 
-                                                FALSE, TRUE))) %>%
+    mutate(children_in_dwelling = ifelse(is.na(children_in_dwelling)|children_in_dwelling==0, 
+                                                FALSE, TRUE)) %>%
     #expansion of factors to binary categorical outcomes
     ed2_expand_wide(livelihoods) %>%
     ed2_expand_wide(length_lived) %>%
@@ -195,6 +193,12 @@ get_logical <- function(dat, exclude_last_yr = TRUE, add_contact = TRUE, gender_
            -length_lived,
            -travel_reason,
            -treatment)
+  
+  
+  # if all children_in_dwelling is F, make NA
+  if(all(!covars$children_in_dwelling)){
+    covars$children_in_dwelling <- NA
+  }
   
   #map yes to TRUE and all other responses to FALSE (including missing)
   covars <- covars %>%
