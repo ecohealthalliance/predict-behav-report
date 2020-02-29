@@ -53,14 +53,21 @@ get_lasso <- function(dat, illness_outcomes, taxa_outcomes){
 }
 
 ########### Plot Lasso #############
-plot_lasso_fit <- function(lasso_obj, dat, pretty_names = TRUE, vert_line = TRUE, title = "") {
+plot_lasso_fit <- function(lasso_obj, dat, pretty_names = TRUE, vert_line = TRUE, title = "", support_threshold = 0.6) {
+  
+  support <- attr(lasso_obj, "bootstrap_support")
+  
   coefs <- coef(lasso_obj) %>%
     as.matrix() %>%
     as.data.frame() %>%
     rownames_to_column(var = "variable") %>%
     rename(effect=s0) %>%
     filter(effect != 0) %>%
-    filter(stringi::stri_detect_fixed(variable, "Intercept", negate=TRUE))
+    filter(stringi::stri_detect_fixed(variable, "Intercept", negate=TRUE)) %>% 
+    mutate(support = support[variable]) %>% 
+    filter(support >= support_threshold)
+  
+  if(!nrow(coefs)){ return(NULL)}
 
   in_mod <- coefs$variable
   in_mod_int <- in_mod[grepl(":", in_mod)] #identify interaction terms
@@ -78,31 +85,26 @@ plot_lasso_fit <- function(lasso_obj, dat, pretty_names = TRUE, vert_line = TRUE
     sapply(., table) %>%
     t() %>%
     as.data.frame() %>%
-    rownames_to_column("field") %>%
+    rownames_to_column("variable") %>%
     mutate(prop_pos = `TRUE`/(`FALSE` + `TRUE`))
 
+  coefs <- coefs %>%
+    left_join(dat_sum) %>%
+    mutate(variable = paste0(variable, "  (s = ", round(support, 2), "; n = ", `TRUE`, ")"))
+
   if(pretty_names) {
-    if(pretty_names) {
-      coefs <- coefs  %>%
-        mutate(variable = gsub("action_|discrete_", "", variable)) %>%
-        mutate(variable = gsub(" to ", "-", variable)) %>%
-        mutate(variable = gsub(":", " AND ", variable)) %>%
-        mutate(variable = gsub("_", " ", variable))
-    }
+    coefs <- coefs  %>%
+      mutate(variable = gsub("action_|discrete_", "", variable)) %>%
+      mutate(variable = gsub(" to ", "-", variable)) %>%
+      mutate(variable = gsub(":", " AND ", variable)) %>%
+      mutate(variable = gsub("_", " ", variable))
   }
-
-  if(!is.null(attr(lasso_obj, "bootstrap_support"))) {
-    support <- attr(lasso_obj, "bootstrap_support")
-    support <- support[in_mod]
-    n_pos <- dat_sum$`TRUE`
-    coefs$variable <- paste0(coefs$variable, "  (s = ", round(support, 2), "; n = ", n_pos, ")")
-  }
-
+  
   coefs <- coefs %>%
     arrange(desc(effect)) %>%
     mutate(variable = fct_reorder(variable, effect)) %>%
     mutate(pred = plogis(lasso_obj$a0 + effect),
-           positive = effect > 0)
+           positive = effect > 0) 
 
   out_plot <- ggplot(coefs, aes(x = variable, y = effect, fill=positive)) +
     geom_point(pch = 21, stroke = 0.75, size = 4) +
