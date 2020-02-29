@@ -5,7 +5,7 @@
 purrr::walk(list.files(here::here("R/"), full.names = TRUE),
             source, echo = FALSE, verbose = FALSE)
 set.seed(99)
-
+library(tidyverse)
 # Breaks for discretizing continuous variables
 age_breaks <- c(0, 18, 41, 61, Inf)
 age_labels <- c("under_18", "18_to_40", "41_to_60", "over_60")
@@ -20,7 +20,9 @@ illness_outcomes <- illness_names_clean
 countries <- eha_countries()
 
 # For each country
-walk(countries, function(country){
+for(country in countries){
+  
+  if(country %in% c("Liberia", "South Sudan",  "Malaysia, Sabah" )){next()}
   
   # get logical data
   ldat <- get_behav(country) %>%
@@ -39,11 +41,11 @@ walk(countries, function(country){
     gather(key = "outcome") %>%
     group_by(outcome) %>%
     summarize(prev = sum((value)/nrow(ldat))) %>%
-    filter(prev >= 0.1) %>% 
+    filter(prev >= 0.1 & prev <= 0.9) %>% 
     pull(outcome)
   
   # For each taxa outcome
-  walk(endpts, function(endpt){
+  for(endpt in endpts){
     
     # remove other taxa outcome
     if(endpt %in% taxa_outcomes){
@@ -78,12 +80,24 @@ walk(countries, function(country){
     write_rds(lasso_fit, h("data", "lasso", paste(country, endpt, "lasso_model.rds", sep = "_")))
     
     # make plot
-    plot_lasso_fit(lasso_obj = lasso_fit, dat = ldat2, title = str_replace(endpt, "_", " "))
-    ggsave(h("outputs", "lasso-figs", paste0(country, "_", endpt, ".png")), width = 12)
-  })
-})
+    p <- plot_lasso_fit(lasso_obj = lasso_fit, dat = ldat_model, title = str_replace(endpt, "_", " "))
+    if(!is.null(p)){
+      ggsave(plot = p, h("outputs", "lasso-figs", paste0(country, "_", endpt, ".png")), width = 12)
+    }
+  }
+}
 
+### run plots separately
+mods <- list.files(here::here("data", "lasso"), pattern = ".rds")
+
+for(mod in mods){
   
+  lasso_fit <- read_rds(here::here("data", "lasso", mod))
+  ldat_model <- read_csv(here::here("data", "lasso", gsub("model.rds", "dat.csv", mod)))
   
+  p <- plot_lasso_fit(lasso_obj = lasso_fit, dat = ldat_model, title = "")
+  if(!is.null(p)){
+    ggsave(plot = p, h("outputs", "lasso-figs", gsub("_lasso_model.rds", ".png", mod)), width = 12)
+  }
   
-})
+}
