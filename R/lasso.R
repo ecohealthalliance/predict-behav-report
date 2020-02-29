@@ -1,7 +1,7 @@
 # function to run lasso analysis
 get_lasso <- function(dat, illness_outcomes, taxa_outcomes){
   
-  outcomes <- c(illness_outcomes, taxa_outcomes = NULL)
+  outcomes <- c(illness_outcomes, taxa_outcomes)
   
   map(outcomes, function(endpt){
     
@@ -24,17 +24,17 @@ get_lasso <- function(dat, illness_outcomes, taxa_outcomes){
     write_csv(dat, h("data", "lasso", paste(country, endpt, "lasso-dat.csv", sep = "-")))
     
     # create matrix
-    lasso_matrix <- dat %>%
+    lasso_matrices <- dat %>%
       ehalasso::make_matrix(interactions = TRUE, interaction_vars = c("gender", "highest_education", "highest_education_mother",
                                                                       "length_lived", "age", "concurrent_site"),
-                            outcome_var  = endpt_mod, interaction_vars_regex = TRUE) %>%
-      ehalasso::remove_colinear_columns()
+                            outcome_var  = endpt, interaction_regex = TRUE)
     
-    resp <- dat %>%
-      select(endpt_mod) %>% 
-      as.matrix()
+    # remove colinear columns
+    lasso_predictor_matrix <- remove_colinear_columns(lasso_matrices$model_matrix)
     
-    lasso_fit <- fit_lasso_model(lasso_matrix$model_data_matrix, response = resp)
+    # fit model
+    lasso_fit <- fit_lasso_model(lasso_predictor_matrix$intermediate_matrix,
+                                 lasso_matrices$outcome_matrix)
     
     write_rds(lasso_fit, h("data/lasso", paste(country, endpt, "lasso-fit.rds", sep = "-")))
     
