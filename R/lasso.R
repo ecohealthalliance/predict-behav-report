@@ -6,28 +6,27 @@ get_lasso <- function(dat, illness_outcomes, taxa_outcomes){
   map(outcomes, function(endpt){
     
     if(endpt %in% illness_outcomes){
-      dat <- get_outcomes(dat, taxa_outcomes = taxa_names, illness_outcomes = endpt) 
+      mdat <- get_outcomes(dat, taxa_outcomes = taxa_names, illness_outcomes = endpt) 
       endpt_mod <- endpt
     }
     if(endpt %in% taxa_outcomes){
-      dat <- get_outcomes(dat, taxa_outcomes = endpt, illness_outcomes = illness_names_clean) %>%
-        select(-starts_with(endpt)) %>%
-        mutate(!!paste0(endpt, "_contact") := ifelse(!!sym(paste0("no_", endpt, "_contact")), FALSE, TRUE)) %>%
-        select(-starts_with("no_"))
       endpt_mod <- paste0(endpt, "_contact")
+      mdat <- get_outcomes(dat, taxa_outcomes = endpt, illness_outcomes = illness_names_clean) %>%
+        mutate(!!endpt_mod := ifelse(!!sym(paste0(endpt_mod, "_none")), FALSE, TRUE)) %>% 
+        select(-starts_with(paste0(endpt_mod, "_"))) 
     }
     
-    dat <- dat %>% 
+    mdat <- mdat %>% 
       select(-participant_id)  %>%
       remove_empty(which = "cols")
     
-    write_csv(dat, h("data", "lasso", paste(country, endpt, "lasso-dat.csv", sep = "-")))
+    write_csv(mdat, h("data", "lasso", paste(country, endpt, "lasso-dat.csv", sep = "-")))
     
     # create matrix
-    lasso_matrices <- dat %>%
+    lasso_matrices <- mdat %>%
       ehalasso::make_matrix(interactions = TRUE, interaction_vars = c("gender", "highest_education", "highest_education_mother",
                                                                       "length_lived", "age", "concurrent_site"),
-                            outcome_var  = endpt, interaction_regex = TRUE)
+                            outcome_var  = endpt_mod, interaction_regex = TRUE)
     
     # remove colinear columns
     lasso_predictor_matrix <- remove_colinear_columns(lasso_matrices$model_matrix)
