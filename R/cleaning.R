@@ -23,9 +23,9 @@ get_site_names <- function(dat, site_lookup, country){ # input dataframe in form
 # Get behavioral data
 get_behav <- function(country, download = FALSE){
   
-  if(download){
-    ed_db_download(verbose = TRUE, p1_tables = NULL, p2_tables = c("Event", "Human"), p1_data = FALSE)
-  }
+  # if(download){
+  #   ed_db_download(verbose = TRUE, p1_tables = NULL, p2_tables = c("Event", "Human"), p1_data = FALSE)
+  # }
   
   human <-  eidith::ed2_human()
   event <- eidith::ed2_events() %>% 
@@ -43,9 +43,8 @@ get_behav <- function(country, download = FALSE){
            bathing_water_shared, drinking_water_source) %>%
     rename(drinking_water_source_site = drinking_water_source)
   
-  out <- left_join(human, event, by = "event_name") %>%
-    filter(country == !!country,
-           concurrent_sampling_site  != "Not Mapped")
+  out <- left_join(human, event) %>%
+    filter(country == !!country)
   
   # recode 
   out <- out %>%
@@ -60,20 +59,20 @@ get_behav <- function(country, download = FALSE){
                            site_latitude, site_longitude, age), .funs = ~suppressWarnings(as.numeric(.))) %>% # make numeric values (warning is NAs introduced -- ok)
     mutate(age = floor(age), # round down age
            # get whether or not exposed to taxa
-           rodents = ifelse(str_detect(rodents_contact, ""), "rodents", NA), 
-           bats = ifelse(str_detect(bats_contact, ""), "bats", NA),
-           nhp = ifelse(str_detect(nhp_contact, ""), "primates", NA),
-           swine = ifelse(str_detect(swine_contact, ""), "swine", NA),
-           poultry = ifelse(str_detect(poultry_contact, ""), "poultry", NA),
-           birds = ifelse(str_detect(birds_contact, ""), "birds", NA),
-           goats_sheep = ifelse(str_detect(goats_sheep_contact, ""), "goats/sheep", NA),
-           cats = ifelse(str_detect(cats_contact, ""), "cats", NA),
-           dogs = ifelse(str_detect(dogs_contact, ""), "dogs", NA),
-           camels = ifelse(str_detect(camels_contact, ""), "camels", NA),
-           carnivores = ifelse(str_detect(carnivores_contact, ""), "carnivores", NA),
-           pangolins = ifelse(str_detect(pangolins_contact, ""), "pangolins", NA),
-           ungulates = ifelse(str_detect(ungulates_contact, ""), "ungulates", NA),
-           cattle = ifelse(str_detect(cattle_contact, ""), "cattle", NA)) %>%
+           rodents = ifelse(rodents_contact != "none", "rodents", NA), 
+           bats = ifelse(bats_contact != "none", "bats", NA),
+           nhp = ifelse(nhp_contact != "none", "primates", NA),
+           swine = ifelse(swine_contact != "none", "swine", NA),
+           poultry = ifelse(poultry_contact != "none", "poultry", NA),
+           birds = ifelse(birds_contact != "none", "birds", NA),
+           goats_sheep = ifelse(goats_sheep_contact != "none", "goats/sheep", NA),
+           cats = ifelse(cats_contact != "none", "cats", NA),
+           dogs = ifelse(dogs_contact != "none", "dogs", NA),
+           camels = ifelse(camels_contact != "none", "camels", NA),
+           carnivores = ifelse(carnivores_contact != "none", "carnivores", NA),
+           pangolins = ifelse(pangolins_contact != "none", "pangolins", NA),
+           ungulates = ifelse(ungulates_contact != "none", "ungulates", NA),
+           cattle = ifelse(cattle_contact != "none", "cattle", NA)) %>%
     unite(contact_all, bats, birds, camels, carnivores, cats, cattle, dogs, goats_sheep,
           nhp, pangolins, poultry, rodents, swine, ungulates, 
           remove=TRUE, sep = "; ") %>%
@@ -130,8 +129,9 @@ get_behav <- function(country, download = FALSE){
            crowding_index = people_in_dwelling/rooms_in_dwelling_crowd
            
     ) %>%
-    select(-rooms_in_dwelling_crowd)
+    select(-rooms_in_dwelling_crowd)  
   
+  return(out)
 }
 
 taxa_names <- c('rodents', 'nhp',  'bats', 'swine',   'poultry',

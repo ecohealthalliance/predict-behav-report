@@ -11,16 +11,16 @@ set.seed(99)
 #-------------------------------------------------------------
 # User entered information
 
-country <-  "Tanzania"       # Name country here
+country <-  "Ivory Coast"       # Name country here
   ## Can only select ONE country
-illness_outcomes <- c("encephalitis") # Select illness of interest here
+illness_outcomes <- NULL # Select illness of interest here
   ## (`illness_names_clean` object (loaded in Environment tab) to see full list). 
   ## Accepts NULL.
 heatmap_taxa_outcomes <- taxa_names # Select taxa contact of interest for heatmaps 
   ## (`taxa_names` object (loaded in Environment tab) to see full list). 
   ## Does NOT accept NULL.
   ## Current condition (taxa_names) will include all taxa; <- c("bats", "rodents", "swine", "etc") will select specific taxa
-tabular_lasso_taxa_outcomes <- c("rodents") # Select taxa contact of interest for lasso and tabular reports
+tabular_lasso_taxa_outcomes <- c("bats") # Select taxa contact of interest for lasso and tabular reports
   ## (`taxa_names` object (loaded in environment) to see full list). 
   ## Accepts NULL.
 #------------------------------------------------------------
@@ -37,16 +37,14 @@ age_labels <- c("under_18", "18_to_40", "41_to_60", "over_60")
 crowding_index_breaks <- c(0, 1, 3, 10000, Inf)
 crowding_index_labels <- c("less_than_1", "1_to_3", "3_plus", "no_rooms")
 #------------------------------------------------------------
-# Download data from EIDITH? 
-  ## Must have local eidith if FALSE
-
-download_fresh <- FALSE
+# Download data from EIDITH
+# import_local_db(database = "global")
 #------------------------------------------------------------
 # Run the lasso analysis?  
   ## If TRUE, processing will be slow depending on the number of outcomes
   ## Lasso should only be run once per outcome, or whenever there are changes to eidith (human) data
 
-run_lasso <- FALSE
+run_lasso <- TRUE
 #-------------------------------------------------------------
 # Write csv files to use for reports
 
@@ -56,19 +54,19 @@ source(h("scripts", "make-data.R"))
 # Check prevalence of outcomes --> see html output (country-outcome-prevalence) in outputs/reports folder
 ## This only needs to be run once, unless there are changes to eidith (human) data
 
-rmarkdown::render(h("scripts/00-prevalence.Rmd"),
-                  output_file = paste0(country_mod, "-outcome-prevalence.html"),
-                  output_dir = h("outputs", "reports"),
-                  params = list(country = country_mod,
-                                illness_outcomes = illness_names_clean,
-                                taxa_outcomes  = taxa_names),
-                  quiet = FALSE, envir = new.env())
+# rmarkdown::render(h("scripts/00-prevalence.Rmd"),
+#                   output_file = paste0(country_mod, "-outcome-prevalence.html"),
+#                   output_dir = h("outputs", "reports"),
+#                   params = list(country = country_mod,
+#                                 illness_outcomes = illness_names_clean,
+#                                 taxa_outcomes  = taxa_names),
+#                   quiet = FALSE, envir = new.env())
   ## If prevalence is less than 10.0%, do NOT run the lasso for that particular outcome
 #-------------------------------------------------------------
 # Select reports to run
   ## Options are: "summary-report", "tabular-report", "site-maps", "heatmaps", "lasso"
 
-reports <- c("summary-report", "tabular-report", "site-maps", "heatmaps")
+reports <- c("summary-report", "tabular-report")
 #-------------------------------------------------------------
 # Run reports
   ## html reports can be found in outputs/reports folder

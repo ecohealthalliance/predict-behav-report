@@ -366,7 +366,7 @@ sites_vector_control <- get_sum_table(dat,
 
 
 # community_engagement
-community_engagement_sites <- get_sum_table(dat, 
+community_engagement_sites <- get_sum_table(dat %>% drop_na(community_engagement), 
                                             pretty_names = site_names, 
                                             group_var = "community_engagement", 
                                             factor_levels = c("yes",
