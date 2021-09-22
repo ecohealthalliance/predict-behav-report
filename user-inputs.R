@@ -64,9 +64,10 @@ source(h("scripts", "make-data.R"))
   ## If prevalence is less than 10.0%, do NOT run the lasso for that particular outcome
 #-------------------------------------------------------------
 # Select reports to run
-  ## Options are: "summary-report", "tabular-report", "site-maps", "heatmaps", "lasso"
+  ## Options are: "summary-report", "tabular-report", "heatmaps", "lasso"
+  ##  "site-maps" are deprecated
 
-reports <- c("summary-report", "tabular-report")
+reports <- c("summary-report", "tabular-report", "heatmaps", "lasso")
 #-------------------------------------------------------------
 # Run reports
   ## html reports can be found in outputs/reports folder
