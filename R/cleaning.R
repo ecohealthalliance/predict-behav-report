@@ -21,11 +21,11 @@ get_site_names <- function(dat, site_lookup, country){ # input dataframe in form
 
 
 # Get behavioral data
-get_behav <- function(country, download = FALSE){
+get_behav <- function(country, download = FALSE, database = "eha"){
   
-  # if(download){
-  #   ed_db_download(verbose = TRUE, p1_tables = NULL, p2_tables = c("Event", "Human"), p1_data = FALSE)
-  # }
+  if(download){
+    eidith::import_local_db(database = database)
+  }
   
   human <-  eidith::ed2_human()
   event <- eidith::ed2_events() %>% 

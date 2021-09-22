@@ -1,7 +1,7 @@
 # Process Data
 
 # Get data (can specify download = TRUE if needed)
-dat <- get_behav(country, download = download_fresh) 
+dat <- get_behav(country, download = FALSE, database = "eha") 
 write_csv(dat, h(paste0("data/raw-behav-", country_mod, ".csv"))) # used in summary report and site maps
 
 # Format data for analysis 
